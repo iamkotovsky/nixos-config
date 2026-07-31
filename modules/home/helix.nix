@@ -105,7 +105,7 @@ in
       pkgs.clang-tools
       pkgs.gopls
       pkgs.nil
-      pkgs.nixfmt-rfc-style
+      pkgs.nixfmt
       pkgs.rust-analyzer
       pkgs.rustfmt
     ];
