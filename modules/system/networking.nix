@@ -1,6 +1,5 @@
 {
   networking.networkmanager.enable = true;
-  networking.wireless.enable = false;
 
   hardware.bluetooth = {
     enable = true;
