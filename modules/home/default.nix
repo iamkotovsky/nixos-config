@@ -4,7 +4,6 @@
     ./helix.nix
     ./kitty.nix
     ./niri.nix
-    ./quickshell.nix
     ./zsh.nix
   ];
 
@@ -26,7 +25,6 @@
       pkgs.jq
       pkgs.pavucontrol
       pkgs.playerctl
-      pkgs.quickshell
       pkgs.ripgrep
       pkgs.slurp
       pkgs.swaylock

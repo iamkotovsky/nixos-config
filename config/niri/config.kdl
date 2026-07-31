@@ -15,9 +15,6 @@ input {
 
 prefer-no-csd
 
-// The panel is intentionally tiny; it mainly demonstrates the shared QML theme.
-spawn-at-startup "qs" "-c" "zenbook"
-
 binds {
     Mod+Return { spawn "kitty"; }
     Mod+D { spawn "fuzzel"; }
