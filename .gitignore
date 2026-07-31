@@ -1,0 +1,4 @@
+# Nix build outputs and local development environments.
+/result
+/result-*
+/.direnv/

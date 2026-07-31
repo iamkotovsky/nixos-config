@@ -1,0 +1,52 @@
+// Minimal native Niri configuration; use `niri validate` after manual edits.
+input {
+    keyboard {
+        xkb {
+            layout "us,de,ua"
+            options "grp:win_space_toggle"
+        }
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+
+prefer-no-csd
+
+// The panel is intentionally tiny; it mainly demonstrates the shared QML theme.
+spawn-at-startup "qs" "-c" "zenbook"
+
+binds {
+    Mod+Return { spawn "kitty"; }
+    Mod+D { spawn "fuzzel"; }
+    Mod+Q { close-window; }
+
+    Mod+H { focus-column-left; }
+    Mod+L { focus-column-right; }
+    Mod+J { focus-window-down; }
+    Mod+K { focus-window-up; }
+
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+Shift+J { move-window-down; }
+    Mod+Shift+K { move-window-up; }
+
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
+
+    Super+Alt+L { spawn "swaylock" "-f"; }
+
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
+    XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+}

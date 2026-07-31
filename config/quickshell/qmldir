@@ -1,0 +1,2 @@
+# Register the generated singleton for sibling QML files.
+singleton Theme 1.0 Theme.qml
