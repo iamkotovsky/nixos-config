@@ -6,6 +6,11 @@
     useNautilus = false;
   };
 
+  # Niri ships with XWayland disabled; X11-only apps (e.g. zoom-us) need this
+  # to display a window at all. Spawned via config.kdl's spawn-at-startup,
+  # which niri has explicit support for waiting on.
+  environment.systemPackages = [ pkgs.xwayland-satellite ];
+
   services.greetd = {
     enable = true;
     useTextGreeter = true;
@@ -16,7 +21,12 @@
   };
 
   security.polkit.enable = true;
-  security.pam.services.swaylock = { };
+  security.pam.services.hyprlock = { };
+
+  # Show asterisk feedback while typing the sudo password.
+  security.sudo.extraConfig = ''
+    Defaults pwfeedback
+  '';
 
   # Niri integrates screencasting with the GNOME portal; GTK supplies file pickers.
   xdg.portal = {

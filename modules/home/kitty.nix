@@ -12,6 +12,9 @@ in
 
     settings = {
       background = colors.background;
+      # Enough translucency for Niri's blur and grain to read as frosted glass.
+      background_opacity = theme.opacity.surface;
+      background_blur = 1;
       foreground = colors.foreground;
       selection_background = colors.accent;
       selection_foreground = colors.background;
@@ -39,6 +42,7 @@ in
       tab_bar_style = "hidden";
       scrollback_lines = 10000;
       cursor_shape = "beam";
+      cursor_trail = 20;
     };
   };
 }

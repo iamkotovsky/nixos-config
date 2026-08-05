@@ -2,7 +2,7 @@
 input {
     keyboard {
         xkb {
-            layout "us,de,ua"
+            layout "us,ru"
             options "grp:win_space_toggle"
         }
     }
@@ -13,12 +13,100 @@ input {
     }
 }
 
+cursor {
+    xcursor-theme "@CURSOR_THEME@"
+    xcursor-size @CURSOR_SIZE@
+}
+
 prefer-no-csd
+
+// XWayland is disabled by default; this is required for X11-only apps
+// (e.g. Zoom) to display a window at all. Niri waits for it and exports
+// DISPLAY to subsequently spawned processes.
+spawn-at-startup "xwayland-satellite"
+
+// Smooth diffusion and fine grain give transparent surfaces a frosted-glass look.
+blur {
+    passes 3
+    offset 3
+    noise 0.03
+    saturation 1.15
+}
+
+layout {
+    // Let the wallpaper remain stationary when workspaces zoom out.
+    background-color "transparent"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+    default-column-width {
+        proportion 0.5
+    }
+    focus-ring {
+        width 2
+        active-color "@ACCENT@"
+        inactive-color "@SURFACE@"
+    }
+    border {
+        off
+    }
+}
+
+overview {
+    zoom 0.65
+    backdrop-color "@BACKGROUND@"
+}
+
+layer-rule {
+    match namespace="^awww-daemon$"
+    place-within-backdrop true
+}
+
+window-rule {
+    geometry-corner-radius @RADIUS@
+    clip-to-geometry true
+    draw-border-with-background false
+    background-effect {
+        blur true
+    }
+}
+
+// Rofi is a layer surface rather than a regular window.
+layer-rule {
+    match namespace="^rofi$"
+    background-effect {
+        blur true
+    }
+}
+
+layer-rule {
+    match namespace="^waybar$"
+    background-effect {
+        blur true
+    }
+}
+
+// A small increase for the Zenbook's high-density internal panel.
+output "eDP-1" {
+    scale 1.75
+}
 
 binds {
     Mod+Return { spawn "kitty"; }
-    Mod+D { spawn "fuzzel"; }
+    Mod+D { spawn "rofi" "-show" "drun"; }
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Q { close-window; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { set-column-width "66.667%"; }
+    Mod+Ctrl+R { expand-column-to-available-width; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+C { center-column; }
+    Mod+W { toggle-column-tabbed-display; }
 
     Mod+H { focus-column-left; }
     Mod+L { focus-column-right; }
@@ -30,12 +118,31 @@ binds {
     Mod+Shift+J { move-window-down; }
     Mod+Shift+K { move-window-up; }
 
-    Mod+Page_Down { focus-workspace-down; }
-    Mod+Page_Up { focus-workspace-up; }
-    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
-    Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
+    Mod+Comma { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+    Mod+V { toggle-window-floating; }
 
-    Super+Alt+L { spawn "swaylock" "-f"; }
+    Mod+Ctrl+J { focus-workspace-down; }
+    Mod+Ctrl+K { focus-workspace-up; }
+    Mod+Ctrl+Shift+J { move-column-to-workspace-down; }
+    Mod+Ctrl+Shift+K { move-column-to-workspace-up; }
+
+    // Only relevant once an external monitor is connected. Mod is Super, and
+    // Super+Alt+L/S are already taken below, so this tier stacks Ctrl+Alt
+    // instead of Alt alone to stay collision-free.
+    Mod+Ctrl+Alt+H { focus-monitor-left; }
+    Mod+Ctrl+Alt+L { focus-monitor-right; }
+    Mod+Ctrl+Alt+J { focus-monitor-down; }
+    Mod+Ctrl+Alt+K { focus-monitor-up; }
+    Mod+Ctrl+Alt+Shift+H { move-column-to-monitor-left; }
+    Mod+Ctrl+Alt+Shift+L { move-column-to-monitor-right; }
+    Mod+Ctrl+Alt+Shift+J { move-column-to-monitor-down; }
+    Mod+Ctrl+Alt+Shift+K { move-column-to-monitor-up; }
+
+    Super+Alt+L { spawn "@LOCK_SCRIPT@"; }
+    Super+Alt+S { spawn "systemctl" "suspend"; }
+    Mod+Shift+E { quit; }
+    XF86Sleep allow-when-locked=true { spawn "systemctl" "suspend"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }

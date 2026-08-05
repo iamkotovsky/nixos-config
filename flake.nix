@@ -32,6 +32,7 @@
             # Home Manager shares the exact package set used by NixOS.
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "hm-backup";
             home-manager.extraSpecialArgs = { inherit theme; };
             home-manager.users.danil = import ./modules/home;
           }

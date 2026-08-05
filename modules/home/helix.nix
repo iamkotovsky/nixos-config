@@ -16,6 +16,11 @@ in
         true-color = true;
         bufferline = "multiple";
         idle-timeout = 250;
+        cursor-shape = {
+          insert = "bar";
+          normal = "block";
+          select = "underline";
+        };
       };
     };
 
@@ -31,7 +36,14 @@ in
         bg = colors.accent;
       };
       "ui.cursorline.primary" = { bg = colors.surface; };
-      "ui.selection" = { bg = colors.surface; };
+      "ui.selection" = {
+        fg = colors.background;
+        bg = colors.muted;
+      };
+      "ui.selection.primary" = {
+        fg = colors.background;
+        bg = colors.muted;
+      };
       "ui.linenr" = { fg = colors.muted; };
       "ui.linenr.selected" = { fg = colors.accent; };
       "ui.statusline" = {

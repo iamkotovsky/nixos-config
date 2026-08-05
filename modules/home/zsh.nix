@@ -1,6 +1,6 @@
 { ... }:
 let
-  flakeDir = "$HOME/nixos-config";
+  flakeDir = "/etc/nixos";
 in
 {
   programs.zsh = {
@@ -20,16 +20,12 @@ in
     };
 
     shellAliases = {
-      ll = "ls -lh";
-      la = "ls -lah";
+      config = "$EDITOR ${flakeDir}";
       rebuild = "sudo nixos-rebuild switch --flake ${flakeDir}#zenbook";
+      rollback = "sudo nixos-rebuild switch --rollback";
       update = "nix flake update ${flakeDir}";
-      cleanup = "sudo nix-collect-garbage --delete-older-than 30d";
+      check = "nix flake check ${flakeDir}";
+      cleanup = "sudo nix-env -p /nix/var/nix/profiles/system --delete-generations 30d && sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage";
     };
-
-    # The prompt uses Kitty's ANSI palette, so it follows the shared theme indirectly.
-    initContent = ''
-      PROMPT='%F{blue}%n@%m%f %F{cyan}%~%f %# '
-    '';
   };
 }

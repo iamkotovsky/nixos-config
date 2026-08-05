@@ -1,9 +1,21 @@
 { pkgs, ... }:
 {
   imports = [
+    ./bash.nix
     ./helix.nix
+    ./fastfetch.nix
+    ./firefox.nix
+    ./git.nix
+    ./hyprlock.nix
     ./kitty.nix
+    ./mako.nix
     ./niri.nix
+    ./rofi.nix
+    ./shell-tools.nix
+    ./starship.nix
+    ./theme.nix
+    ./waybar.nix
+    ./wallpaper.nix
     ./zsh.nix
   ];
 
@@ -13,23 +25,27 @@
     stateVersion = "26.05";
 
     packages = [
+      pkgs.zoom-us
+      pkgs.claude-code
+      pkgs.codex
       pkgs.brightnessctl
+      pkgs.btop
       pkgs.curl
+      pkgs.dust
       pkgs.fd
       pkgs.file
-      pkgs.firefox
-      pkgs.fuzzel
       pkgs.fzf
-      pkgs.git
       pkgs.grim
       pkgs.jq
+      pkgs.ncdu
       pkgs.pavucontrol
       pkgs.playerctl
       pkgs.ripgrep
       pkgs.slurp
-      pkgs.swaylock
+      pkgs.telegram-desktop
       pkgs.tree
       pkgs.unzip
+      pkgs.vesktop
       pkgs.wget
       pkgs.wl-clipboard
       pkgs.wireplumber
