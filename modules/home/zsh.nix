@@ -26,6 +26,9 @@ in
       update = "nix flake update ${flakeDir}";
       check = "nix flake check ${flakeDir}";
       cleanup = "sudo nix-env -p /nix/var/nix/profiles/system --delete-generations 30d && sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage";
+      # `nix develop` always drops into bash by design (it needs bash to
+      # source stdenv setup); this lands in zsh instead.
+      develop = "nix develop --command zsh";
     };
   };
 }
