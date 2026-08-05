@@ -88,6 +88,14 @@ layer-rule {
     }
 }
 
+// Mako is a layer surface rather than a regular window.
+layer-rule {
+    match namespace="^notifications$"
+    background-effect {
+        blur true
+    }
+}
+
 // A small increase for the Zenbook's high-density internal panel.
 output "eDP-1" {
     scale 1.75

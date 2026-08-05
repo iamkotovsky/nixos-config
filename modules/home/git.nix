@@ -1,9 +1,12 @@
 { ... }:
 {
-  # No user.name/user.email set here: home-manager only writes
-  # ~/.config/git/config, so `git config --global` still works normally
-  # and takes precedence via ~/.gitconfig.
-  programs.git.enable = true;
+  programs.git = {
+    enable = true;
+    settings.user = {
+      name = "iamkotovsky";
+      email = "danilerem@gmail.com";
+    };
+  };
 
   programs.delta = {
     enable = true;

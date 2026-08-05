@@ -1,7 +1,4 @@
 { pkgs, theme, ... }:
-let
-  colors = theme.colors;
-in
 {
   home.pointerCursor = {
     enable = true;

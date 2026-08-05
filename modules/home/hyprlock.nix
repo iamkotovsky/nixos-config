@@ -48,6 +48,7 @@ let
 
   idleManager = pkgs.writeShellScript "niri-idle-manager" ''
     exec ${pkgs.swayidle}/bin/swayidle \
+      timeout 270 ${lib.escapeShellArg (toString lockScreen)} \
       timeout 300 ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-off-monitors"} \
         resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"} \
       timeout 600 ${lib.escapeShellArg "${pkgs.systemd}/bin/systemctl suspend"} \

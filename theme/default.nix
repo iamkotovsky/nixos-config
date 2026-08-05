@@ -35,12 +35,12 @@
   };
 
   opacity = {
-    # Shared translucency for kitty, waybar and fuzzel backgrounds; kept as a
+    # Shared translucency for kitty, waybar, rofi and mako backgrounds; kept as a
     # string so it drops into config text without float-formatting artifacts.
     surface = "0.84";
   };
 
-  # Strips the leading "#" for consumers that want bare hex (hyprlock, fuzzel).
+  # Strips the leading "#" for consumers that want bare hex (hyprlock, rofi, mako).
   hex = color: builtins.substring 1 6 color;
 
   # Renders an opacity string like "0.84" as a two-digit hex alpha suffix ("d6").
