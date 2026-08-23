@@ -23,6 +23,9 @@
   security.polkit.enable = true;
   security.pam.services.hyprlock = { };
 
+  # Lets udiskie (see home/udiskie.nix) mount/unmount removable drives without root.
+  services.udisks2.enable = true;
+
   # Show asterisk feedback while typing the sudo password.
   security.sudo.extraConfig = ''
     Defaults pwfeedback

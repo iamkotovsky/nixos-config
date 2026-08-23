@@ -12,10 +12,13 @@
     ./niri.nix
     ./rofi.nix
     ./shell-tools.nix
+    ./ssh.nix
     ./starship.nix
     ./theme.nix
+    ./udiskie.nix
     ./waybar.nix
     ./wallpaper.nix
+    ./yazi.nix
     ./zsh.nix
   ];
 
