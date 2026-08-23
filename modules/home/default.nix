@@ -28,6 +28,7 @@
     stateVersion = "26.05";
 
     packages = [
+      pkgs.bitwig-studio
       pkgs.zoom-us
       pkgs.claude-code
       pkgs.codex
