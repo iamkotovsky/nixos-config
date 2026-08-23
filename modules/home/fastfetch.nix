@@ -1,4 +1,4 @@
-{ theme, ... }:
+{ theme, pkgs, ... }:
 let
   colors = theme.colors;
 in
@@ -7,8 +7,16 @@ in
     enable = true;
 
     settings = {
+      # Rendered via kitty's graphics protocol (same as icat) instead of
+      # blocky ASCII art; only displays correctly in kitty or other
+      # terminals that support the kitty image protocol.
+      # kitty-direct (not kitty) because file-based transmission fails to
+      # display here even though the path is readable.
       logo = {
-        type = "small";
+        type = "kitty-direct";
+        source = "${pkgs.nixos-icons}/share/icons/hicolor/512x512/apps/nix-snowflake.png";
+        width = 24;
+        height = 12;
         padding.top = 1;
       };
 
