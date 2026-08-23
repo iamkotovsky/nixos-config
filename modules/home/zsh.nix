@@ -35,6 +35,10 @@ in
       # `nix develop` always drops into bash by design (it needs bash to
       # source stdenv setup); this lands in zsh instead.
       develop = "nix develop --command zsh";
+      icat = "kitty +kitten icat";
+      # Transfers kitty's terminfo + shell integration to the remote on
+      # connect, so `clear`/tput/full-screen apps don't break over SSH.
+      ssh = "kitty +kitten ssh";
     };
   };
 }
