@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 let
   flakeDir = "/etc/nixos";
 in
@@ -8,6 +8,12 @@ in
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+
+    # https://devenv.sh/auto-activation/ - auto-activates devenv shells on cd,
+    # no direnv/.envrc needed.
+    initContent = lib.mkAfter ''
+      eval "$(devenv hook zsh)"
+    '';
 
     history = {
       path = "$HOME/.zsh_history";

@@ -1,5 +1,7 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  home.packages = [ pkgs.devenv ];
+
   programs.eza = {
     enable = true;
     enableZshIntegration = true;
@@ -12,12 +14,6 @@
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = true;
-    nix-direnv.enable = true;
   };
 
   programs.tealdeer = {
