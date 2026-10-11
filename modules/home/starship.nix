@@ -1,4 +1,4 @@
-# Minimal single-line prompt: folded path, git branch/status, nix env state.
+# Minimal single-line prompt: folded path, git branch and status.
 { theme, ... }:
 let
   colors = theme.colors;
@@ -11,7 +11,7 @@ in
 
     settings = {
       add_newline = false;
-      format = "$directory$git_branch$git_status$nix_shell$character";
+      format = "$directory$git_branch$git_status$character";
 
       character = {
         success_symbol = "[>](${colors.green})";
@@ -39,15 +39,19 @@ in
       git_status = {
         style = colors.yellow;
         format = "([$all_status$ahead_behind]($style) )";
+        ahead = ">";
+        behind = "<";
+        conflicted = "=";
+        deleted = "x";
+        diverged = "<>";
+        modified = "!";
+        renamed = "r";
+        staged = "+";
+        stashed = "$";
+        untracked = "?";
+        up_to_date = "";
       };
 
-      nix_shell = {
-        style = colors.cyan;
-        format = "[$symbol$state]($style) ";
-        symbol = "❄ ";
-        impure_msg = "impure";
-        pure_msg = "pure";
-      };
     };
   };
 }

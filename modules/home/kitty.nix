@@ -18,7 +18,8 @@ in
       foreground = colors.foreground;
       selection_background = colors.accent;
       selection_foreground = colors.background;
-      cursor = colors.accent;
+      # Keep the insertion point clearly visible regardless of the active theme.
+      cursor = "#ffffff";
       cursor_text_color = colors.background;
 
       color0 = colors.background;

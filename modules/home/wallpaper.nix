@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, theme, ... }:
 let
   setInitialWallpaper = pkgs.writeShellScript "awww-set-initial-wallpaper" ''
     if [[ ! -f ${builtins.toJSON config.wallpaper.path} ]]; then
@@ -8,7 +8,7 @@ let
     for _ in {1..20}; do
       if ${pkgs.awww}/bin/awww query >/dev/null 2>&1; then
         exec ${pkgs.awww}/bin/awww img ${builtins.toJSON config.wallpaper.path} \
-          --transition-type fade \
+          --transition-type ${theme.wallpaper.transition} \
           --transition-duration 1
       fi
 
@@ -19,11 +19,13 @@ let
   '';
 in
 {
-  # Single source of truth for the active wallpaper path; hyprlock reads it too.
+  # Each declarative theme owns a wallpaper. This remains the single path that
+  # both awww and hyprlock consume.
   options.wallpaper.path = lib.mkOption {
     type = lib.types.str;
-    default = "${config.home.homeDirectory}/Pictures/Wallpapers/white-rose.jpg";
-    description = "Absolute path to the active desktop wallpaper image.";
+    default = "${config.home.homeDirectory}/Pictures/Wallpapers/${theme.wallpaper.file}";
+    readOnly = true;
+    description = "Absolute path to the active theme's wallpaper image.";
   };
 
   config.home.packages = [ pkgs.awww ];
