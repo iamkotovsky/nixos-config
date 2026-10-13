@@ -7,7 +7,7 @@
   ...
 }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   home.packages = [ pkgs.rofi ];

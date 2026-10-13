@@ -1,7 +1,4 @@
-{ lib, ... }:
-let
-  flakeDir = "/etc/nixos";
-in
+{ lib, flakeDir, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -13,13 +10,17 @@ in
     # no direnv/.envrc needed.
     initContent = lib.mkAfter ''
       eval "$(devenv hook zsh)"
+
+      # Transfers kitty's terminfo + shell integration to the remote on
+      # connect, so `clear`/tput/full-screen apps don't break over SSH.
+      # Only inside kitty: the kitten fails in a TTY or other terminals.
+      [[ $TERM == xterm-kitty ]] && alias ssh="kitty +kitten ssh"
     '';
 
     history = {
       path = "$HOME/.zsh_history";
       size = 10000;
       save = 10000;
-      ignoreDups = true;
       ignoreAllDups = true;
       expireDuplicatesFirst = true;
       share = true;
@@ -27,18 +28,17 @@ in
 
     shellAliases = {
       config = "$EDITOR ${flakeDir}";
-      rebuild = "sudo nixos-rebuild switch --flake ${flakeDir}#zenbook";
-      rollback = "sudo nixos-rebuild switch --rollback";
-      update = "nix flake update ${flakeDir}";
+      # nh shows a package diff and asks for sudo itself; the flake path is
+      # explicit so these work before NH_FLAKE reaches the session.
+      rebuild = "nh os switch ${flakeDir}";
+      rollback = "nh os rollback";
+      update = "nix flake update --flake ${flakeDir}";
       check = "nix flake check ${flakeDir}";
-      cleanup = "sudo nix-env -p /nix/var/nix/profiles/system --delete-generations 30d && sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage";
+      cleanup = "nh clean all --keep-since 30d --keep 5";
       # `nix develop` always drops into bash by design (it needs bash to
       # source stdenv setup); this lands in zsh instead.
       develop = "nix develop --command zsh";
       icat = "kitty +kitten icat";
-      # Transfers kitty's terminfo + shell integration to the remote on
-      # connect, so `clear`/tput/full-screen apps don't break over SSH.
-      ssh = "kitty +kitten ssh";
     };
   };
 }

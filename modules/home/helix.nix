@@ -1,6 +1,6 @@
 { pkgs, theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   programs.helix = {

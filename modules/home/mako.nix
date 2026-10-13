@@ -2,7 +2,7 @@
 # notification rather than needing an explicit niri spawn-at-startup.
 { theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   services.mako = {

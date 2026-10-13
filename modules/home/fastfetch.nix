@@ -1,6 +1,6 @@
 { theme, pkgs, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   programs.fastfetch = {

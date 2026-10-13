@@ -2,7 +2,7 @@
 # and image previews via kitty's graphics protocol (same one icat uses).
 { pkgs, theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   programs.yazi = {

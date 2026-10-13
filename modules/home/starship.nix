@@ -1,7 +1,7 @@
 # Minimal single-line prompt: folded path, git branch and status.
 { theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   programs.starship = {

@@ -11,25 +11,29 @@
   # which niri has explicit support for waiting on.
   environment.systemPackages = [ pkgs.xwayland-satellite ];
 
-  services.greetd = {
-    enable = true;
-    useTextGreeter = true;
-    settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.niri}/bin/niri-session";
-      user = "greeter";
+  services = {
+    greetd = {
+      enable = true;
+      useTextGreeter = true;
+      settings.default_session = {
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.niri}/bin/niri-session";
+        user = "greeter";
+      };
     };
+
+    # Lets udiskie (see home/udiskie.nix) mount/unmount removable drives without root.
+    udisks2.enable = true;
   };
 
-  security.polkit.enable = true;
-  security.pam.services.hyprlock = { };
+  security = {
+    polkit.enable = true;
+    pam.services.hyprlock = { };
 
-  # Lets udiskie (see home/udiskie.nix) mount/unmount removable drives without root.
-  services.udisks2.enable = true;
-
-  # Show asterisk feedback while typing the sudo password.
-  security.sudo.extraConfig = ''
-    Defaults pwfeedback
-  '';
+    # Show asterisk feedback while typing the sudo password.
+    sudo.extraConfig = ''
+      Defaults pwfeedback
+    '';
+  };
 
   # Niri integrates screencasting with the GNOME portal; GTK supplies file pickers.
   xdg.portal = {
