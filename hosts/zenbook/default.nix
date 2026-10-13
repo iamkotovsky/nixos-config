@@ -1,15 +1,23 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 {
   imports = [
-    ./hardware-configuration.nix
+    ./hardware.nix
     ../../modules/system
   ];
 
   networking.hostName = "zenbook";
 
-  users.users.danil = {
+  # Kept out of hardware.nix, which nixos-generate-config may overwrite.
+  hardware.cpu.intel.npu.enable = true;
+
+  # VA-API driver for the Arrow Lake iGPU, so browsers and mpv decode video on
+  # the GPU instead of the CPU.
+  hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
+  environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
+
+  users.users.${username} = {
     isNormalUser = true;
-    description = "Danil";
+    description = username;
     shell = pkgs.zsh;
     extraGroups = [
       "wheel"

@@ -1,6 +1,6 @@
 { theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 in
 {
   programs.kitty = {
@@ -11,11 +11,10 @@ in
     };
 
     settings = {
-      background = colors.background;
+      inherit (colors) background foreground;
       # Enough translucency for Niri's blur and grain to read as frosted glass.
       background_opacity = theme.opacity.surface;
       background_blur = 1;
-      foreground = colors.foreground;
       selection_background = colors.accent;
       selection_foreground = colors.background;
       # Keep the insertion point clearly visible regardless of the active theme.
@@ -44,6 +43,13 @@ in
       scrollback_lines = 10000;
       cursor_shape = "beam";
       cursor_trail = 20;
+    };
+
+    # Copilot key: xkeyboard-config >= 2.44 reports it as XF86Assistant; some
+    # stacks emit the raw Super+Shift+F23 chord instead, hence both bindings.
+    keybindings = {
+      "XF86Assistant" = "launch --cwd=current --type=tab claude";
+      "shift+super+f23" = "launch --cwd=current --type=tab claude";
     };
   };
 }

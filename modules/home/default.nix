@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 {
   imports = [
     ./bash.nix
@@ -10,10 +10,13 @@
     ./kitty.nix
     ./mako.nix
     ./niri.nix
+    ./opencode.nix
+    ./quickshell.nix
     ./rofi.nix
     ./shell-tools.nix
     ./ssh.nix
     ./starship.nix
+    ./telegram.nix
     ./theme.nix
     ./udiskie.nix
     ./waybar.nix
@@ -23,15 +26,13 @@
   ];
 
   home = {
-    username = "danil";
-    homeDirectory = "/home/danil";
+    inherit username;
+    homeDirectory = "/home/${username}";
     stateVersion = "26.05";
 
     packages = [
-      pkgs.bitwig-studio
-      pkgs.zoom-us
       pkgs.claude-code
-      pkgs.codex
+      pkgs.bitwig-studio
       pkgs.brightnessctl
       pkgs.btop
       pkgs.curl
@@ -52,7 +53,6 @@
       pkgs.vesktop
       pkgs.wget
       pkgs.wl-clipboard
-      pkgs.wireplumber
       pkgs.zip
     ];
   };
