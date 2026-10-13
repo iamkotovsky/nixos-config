@@ -1,6 +1,6 @@
 { config, lib, pkgs, theme, ... }:
 let
-  colors = theme.colors;
+  inherit (theme) colors;
 
   keyboardLayout = pkgs.writeShellScript "hyprlock-keyboard-layout" ''
     layout="$(${pkgs.niri}/bin/niri msg keyboard-layouts | ${pkgs.gawk}/bin/awk '/^ \*/ { print $3; exit }')"
@@ -36,23 +36,46 @@ let
     fi
   '';
 
+  # hyprlock is launched through the profile, not a pinned store path: PAM
+  # modules come from the current /etc/pam.d, so a hyprlock baked into a
+  # not-yet-restarted swayidle after a glibc bump can't load them and never
+  # unlocks. The profile always matches the active generation.
   lockScreen = pkgs.writeShellScript "lock-screen" ''
     if ! ${pkgs.procps}/bin/pgrep -x hyprlock >/dev/null; then
       ${pkgs.systemd}/bin/systemd-run \
         --user \
         --unit=hyprlock \
         --collect \
-        ${pkgs.hyprlock}/bin/hyprlock
+        ${config.home.profileDirectory}/bin/hyprlock
     fi
   '';
 
+  # lockScreen returns as soon as hyprlock is launched; before suspending, wait
+  # until it is actually running and has drawn its first frame, so the desktop
+  # never flashes on resume.
+  lockBeforeSleep = pkgs.writeShellScript "lock-before-sleep" ''
+    ${lockScreen}
+
+    for _ in {1..20}; do
+      if ${pkgs.procps}/bin/pgrep -x hyprlock >/dev/null; then
+        break
+      fi
+
+      ${pkgs.coreutils}/bin/sleep 0.1
+    done
+
+    ${pkgs.coreutils}/bin/sleep 0.5
+  '';
+
+  # -w makes swayidle wait for before-sleep to finish while holding logind's
+  # sleep delay lock.
   idleManager = pkgs.writeShellScript "niri-idle-manager" ''
-    exec ${pkgs.swayidle}/bin/swayidle \
+    exec ${pkgs.swayidle}/bin/swayidle -w \
       timeout 270 ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-off-monitors"} \
         resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"} \
       timeout 300 ${lib.escapeShellArg (toString lockScreen)} \
       timeout 600 ${lib.escapeShellArg "${pkgs.systemd}/bin/systemctl suspend"} \
-      before-sleep ${lib.escapeShellArg (toString lockScreen)} \
+      before-sleep ${lib.escapeShellArg (toString lockBeforeSleep)} \
       after-resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"}
   '';
 in
@@ -66,108 +89,110 @@ in
     description = "Path to the pgrep-guarded hyprlock launcher script.";
   };
 
-  config.home.packages = [
-    pkgs.hyprlock
-    pkgs.swayidle
-  ];
+  config = {
+    home.packages = [
+      pkgs.hyprlock
+      pkgs.swayidle
+    ];
 
-  config.systemd.user.services.swayidle = {
-    Unit = {
-      Description = "Idle manager for Niri";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      Requisite = [ "graphical-session.target" ];
+    systemd.user.services.swayidle = {
+      Unit = {
+        Description = "Idle manager for Niri";
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
+        Requisite = [ "graphical-session.target" ];
+      };
+
+      Service = {
+        ExecStart = idleManager;
+        Restart = "on-failure";
+      };
+
+      Install.WantedBy = [ "graphical-session.target" ];
     };
 
-    Service = {
-      ExecStart = idleManager;
-      Restart = "on-failure";
-    };
+    xdg.configFile."hypr/hyprlock.conf".text = ''
+      general {
+          hide_cursor = true
+          immediate_render = true
+          ignore_empty_input = true
+      }
 
-    Install.WantedBy = [ "graphical-session.target" ];
+      background {
+          monitor =
+          path = ${config.wallpaper.path}
+          color = rgb(${theme.hex colors.background})
+          blur_passes = 3
+          blur_size = 8
+          noise = 0.02
+          brightness = 0.58
+          vibrancy = 0.12
+      }
+
+      label {
+          monitor =
+          text = cmd[update:1000] ${pkgs.coreutils}/bin/date +"%H:%M"
+          color = rgb(${theme.hex colors.foreground})
+          font_size = 104
+          font_family = ${theme.font.mono}
+          position = 0, 220
+          halign = center
+          valign = center
+      }
+
+      label {
+          monitor =
+          text = cmd[update:60000] ${pkgs.coreutils}/bin/date +"%A, %d %B"
+          color = rgb(${theme.hex colors.muted})
+          font_size = 23
+          font_family = ${theme.font.mono}
+          position = 0, 140
+          halign = center
+          valign = center
+      }
+
+      input-field {
+          monitor =
+          size = 520, 72
+          outline_thickness = 3
+          dots_size = 0.25
+          dots_spacing = 0.18
+          dots_center = true
+          outer_color = rgb(${theme.hex colors.accent})
+          inner_color = rgba(${theme.hex colors.surface}e6)
+          font_color = rgb(${theme.hex colors.foreground})
+          check_color = rgb(${theme.hex colors.blue})
+          fail_color = rgb(${theme.hex colors.red})
+          fade_on_empty = false
+          placeholder_text = <span foreground="##${theme.hex colors.muted}">Password</span>
+          fail_text = <span foreground="##${theme.hex colors.red}">$FAIL</span>
+          rounding = 14
+          position = 0, 20
+          halign = center
+          valign = center
+      }
+
+      label {
+          monitor =
+          text = cmd[update:500] ${keyboardLayout}
+          color = rgb(${theme.hex colors.foreground})
+          font_size = 22
+          font_family = ${theme.font.mono}
+          position = -170, -30
+          halign = right
+          valign = top
+      }
+
+      label {
+          monitor =
+          text = cmd[update:10000] ${batteryStatus}
+          color = rgb(${theme.hex colors.foreground})
+          font_size = 22
+          font_family = ${theme.font.mono}
+          position = -36, -30
+          halign = right
+          valign = top
+      }
+    '';
   };
-
-  config.xdg.configFile."hypr/hyprlock.conf".text = ''
-    general {
-        hide_cursor = true
-        immediate_render = true
-        ignore_empty_input = true
-    }
-
-    background {
-        monitor =
-        path = ${config.wallpaper.path}
-        color = rgb(${theme.hex colors.background})
-        blur_passes = 3
-        blur_size = 8
-        noise = 0.02
-        brightness = 0.58
-        vibrancy = 0.12
-    }
-
-    label {
-        monitor =
-        text = cmd[update:1000] ${pkgs.coreutils}/bin/date +"%H:%M"
-        color = rgb(${theme.hex colors.foreground})
-        font_size = 104
-        font_family = ${theme.font.mono}
-        position = 0, 220
-        halign = center
-        valign = center
-    }
-
-    label {
-        monitor =
-        text = cmd[update:60000] ${pkgs.coreutils}/bin/date +"%A, %d %B"
-        color = rgb(${theme.hex colors.muted})
-        font_size = 23
-        font_family = ${theme.font.mono}
-        position = 0, 140
-        halign = center
-        valign = center
-    }
-
-    input-field {
-        monitor =
-        size = 520, 72
-        outline_thickness = 3
-        dots_size = 0.25
-        dots_spacing = 0.18
-        dots_center = true
-        outer_color = rgb(${theme.hex colors.accent})
-        inner_color = rgba(${theme.hex colors.surface}e6)
-        font_color = rgb(${theme.hex colors.foreground})
-        check_color = rgb(${theme.hex colors.blue})
-        fail_color = rgb(${theme.hex colors.red})
-        fade_on_empty = false
-        placeholder_text = <span foreground="##${theme.hex colors.muted}">Password</span>
-        fail_text = <span foreground="##${theme.hex colors.red}">$FAIL</span>
-        rounding = 14
-        position = 0, 20
-        halign = center
-        valign = center
-    }
-
-    label {
-        monitor =
-        text = cmd[update:500] ${keyboardLayout}
-        color = rgb(${theme.hex colors.foreground})
-        font_size = 22
-        font_family = ${theme.font.mono}
-        position = -170, -30
-        halign = right
-        valign = top
-    }
-
-    label {
-        monitor =
-        text = cmd[update:10000] ${batteryStatus}
-        color = rgb(${theme.hex colors.foreground})
-        font_size = 22
-        font_family = ${theme.font.mono}
-        position = -36, -30
-        halign = right
-        valign = top
-    }
-  '';
 }

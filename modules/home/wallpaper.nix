@@ -23,9 +23,10 @@ in
   # both awww and hyprlock consume.
   options.wallpaper.path = lib.mkOption {
     type = lib.types.str;
-    default = "${config.home.homeDirectory}/Pictures/Wallpapers/${theme.wallpaper.file}";
+    # Interpolating the path copies only the active wallpaper into the store.
+    default = "${../../theme/wallpapers + "/${theme.wallpaper.file}"}";
     readOnly = true;
-    description = "Absolute path to the active theme's wallpaper image.";
+    description = "Store path of the active theme's wallpaper (from theme/wallpapers).";
   };
 
   config.home.packages = [ pkgs.awww ];

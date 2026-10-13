@@ -1,4 +1,6 @@
-// Minimal native Niri configuration; use `niri validate` after manual edits.
+// Minimal native Niri configuration. Theme placeholders (@ACCENT@ etc.) are
+// substituted at build time by modules/home/niri.nix, so validate the generated
+// ~/.config/niri/config.kdl (via `niri validate`) rather than this raw file.
 input {
     keyboard {
         xkb {
@@ -24,6 +26,10 @@ prefer-no-csd
 // (e.g. Zoom) to display a window at all. Niri waits for it and exports
 // DISPLAY to subsequently spawned processes.
 spawn-at-startup "xwayland-satellite"
+
+// Quickshell bar (config name "bar"). Keep waybar around until it renders
+// correctly, then drop the waybar module.
+spawn-at-startup "quickshell" "--config" "bar"
 
 // Smooth diffusion and fine grain give transparent surfaces a frosted-glass look.
 blur {
@@ -68,6 +74,15 @@ window-rule {
     geometry-corner-radius @RADIUS@
     clip-to-geometry true
     draw-border-with-background false
+    background-effect {
+        blur true
+    }
+}
+
+// Firefox supplies the transparent chrome; Niri adds a subtle frosted finish.
+window-rule {
+    match app-id="^firefox$"
+    opacity 0.96
     background-effect {
         blur true
     }
@@ -149,6 +164,7 @@ binds {
 
     Super+Alt+L { spawn "@LOCK_SCRIPT@"; }
     Super+Alt+S { spawn "systemctl" "suspend"; }
+    Mod+P hotkey-overlay-title="Cycle power profile" { spawn "@POWER_PROFILE_SCRIPT@"; }
     Mod+Shift+E { quit; }
     XF86Sleep allow-when-locked=true { spawn "systemctl" "suspend"; }
 
