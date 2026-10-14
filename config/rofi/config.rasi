@@ -1,0 +1,94 @@
+/* Rendered by modules/home/rofi.nix: @NAME@ placeholders are replaced with
+   values from the active theme at build time. */
+
+configuration {
+    modi: "drun";
+    show-icons: true;
+    icon-theme: "Papirus-Dark";
+    display-drun: "Search";
+    drun-display-format: "{name}";
+    font: "@FONT@ @FONT_SIZE@";
+    location: 0;
+}
+
+* {
+    bg: #@SURFACE_HEX@@SURFACE_ALPHA@;
+    bg-alt: #@FOREGROUND_HEX@1a;
+    fg: #@FOREGROUND_HEX@ff;
+    muted: #@MUTED_HEX@ff;
+    accent: #@ACCENT_HEX@ff;
+
+    background-color: transparent;
+    text-color: @fg;
+}
+
+window {
+    width: 560px;
+    background-color: @bg;
+    border: 2px;
+    border-color: @accent;
+    border-radius: @RADIUS_MEDIUM@px;
+    padding: @SPACING_MEDIUM@px @SPACING_MEDIUM@px @SPACING_SMALL@px @SPACING_MEDIUM@px;
+    location: center;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing: @SPACING_SMALL@px;
+    children: [ "inputbar", "listview" ];
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius: @RADIUS_SMALL@px;
+    padding: @SPACING_MEDIUM@px;
+    children: [ "entry" ];
+}
+
+entry {
+    placeholder: "Search";
+    placeholder-color: @muted;
+    text-color: @fg;
+}
+
+listview {
+    background-color: transparent;
+    border: 0px;
+    padding: 0px;
+    lines: 5;
+    spacing: @SPACING_SMALL@px;
+    scrollbar: false;
+    fixed-height: false;
+    dynamic: true;
+    require-input: true;
+}
+
+element {
+    padding: @SPACING_SMALL@px;
+    border-radius: @RADIUS_SMALL@px;
+    orientation: horizontal;
+    spacing: @SPACING_MEDIUM@px;
+}
+
+element normal.normal, element alternate.normal, element normal.urgent,
+element alternate.urgent, element normal.active, element alternate.active {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element selected.normal, element selected.urgent, element selected.active {
+    background-color: @bg-alt;
+    text-color: @fg;
+}
+
+element-icon {
+    size: 40px;
+    vertical-align: 0.5;
+    background-color: transparent;
+}
+
+element-text {
+    vertical-align: 0.5;
+    text-color: inherit;
+    background-color: transparent;
+}

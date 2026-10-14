@@ -78,6 +78,22 @@ let
       before-sleep ${lib.escapeShellArg (toString lockBeforeSleep)} \
       after-resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"}
   '';
+
+  # Each attribute fills the matching @NAME@ placeholder in hyprlock.conf.
+  substitutions = {
+    WALLPAPER = config.wallpaper.path;
+    DATE = "${pkgs.coreutils}/bin/date";
+    KEYBOARD_LAYOUT = toString keyboardLayout;
+    BATTERY_STATUS = toString batteryStatus;
+    FONT = theme.font.mono;
+    BACKGROUND_HEX = theme.hex colors.background;
+    SURFACE_HEX = theme.hex colors.surface;
+    FOREGROUND_HEX = theme.hex colors.foreground;
+    MUTED_HEX = theme.hex colors.muted;
+    ACCENT_HEX = theme.hex colors.accent;
+    BLUE_HEX = theme.hex colors.blue;
+    RED_HEX = theme.hex colors.red;
+  };
 in
 {
   # Exposed so the niri keybind can call the same idle-safe launcher instead
@@ -111,88 +127,11 @@ in
       Install.WantedBy = [ "graphical-session.target" ];
     };
 
-    xdg.configFile."hypr/hyprlock.conf".text = ''
-      general {
-          hide_cursor = true
-          immediate_render = true
-          ignore_empty_input = true
-      }
-
-      background {
-          monitor =
-          path = ${config.wallpaper.path}
-          color = rgb(${theme.hex colors.background})
-          blur_passes = 3
-          blur_size = 8
-          noise = 0.02
-          brightness = 0.58
-          vibrancy = 0.12
-      }
-
-      label {
-          monitor =
-          text = cmd[update:1000] ${pkgs.coreutils}/bin/date +"%H:%M"
-          color = rgb(${theme.hex colors.foreground})
-          font_size = 104
-          font_family = ${theme.font.mono}
-          position = 0, 220
-          halign = center
-          valign = center
-      }
-
-      label {
-          monitor =
-          text = cmd[update:60000] ${pkgs.coreutils}/bin/date +"%A, %d %B"
-          color = rgb(${theme.hex colors.muted})
-          font_size = 23
-          font_family = ${theme.font.mono}
-          position = 0, 140
-          halign = center
-          valign = center
-      }
-
-      input-field {
-          monitor =
-          size = 520, 72
-          outline_thickness = 3
-          dots_size = 0.25
-          dots_spacing = 0.18
-          dots_center = true
-          outer_color = rgb(${theme.hex colors.accent})
-          inner_color = rgba(${theme.hex colors.surface}e6)
-          font_color = rgb(${theme.hex colors.foreground})
-          check_color = rgb(${theme.hex colors.blue})
-          fail_color = rgb(${theme.hex colors.red})
-          fade_on_empty = false
-          placeholder_text = <span foreground="##${theme.hex colors.muted}">Password</span>
-          fail_text = <span foreground="##${theme.hex colors.red}">$FAIL</span>
-          rounding = 14
-          position = 0, 20
-          halign = center
-          valign = center
-      }
-
-      label {
-          monitor =
-          text = cmd[update:500] ${keyboardLayout}
-          color = rgb(${theme.hex colors.foreground})
-          font_size = 22
-          font_family = ${theme.font.mono}
-          position = -170, -30
-          halign = right
-          valign = top
-      }
-
-      label {
-          monitor =
-          text = cmd[update:10000] ${batteryStatus}
-          color = rgb(${theme.hex colors.foreground})
-          font_size = 22
-          font_family = ${theme.font.mono}
-          position = -36, -30
-          halign = right
-          valign = top
-      }
-    '';
+    # Layout lives in its native format; only theme values and script paths
+    # are injected here.
+    xdg.configFile."hypr/hyprlock.conf".text = builtins.replaceStrings
+      (map (name: "@${name}@") (builtins.attrNames substitutions))
+      (builtins.attrValues substitutions)
+      (builtins.readFile ../../config/hypr/hyprlock.conf);
   };
 }

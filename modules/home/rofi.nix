@@ -8,101 +8,28 @@
 }:
 let
   inherit (theme) colors;
+
+  # Each attribute fills the matching @NAME@ placeholder in config.rasi.
+  substitutions = {
+    FONT = theme.font.mono;
+    FONT_SIZE = toString theme.font.size;
+    SURFACE_HEX = theme.hex colors.surface;
+    SURFACE_ALPHA = theme.alphaHex theme.opacity.surface;
+    FOREGROUND_HEX = theme.hex colors.foreground;
+    MUTED_HEX = theme.hex colors.muted;
+    ACCENT_HEX = theme.hex colors.accent;
+    RADIUS_SMALL = toString theme.radius.small;
+    RADIUS_MEDIUM = toString theme.radius.medium;
+    SPACING_SMALL = toString theme.spacing.small;
+    SPACING_MEDIUM = toString theme.spacing.medium;
+  };
 in
 {
   home.packages = [ pkgs.rofi ];
 
-  xdg.configFile."rofi/config.rasi".text = ''
-    configuration {
-        modi: "drun";
-        show-icons: true;
-        icon-theme: "Papirus-Dark";
-        display-drun: "Search";
-        drun-display-format: "{name}";
-        font: "${theme.font.mono} ${toString theme.font.size}";
-        location: 0;
-    }
-
-    * {
-        bg: #${theme.hex colors.surface}${theme.alphaHex theme.opacity.surface};
-        bg-alt: #${theme.hex colors.foreground}${theme.alphaHex "0.10"};
-        fg: #${theme.hex colors.foreground}ff;
-        muted: #${theme.hex colors.muted}ff;
-        accent: #${theme.hex colors.accent}ff;
-
-        background-color: transparent;
-        text-color: @fg;
-    }
-
-    window {
-        width: 560px;
-        background-color: @bg;
-        border: 2px;
-        border-color: @accent;
-        border-radius: ${toString theme.radius.medium}px;
-        padding: ${toString theme.spacing.medium}px ${toString theme.spacing.medium}px ${toString theme.spacing.small}px ${toString theme.spacing.medium}px;
-        location: center;
-    }
-
-    mainbox {
-        background-color: transparent;
-        spacing: ${toString theme.spacing.small}px;
-        children: [ "inputbar", "listview" ];
-    }
-
-    inputbar {
-        background-color: @bg-alt;
-        border-radius: ${toString theme.radius.small}px;
-        padding: ${toString theme.spacing.medium}px;
-        children: [ "entry" ];
-    }
-
-    entry {
-        placeholder: "Search";
-        placeholder-color: @muted;
-        text-color: @fg;
-    }
-
-    listview {
-        background-color: transparent;
-        border: 0px;
-        padding: 0px;
-        lines: 5;
-        spacing: ${toString theme.spacing.small}px;
-        scrollbar: false;
-        fixed-height: false;
-        dynamic: true;
-        require-input: true;
-    }
-
-    element {
-        padding: ${toString theme.spacing.small}px;
-        border-radius: ${toString theme.radius.small}px;
-        orientation: horizontal;
-        spacing: ${toString theme.spacing.medium}px;
-    }
-
-    element normal.normal, element alternate.normal, element normal.urgent,
-    element alternate.urgent, element normal.active, element alternate.active {
-        background-color: transparent;
-        text-color: @fg;
-    }
-
-    element selected.normal, element selected.urgent, element selected.active {
-        background-color: @bg-alt;
-        text-color: @fg;
-    }
-
-    element-icon {
-        size: 40px;
-        vertical-align: 0.5;
-        background-color: transparent;
-    }
-
-    element-text {
-        vertical-align: 0.5;
-        text-color: inherit;
-        background-color: transparent;
-    }
-  '';
+  # Layout lives in its native format; only theme values are injected here.
+  xdg.configFile."rofi/config.rasi".text = builtins.replaceStrings
+    (map (name: "@${name}@") (builtins.attrNames substitutions))
+    (builtins.attrValues substitutions)
+    (builtins.readFile ../../config/rofi/config.rasi);
 }
