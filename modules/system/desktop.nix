@@ -42,5 +42,9 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
-  fonts.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+    # Rounded icon font for the quickshell bar.
+    pkgs.material-symbols
+  ];
 }

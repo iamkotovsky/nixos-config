@@ -27,10 +27,6 @@ prefer-no-csd
 // DISPLAY to subsequently spawned processes.
 spawn-at-startup "xwayland-satellite"
 
-// Quickshell bar (config name "bar"). Keep waybar around until it renders
-// correctly, then drop the waybar module.
-spawn-at-startup "quickshell" "--config" "bar"
-
 // Smooth diffusion and fine grain give transparent surfaces a frosted-glass look.
 blur {
     passes 3
@@ -42,6 +38,8 @@ blur {
 layout {
     // Let the wallpaper remain stationary when workspaces zoom out.
     background-color "transparent"
+    // Shared with the quickshell bar (theme.gap), so edges line up.
+    gaps @GAP@
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
@@ -97,9 +95,23 @@ layer-rule {
 }
 
 layer-rule {
-    match namespace="^waybar$"
+    match namespace="^quickshell-bar$"
     background-effect {
         blur true
+        // Blur what is actually behind the strip (windows sliding under it
+        // during workspace switches), not just the wallpaper.
+        xray false
+    }
+}
+
+// Control panel: a full-screen transparent surface whose card requests its
+// own blur region (ext-background-effect), so no `blur true` here, which would
+// blur the whole screen. Only turn off xray, so the card frosts the windows
+// behind it instead of showing the wallpaper through them.
+layer-rule {
+    match namespace="^quickshell-panel$"
+    background-effect {
+        xray false
     }
 }
 
@@ -168,7 +180,7 @@ binds {
     Mod+Shift+E { quit; }
     XF86Sleep allow-when-locked=true { spawn "systemctl" "suspend"; }
 
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
     XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }

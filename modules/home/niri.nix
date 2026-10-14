@@ -21,7 +21,7 @@ let
 
   rawConfig = builtins.readFile ../../config/niri/config.kdl;
   themedConfig = builtins.replaceStrings
-    [ "@BACKGROUND@" "@SURFACE@" "@ACCENT@" "@RADIUS@" "@LOCK_SCRIPT@" "@POWER_PROFILE_SCRIPT@" "@CURSOR_THEME@" "@CURSOR_SIZE@" ]
+    [ "@BACKGROUND@" "@SURFACE@" "@ACCENT@" "@RADIUS@" "@LOCK_SCRIPT@" "@POWER_PROFILE_SCRIPT@" "@CURSOR_THEME@" "@CURSOR_SIZE@" "@GAP@" ]
     [
       theme.colors.background
       theme.colors.surface
@@ -31,6 +31,7 @@ let
       (toString cyclePowerProfile)
       theme.cursor.name
       (toString theme.cursor.size)
+      (toString theme.gap)
     ]
     rawConfig;
 in

@@ -39,7 +39,7 @@
 
           statix = pkgs.runCommand "statix-check" { } ''
             cd ${files}
-            ${pkgs.statix}/bin/statix check -i hosts/zenbook/hardware.nix -i modules/home/quickshell.nix .
+            ${pkgs.statix}/bin/statix check -i hosts/zenbook/hardware.nix .
             touch $out
           '';
         };

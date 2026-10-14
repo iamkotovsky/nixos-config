@@ -16,13 +16,17 @@
     medium = 10;
   };
 
+  # One gap for the whole desktop: screen edges, between windows, and around
+  # the floating bar (niri `gaps` and the quickshell bar both use it).
+  gap = 9;
+
   cursor = {
     name = "phinger-cursors-dark";
     size = 28;
   };
 
   opacity = {
-    # Shared translucency for kitty, waybar, rofi and mako backgrounds; kept as a
+    # Shared translucency for kitty, the bar, rofi and mako backgrounds; kept as a
     # string so it drops into config text without float-formatting artifacts.
     surface = "0.84";
   };
