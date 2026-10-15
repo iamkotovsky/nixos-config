@@ -44,6 +44,8 @@
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
+    # UI font for the shell; see theme/base.nix.
+    pkgs.inter
     # Rounded icon font for the quickshell bar.
     pkgs.material-symbols
   ];

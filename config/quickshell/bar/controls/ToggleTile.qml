@@ -3,7 +3,8 @@ import QtQuick.Layouts
 import ".."
 
 // GNOME-style quick toggle: icon, title and subtitle on a frosted chip that
-// lifts on hover; accent-filled when on.
+// lifts on hover; accent-filled when on. With `hasPage`, a chevron area on the
+// right opens a sub-page while the rest of the tile still toggles.
 Glass {
     id: root
 
@@ -12,10 +13,12 @@ Glass {
     property string subtitle
     property bool active: false
     property bool interactive: true
+    property bool hasPage: false
 
     readonly property color contentColor: active ? Theme.background : Theme.foreground
 
     signal clicked
+    signal pageRequested
 
     implicitHeight: Theme.tileHeight
     radius: Theme.radiusMedium
@@ -33,7 +36,7 @@ Glass {
         anchors {
             fill: parent
             leftMargin: Theme.spacingMedium
-            rightMargin: Theme.spacingMedium
+            rightMargin: root.hasPage ? Theme.chevronWidth + Theme.spacingSmall : Theme.spacingMedium
         }
         spacing: Theme.spacingMedium
 
@@ -81,6 +84,37 @@ Glass {
                     }
                 }
             }
+        }
+    }
+
+    // Chevron chip: its own hover, on top of the tile's.
+    Rectangle {
+        visible: root.hasPage
+        anchors {
+            right: parent.right
+            top: parent.top
+            bottom: parent.bottom
+            margins: Theme.spacingXs
+        }
+        width: Theme.chevronWidth
+        radius: Theme.radiusSmall
+        color: Qt.alpha(root.contentColor, Theme.fillRest)
+
+        Behavior on color {
+            ColorAnimation {
+                duration: Theme.durationFast
+            }
+        }
+
+        StateLayer {
+            lift: false
+            onClicked: root.pageRequested()
+        }
+
+        MaterialIcon {
+            anchors.centerIn: parent
+            name: "chevron_right"
+            color: root.contentColor
         }
     }
 }

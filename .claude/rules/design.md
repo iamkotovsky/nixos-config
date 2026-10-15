@@ -51,8 +51,8 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 | Gap | `gap` | 8 | Screen edges, between windows (niri `gaps`), around the bar, between stacked cards |
 | Spacing | `spacingXs/Small/Medium/Large` | 4 / 8 / 12 / 16 | xs: icon↔label. small: items in a row. medium: inside tiles, between rows. large: card padding |
 | Radius | `radiusSmall/Medium/Large`, full = `height / 2` | 6 / 10 / 16 | small: list rows, thumbnails. medium: windows, bar pills, tiles, OSD. large: panel, notifications, rofi. full: buttons, chips, sliders. Nested: inner = outer − padding |
-| Type | `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | caption: app names, sublabels (muted). small: tile titles, body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
-| Icons | `iconSize`, `iconSizeLarge` | 18 / 24 | Material Symbols Rounded only |
+| Type | `fontFamily` (Inter, `font.ui`), `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | Inter everywhere in the shell, rofi and hyprlock, with tabular digits (`BarText` sets `tnum`). JetBrains Mono (`font.mono`) only for the terminal, code and Nerd Font glyphs. caption: app names, sublabels (muted). small: tile titles, body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
+| Icons | `iconSize`, `iconSizeLarge`, `iconWeight` | 18 / 24, 450 | Material Symbols Rounded only |
 | Glass | `stripOpacity`, `raisedOpacity`, `overlayOpacity` | 0.55 / 0.62 / 0.55 | strip: bar backdrop (on `background`). raised: bar pills, rofi. overlay: panel, notifications, OSD (on `surface`). Kitty uses a separate `opacity.terminal` (0.84) |
 | Rim | `rimOpacity`, `highlightOpacity` | 0.12 / 0.06 | 1px foreground border on glass (not the edge-to-edge bar strip, which has no border); a faint top gradient inside it |
 | Fills | `fillRest/Hover/Pressed`, `fillRim` | 0.08 / 0.14 / 0.20, 0.08 | Foreground fills for chips, tiles, buttons and rofi rows, plus their own hairline |
@@ -79,6 +79,8 @@ Reuse these before writing new widgets:
 - **`controls/StateLayer`:** the hover/press tint, cursor, press scale and lift for anything clickable. Declare it before the content. Use `outset` for bare icons (tray).
 - **`Pill`:** a bar applet (`pillHeight` 30, radius medium, raised glass). Set `interactive` for click and scroll.
 - **`controls/IconButton`** (`buttonSize` 36, full), **`ToggleTile`** (`tileHeight` 56, medium), **`QuickSlider`** (track 6, knob 16 → 18 on hover or drag), **`MaterialIcon`**, **`BarText`**.
+- **List rows** (`controls/ListRow`) have one status slot at the end, never a row of icons. It shows one thing: a hover action (forget) in place of the status, else the state (a check when connected), else a hint (a lock only when a password is still needed). The glyphs cross-fade. Saved or connected things never show a lock.
+- **Sound page:** list only outputs that can play (unplugged HDMI/DP ports are hidden), and one slider per app, not per stream.
 - **Cards:** panel (`panelWidth` 360), notification (`notificationWidth` 380, rests raised and lifts to floating on hover), OSD (`osdWidth` 300 × `osdHeight` 44, radius medium like the bar pills).
 
 ## Windows and the compositor
@@ -92,7 +94,9 @@ Reuse these before writing new widgets:
 
 ## Icons
 
-- Material Symbols Rounded, by ligature name, through `MaterialIcon`. They're filled by default.
+- Material Symbols Rounded, by ligature name, through `MaterialIcon`. Set its `size`, never `font.pixelSize`, so the optical size follows it.
+- **Outlined by default.** Solid status glyphs are filled: Wi-Fi, Bluetooth, battery, volume, brightness, wired, and the check mark (see the `filled` pattern in `MaterialIcon`). Line icons such as lock, delete and monitor stay outlined, because filling them turns them into blobs.
+- Prefer the clearest glyph over the literal one: `volume_up` for the laptop speaker, not the box `speaker`. Show an app's own icon when it has one (notifications, per-app volume), with a glyph only as the fallback.
 - Symbolic tray icons are tinted `foreground`. No Nerd Font glyphs in the shell UI.
 
 ## Working rules
@@ -108,3 +112,4 @@ Reuse these before writing new widgets:
   - check centring, gaps and the animation end states;
   - the user rebuilds with `rebuild`; don't run it for them.
 - After a token change, also run `nix flake check` (statix) and `nixos-rebuild build`.
+- New files must be known to git (`git add -N <file>`) before building: the flake only sees tracked files, and a missing QML file only fails at runtime ("X is not defined"), not in `nix flake check` or the build. Check with `git status --short | grep "^??"` before reporting.

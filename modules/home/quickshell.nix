@@ -24,7 +24,7 @@ let
     # Same corner radius as windows (niri geometry-corner-radius).
     RADIUS_MEDIUM = toString theme.radius.medium;
     RADIUS_LARGE = toString theme.radius.large;
-    FONT = theme.font.mono;
+    FONT = theme.font.ui;
     FONT_SIZE = toString theme.font.size;
     FONT_CAPTION = toString theme.fontSizes.caption;
     FONT_SMALL = toString theme.fontSizes.small;

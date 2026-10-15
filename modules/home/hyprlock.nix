@@ -67,14 +67,26 @@ let
     ${pkgs.coreutils}/bin/sleep 0.5
   '';
 
+  # Caffeine (a toggle in the quickshell control panel) creates this file;
+  # while it exists, idle only turns the display off: no idle lock, no idle
+  # suspend. Manual locking and locking before sleep (lid, suspend key) are
+  # unaffected. It lives in the runtime dir, so it resets on logout.
+  idleLock = pkgs.writeShellScript "idle-lock" ''
+    [ -e "$XDG_RUNTIME_DIR/caffeine" ] || exec ${lockScreen}
+  '';
+
+  idleSuspend = pkgs.writeShellScript "idle-suspend" ''
+    [ -e "$XDG_RUNTIME_DIR/caffeine" ] || exec ${pkgs.systemd}/bin/systemctl suspend
+  '';
+
   # -w makes swayidle wait for before-sleep to finish while holding logind's
   # sleep delay lock.
   idleManager = pkgs.writeShellScript "niri-idle-manager" ''
     exec ${pkgs.swayidle}/bin/swayidle -w \
       timeout 270 ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-off-monitors"} \
         resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"} \
-      timeout 300 ${lib.escapeShellArg (toString lockScreen)} \
-      timeout 600 ${lib.escapeShellArg "${pkgs.systemd}/bin/systemctl suspend"} \
+      timeout 300 ${lib.escapeShellArg (toString idleLock)} \
+      timeout 600 ${lib.escapeShellArg (toString idleSuspend)} \
       before-sleep ${lib.escapeShellArg (toString lockBeforeSleep)} \
       after-resume ${lib.escapeShellArg "${pkgs.niri}/bin/niri msg action power-on-monitors"}
   '';
@@ -85,7 +97,8 @@ let
     DATE = "${pkgs.coreutils}/bin/date";
     KEYBOARD_LAYOUT = toString keyboardLayout;
     BATTERY_STATUS = toString batteryStatus;
-    FONT = theme.font.mono;
+    FONT = theme.font.ui;
+    FONT_MONO = theme.font.mono;
     BACKGROUND_HEX = theme.hex colors.background;
     SURFACE_HEX = theme.hex colors.surface;
     FOREGROUND_HEX = theme.hex colors.foreground;

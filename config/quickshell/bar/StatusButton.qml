@@ -34,7 +34,7 @@ Pill {
         visible: Power.hasBattery
         name: Power.icon
         color: Power.levelColor
-        font.pixelSize: Theme.batteryIconSize
+        size: Theme.batteryIconSize
         // The glyph sits high in its taller box at this size; nudge it to the
         // optical center without affecting the pill's layout.
         transform: Translate {

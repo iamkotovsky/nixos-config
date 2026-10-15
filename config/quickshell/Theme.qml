@@ -46,7 +46,7 @@ Singleton {
     property int radiusMedium: @RADIUS_MEDIUM@
     property int radiusLarge: @RADIUS_LARGE@
 
-    // Type scale.
+    // Type scale, in the UI font (Inter).
     property string fontFamily: "@FONT@"
     property int fontCaption: @FONT_CAPTION@
     property int fontSmall: @FONT_SMALL@
@@ -57,6 +57,9 @@ Singleton {
     property string iconFont: "Material Symbols Rounded"
     property int iconSize: fontSize + 2
     property int iconSizeLarge: 24
+    // Stroke weight for Material Symbols, a touch heavier than regular so
+    // outlined glyphs hold up next to the UI font.
+    property int iconWeight: 450
     // The horizontal battery glyph reads small at iconSize.
     property int batteryIconSize: iconSize + 4
 
@@ -120,4 +123,12 @@ Singleton {
     property int osdWidth: 300
     property int osdHeight: 44
     property int percentWidth: 48
+    // Control panel sub-pages: list rows, visible rows before scrolling, the
+    // chevron area on split tiles, text fields and switches.
+    property int rowHeight: 44
+    property int listMaxRows: 6
+    property int chevronWidth: 36
+    property int fieldHeight: 40
+    property int switchWidth: 40
+    property int switchHeight: 22
 }

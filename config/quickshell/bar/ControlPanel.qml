@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import "services"
 import "controls"
+import "pages"
 
 // GNOME-style quick settings for one screen. The window covers the whole
 // screen (transparent) so a click anywhere outside the card closes it; this
@@ -81,13 +82,14 @@ PanelWindow {
             rightMargin: Theme.gap
         }
         width: Theme.panelWidth
-        height: content.implicitHeight + padding * 2
+        height: pages.height
         radius: Theme.radiusLarge
         level: "overlay"
         elevation: "floating"
 
         focus: true
-        Keys.onEscapePressed: ControlCenter.close()
+        // Esc steps back out of a sub-page first.
+        Keys.onEscapePressed: ControlCenter.page !== "" ? ControlCenter.back() : ControlCenter.close()
 
         // Springs down out of the status button; leaves quicker, no bounce.
         opacity: panel.showing ? 1 : 0
@@ -125,115 +127,226 @@ PanelWindow {
             anchors.fill: parent
         }
 
-        ColumnLayout {
-            id: content
+        // Main page and sub-page side by side; switching slides one out to the
+        // left and the other in from the right while the card resizes. Clipped
+        // at the card edge (not the padding), so hover shadows stay whole.
+        Item {
+            id: pages
+
+            readonly property bool sub: ControlCenter.page !== ""
+            readonly property real contentWidth: width - card.padding * 2
+            // The last sub-page stays loaded while it slides back out.
+            property string shownPage: ""
 
             anchors {
-                fill: parent
-                margins: card.padding
+                left: parent.left
+                right: parent.right
+                top: parent.top
             }
-            spacing: Theme.spacingLarge
+            height: (sub ? subPage.implicitHeight : mainPage.implicitHeight) + card.padding * 2
+            clip: true
 
-            // Battery level and charge state.
-            RowLayout {
-                Layout.fillWidth: true
-                visible: Power.hasBattery
-                spacing: Theme.spacingMedium
+            Behavior on height {
+                NumberAnimation {
+                    duration: Theme.durationNormal
+                    easing.type: Easing.OutCubic
+                }
+            }
 
-                MaterialIcon {
-                    name: Power.icon
-                    color: Power.levelColor
-                    font.pixelSize: Theme.iconSizeLarge
+            Connections {
+                target: ControlCenter
+
+                function onPageChanged() {
+                    if (ControlCenter.page !== "")
+                        pages.shownPage = ControlCenter.page;
+                    card.forceActiveFocus();
+                }
+            }
+
+            Component.onCompleted: shownPage = ControlCenter.page
+
+            Loader {
+                id: subPage
+
+                x: card.padding + (pages.sub ? 0 : pages.width)
+                y: card.padding
+                width: pages.contentWidth
+                opacity: pages.sub ? 1 : 0
+                active: pages.shownPage !== ""
+                sourceComponent: pages.shownPage === "wifi" ? wifiPage : pages.shownPage === "bluetooth" ? bluetoothPage : soundPage
+
+                Behavior on x {
+                    NumberAnimation {
+                        duration: Theme.durationNormal
+                        easing.type: Easing.OutCubic
+                    }
+                }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Theme.durationNormal
+                        easing.type: Easing.OutCubic
+                    }
+                }
+            }
+
+            Component {
+                id: wifiPage
+
+                WifiPage {}
+            }
+
+            Component {
+                id: bluetoothPage
+
+                BluetoothPage {}
+            }
+
+            Component {
+                id: soundPage
+
+                SoundPage {}
+            }
+
+            ColumnLayout {
+                id: mainPage
+
+                x: card.padding - (pages.sub ? pages.width : 0)
+                y: card.padding
+                width: pages.contentWidth
+                opacity: pages.sub ? 0 : 1
+                spacing: Theme.spacingLarge
+
+                Behavior on x {
+                    NumberAnimation {
+                        duration: Theme.durationNormal
+                        easing.type: Easing.OutCubic
+                    }
+                }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Theme.durationNormal
+                        easing.type: Easing.OutCubic
+                    }
                 }
 
-                ColumnLayout {
-                    spacing: 0
+                // Battery level and charge state.
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: Power.hasBattery
+                    spacing: Theme.spacingMedium
 
-                    BarText {
-                        text: Power.capacity + "%"
-                        font.bold: true
-                        font.pixelSize: Theme.fontTitle
+                    MaterialIcon {
+                        name: Power.icon
+                        color: Power.levelColor
+                        size: Theme.iconSizeLarge
                     }
 
-                    BarText {
-                        text: Power.stateText
-                        color: Theme.muted
-                        font.pixelSize: Theme.fontCaption
+                    ColumnLayout {
+                        spacing: 0
+
+                        BarText {
+                            text: Power.capacity + "%"
+                            font.bold: true
+                            font.pixelSize: Theme.fontTitle
+                        }
+
+                        BarText {
+                            text: Power.stateText
+                            color: Theme.muted
+                            font.pixelSize: Theme.fontCaption
+                        }
                     }
                 }
-            }
 
-            QuickSlider {
-                Layout.fillWidth: true
-                visible: Audio.ready
-                icon: Audio.icon
-                value: Math.min(Audio.volume, 1)
-                dimmed: Audio.muted
-                onMoved: value => Audio.setVolume(value)
-                onIconClicked: mouse => {
-                    if (mouse.button === Qt.RightButton)
-                        Audio.openMixer();
-                    else
-                        Audio.toggleMute();
-                }
-            }
-
-            QuickSlider {
-                Layout.fillWidth: true
-                visible: Brightness.available
-                icon: Brightness.icon
-                from: 0.01
-                value: Brightness.percent / 100
-                onMoved: value => Brightness.set(value * 100)
-            }
-
-            GridLayout {
-                Layout.fillWidth: true
-                columns: 2
-                columnSpacing: Theme.spacingSmall
-                rowSpacing: Theme.spacingSmall
-
-                ToggleTile {
+                QuickSlider {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    icon: Network.wifiIcon
-                    title: "Wi-Fi"
-                    subtitle: !Network.wifiEnabled ? "Off" : Network.ssid !== "" ? Network.ssid : "Not connected"
-                    active: Network.wifiEnabled
-                    onClicked: Network.toggleWifi()
+                    visible: Audio.ready
+                    icon: Audio.icon
+                    value: Math.min(Audio.volume, 1)
+                    dimmed: Audio.muted
+                    hasPage: true
+                    onPageRequested: ControlCenter.openPage("sound")
+                    onMoved: value => Audio.setVolume(value)
+                    onIconClicked: mouse => {
+                        if (mouse.button === Qt.RightButton)
+                            Audio.openMixer();
+                        else
+                            Audio.toggleMute();
+                    }
                 }
 
-                ToggleTile {
+                QuickSlider {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    visible: BluetoothState.available
-                    icon: BluetoothState.icon
-                    title: "Bluetooth"
-                    subtitle: !BluetoothState.enabled ? "Off" : BluetoothState.deviceName !== "" ? BluetoothState.deviceName : "On"
-                    active: BluetoothState.enabled
-                    onClicked: BluetoothState.toggle()
+                    visible: Brightness.available
+                    icon: Brightness.icon
+                    from: 0.01
+                    value: Brightness.percent / 100
+                    onMoved: value => Brightness.set(value * 100)
                 }
 
-                ToggleTile {
+                GridLayout {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    icon: Power.profileIcon
-                    title: "Power mode"
-                    subtitle: Power.profileName
-                    // Highlighted when not on the default (balanced) profile.
-                    active: !Power.balanced
-                    onClicked: Power.cycleProfile()
-                }
+                    columns: 2
+                    columnSpacing: Theme.spacingSmall
+                    rowSpacing: Theme.spacingSmall
 
-                ToggleTile {
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    visible: Network.wired !== null
-                    icon: "lan"
-                    title: "Wired"
-                    subtitle: "Connected"
-                    active: true
-                    interactive: false
+                    ToggleTile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        icon: Network.wifiIcon
+                        title: "Wi-Fi"
+                        subtitle: !Network.wifiEnabled ? "Off" : Network.ssid !== "" ? Network.ssid : "Not connected"
+                        active: Network.wifiEnabled
+                        onClicked: Network.toggleWifi()
+                        hasPage: true
+                        onPageRequested: ControlCenter.openPage("wifi")
+                    }
+
+                    ToggleTile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        visible: BluetoothState.available
+                        icon: BluetoothState.icon
+                        title: "Bluetooth"
+                        subtitle: !BluetoothState.enabled ? "Off" : BluetoothState.deviceName !== "" ? BluetoothState.deviceName : "On"
+                        active: BluetoothState.enabled
+                        onClicked: BluetoothState.toggle()
+                        hasPage: true
+                        onPageRequested: ControlCenter.openPage("bluetooth")
+                    }
+
+                    ToggleTile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        icon: Power.profileIcon
+                        title: "Power mode"
+                        subtitle: Power.profileName
+                        // Highlighted when not on the default (balanced) profile.
+                        active: !Power.balanced
+                        onClicked: Power.cycleProfile()
+                    }
+
+                    // Keeps the screen from locking (it still turns off).
+                    ToggleTile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        icon: "coffee"
+                        title: "Caffeine"
+                        subtitle: Caffeine.enabled ? "Won't lock" : "Off"
+                        active: Caffeine.enabled
+                        onClicked: Caffeine.toggle()
+                    }
+
+                    ToggleTile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        visible: Network.wired !== null
+                        icon: "lan"
+                        title: "Wired"
+                        subtitle: "Connected"
+                        active: true
+                        interactive: false
+                    }
                 }
             }
         }

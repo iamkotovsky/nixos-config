@@ -11,7 +11,7 @@ let
 
   # Each attribute fills the matching @NAME@ placeholder in config.rasi.
   substitutions = {
-    FONT = theme.font.mono;
+    FONT = theme.font.ui;
     FONT_SIZE = toString theme.font.size;
     SURFACE_HEX = theme.hex colors.surface;
     SURFACE_ALPHA = theme.alphaHex theme.opacity.raised;

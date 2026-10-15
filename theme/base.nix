@@ -1,7 +1,10 @@
 # Values shared by every visual profile. Individual profiles provide colors and
 # their wallpaper, keeping a theme switch to one declarative selection.
 {
+  # ui: the shell (bar, panel, notifications, rofi, hyprlock); mono: terminal,
+  # code, and Nerd Font glyphs.
   font = {
+    ui = "Inter";
     mono = "JetBrainsMono Nerd Font";
     size = 16;
   };
