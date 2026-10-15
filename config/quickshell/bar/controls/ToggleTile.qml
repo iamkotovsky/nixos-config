@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import ".."
 
-// GNOME-style quick toggle: icon, title and subtitle; accent-filled when on.
-Rectangle {
+// GNOME-style quick toggle: icon, title and subtitle on a frosted chip that
+// lifts on hover; accent-filled when on.
+Glass {
     id: root
 
     property string icon
@@ -16,27 +17,35 @@ Rectangle {
 
     signal clicked
 
-    implicitHeight: 56
-    radius: Theme.moduleRadius
-    color: active ? Theme.accent : Qt.alpha(Theme.foreground, mouse.containsMouse && interactive ? 0.14 : 0.07)
+    implicitHeight: Theme.tileHeight
+    radius: Theme.radiusMedium
+    color: active ? Theme.accent : Qt.alpha(Theme.foreground, Theme.fillRest)
+    border.color: Qt.alpha(Theme.foreground, Theme.fillRim)
+    highlight: false
 
-    Behavior on color {
-        ColorAnimation {
-            duration: 150
-        }
+    StateLayer {
+        enabled: root.interactive
+        lift: root.interactive
+        onClicked: root.clicked()
     }
 
     RowLayout {
         anchors {
             fill: parent
-            leftMargin: 14
-            rightMargin: 12
+            leftMargin: Theme.spacingMedium
+            rightMargin: Theme.spacingMedium
         }
-        spacing: 12
+        spacing: Theme.spacingMedium
 
         MaterialIcon {
             name: root.icon
             color: root.contentColor
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.durationFast
+                }
+            }
         }
 
         ColumnLayout {
@@ -47,29 +56,31 @@ Rectangle {
                 Layout.fillWidth: true
                 text: root.title
                 color: root.contentColor
-                font.pixelSize: Theme.fontSize - 2
+                font.pixelSize: Theme.fontSmall
                 font.bold: true
                 elide: Text.ElideRight
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Theme.durationFast
+                    }
+                }
             }
 
             BarText {
                 Layout.fillWidth: true
                 visible: text !== ""
                 text: root.subtitle
-                color: root.active ? Qt.alpha(Theme.background, 0.75) : Theme.muted
-                font.pixelSize: Theme.fontSize - 4
+                color: root.active ? Qt.alpha(Theme.background, Theme.subtleTextOpacity) : Theme.muted
+                font.pixelSize: Theme.fontCaption
                 elide: Text.ElideRight
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Theme.durationFast
+                    }
+                }
             }
         }
-    }
-
-    MouseArea {
-        id: mouse
-
-        anchors.fill: parent
-        hoverEnabled: true
-        enabled: root.interactive
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
     }
 }

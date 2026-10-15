@@ -1,4 +1,4 @@
-# Auto-mounts removable drives (e.g. USB sticks) and notifies via mako on insert/removal.
+# Auto-mounts removable drives (e.g. USB sticks) and notifies (quickshell bar) on insert/removal.
 {
   services.udiskie = {
     enable = true;

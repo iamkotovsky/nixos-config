@@ -12,15 +12,9 @@ Pill {
 
     interactive: true
     spacing: Theme.spacingMedium
-    color: open ? Qt.alpha(Theme.accent, 0.25) : Qt.alpha(Theme.surface, Theme.pillOpacity)
+    color: open ? Qt.alpha(Theme.accent, Theme.trackOpacity) : Qt.alpha(Theme.surface, Theme.raisedOpacity)
     onClicked: ControlCenter.toggle(root.screenName)
     onScrolled: delta => Audio.step(delta)
-
-    Behavior on color {
-        ColorAnimation {
-            duration: 150
-        }
-    }
 
     MaterialIcon {
         name: Network.icon
@@ -40,7 +34,7 @@ Pill {
         visible: Power.hasBattery
         name: Power.icon
         color: Power.levelColor
-        font.pixelSize: Theme.iconSize + 4
+        font.pixelSize: Theme.batteryIconSize
         // The glyph sits high in its taller box at this size; nudge it to the
         // optical center without affecting the pill's layout.
         transform: Translate {

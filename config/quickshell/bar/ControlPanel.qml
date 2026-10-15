@@ -11,6 +11,13 @@ import "controls"
 PanelWindow {
     id: panel
 
+    required property string screenName
+
+    readonly property bool open: ControlCenter.openOn === screenName
+    // False for the first frame, so the card animates in after creation.
+    property bool entered: false
+    readonly property bool showing: entered && open
+
     anchors {
         top: true
         bottom: true
@@ -19,16 +26,41 @@ PanelWindow {
     }
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
+    // Stays mapped while the card animates out (shell.qml keeps it loaded),
+    // letting clicks through meanwhile.
+    visible: open || card.opacity > 0
+    mask: open ? null : passThrough
+
+    Component.onCompleted: entered = true
+
+    Region {
+        id: passThrough
+    }
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell-panel"
     // Exclusive while open so Esc reaches the panel; it's transient anyway.
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    // niri blurs only the card's rounded rectangle, not the whole screen.
-    BackgroundEffect.blurRegion: Region {
-        item: card
-        radius: card.radius
+    // Blur only the card's rounded rectangle, not the whole screen. The rect
+    // follows the card's scale (around its top-right corner) and slide by
+    // hand: an item-bound Region ignores transforms and would freeze at the
+    // first frame. Dropped as soon as closing starts, so no frost outlives the
+    // fading card.
+    BackgroundEffect.blurRegion: showing ? cardBlur : noBlur
+
+    Region {
+        id: cardBlur
+
+        x: card.x + card.width * (1 - card.scale)
+        y: card.y + slide.y
+        width: card.width * card.scale
+        height: card.height * card.scale
+        radius: card.radius * card.scale
+    }
+
+    Region {
+        id: noBlur
     }
 
     MouseArea {
@@ -36,10 +68,10 @@ PanelWindow {
         onClicked: ControlCenter.close()
     }
 
-    Rectangle {
+    Glass {
         id: card
 
-        readonly property int padding: 16
+        readonly property int padding: Theme.spacingLarge
 
         anchors {
             top: parent.top
@@ -48,38 +80,43 @@ PanelWindow {
             topMargin: Theme.gap * 2 + Theme.pillHeight
             rightMargin: Theme.gap
         }
-        width: 360
+        width: Theme.panelWidth
         height: content.implicitHeight + padding * 2
-        radius: Theme.moduleRadius * 1.6
-        color: Qt.alpha(Theme.surface, Theme.panelOpacity)
-        border.width: 1
-        border.color: Qt.alpha(Theme.foreground, 0.08)
+        radius: Theme.radiusLarge
+        level: "overlay"
+        elevation: "floating"
 
         focus: true
         Keys.onEscapePressed: ControlCenter.close()
 
-        // Short fade + slide in.
-        opacity: 0
+        // Springs down out of the status button; leaves quicker, no bounce.
+        opacity: panel.showing ? 1 : 0
+        scale: panel.showing ? 1 : Theme.pressScale
+        transformOrigin: Item.TopRight
         transform: Translate {
             id: slide
 
-            y: -8
+            y: panel.showing ? 0 : -Theme.spacingSmall
 
             Behavior on y {
                 NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
+                    duration: panel.showing ? Theme.durationSlow : Theme.exitDuration(Theme.durationSlow)
+                    easing.type: panel.showing ? Easing.OutBack : Easing.InCubic
+                    easing.overshoot: Theme.overshoot
                 }
             }
         }
-        Component.onCompleted: {
-            card.opacity = 1;
-            slide.y = 0;
-        }
         Behavior on opacity {
             NumberAnimation {
-                duration: 150
-                easing.type: Easing.OutCubic
+                duration: panel.showing ? Theme.durationNormal : Theme.exitDuration(Theme.durationNormal)
+                easing.type: panel.showing ? Easing.OutCubic : Easing.InCubic
+            }
+        }
+        Behavior on scale {
+            NumberAnimation {
+                duration: panel.showing ? Theme.durationSlow : Theme.exitDuration(Theme.durationSlow)
+                easing.type: panel.showing ? Easing.OutBack : Easing.InCubic
+                easing.overshoot: Theme.overshoot
             }
         }
 
@@ -95,18 +132,18 @@ PanelWindow {
                 fill: parent
                 margins: card.padding
             }
-            spacing: 14
+            spacing: Theme.spacingLarge
 
-            // Battery and power profile.
+            // Battery level and charge state.
             RowLayout {
                 Layout.fillWidth: true
                 visible: Power.hasBattery
-                spacing: 12
+                spacing: Theme.spacingMedium
 
                 MaterialIcon {
                     name: Power.icon
                     color: Power.levelColor
-                    font.pixelSize: Theme.iconSize + 8
+                    font.pixelSize: Theme.iconSizeLarge
                 }
 
                 ColumnLayout {
@@ -115,23 +152,14 @@ PanelWindow {
                     BarText {
                         text: Power.capacity + "%"
                         font.bold: true
+                        font.pixelSize: Theme.fontTitle
                     }
 
                     BarText {
                         text: Power.stateText
                         color: Theme.muted
-                        font.pixelSize: Theme.fontSize - 4
+                        font.pixelSize: Theme.fontCaption
                     }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                IconButton {
-                    icon: Power.profileIcon
-                    active: !Power.balanced
-                    onClicked: Power.cycleProfile()
                 }
             }
 
@@ -162,8 +190,8 @@ PanelWindow {
             GridLayout {
                 Layout.fillWidth: true
                 columns: 2
-                columnSpacing: 8
-                rowSpacing: 8
+                columnSpacing: Theme.spacingSmall
+                rowSpacing: Theme.spacingSmall
 
                 ToggleTile {
                     Layout.fillWidth: true

@@ -52,4 +52,21 @@ Singleton {
     PwObjectTracker {
         objects: root.sink ? [root.sink] : []
     }
+
+    // Floating slider on any volume/mute change, whoever made it (keys,
+    // scroll, apps, pavucontrol). Connections only fire on real changes, not
+    // on start-up or a sink switch; the open control panel shows its own.
+    Connections {
+        target: root.ready ? root.sink.audio : null
+
+        function onVolumeChanged() {
+            if (ControlCenter.openOn === "")
+                Osd.show("volume");
+        }
+
+        function onMutedChanged() {
+            if (ControlCenter.openOn === "")
+                Osd.show("volume");
+        }
+    }
 }

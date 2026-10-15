@@ -32,27 +32,27 @@ Pill {
                 id: indicator
 
                 anchors.centerIn: parent
-                width: workspace.active ? 22 : 8
-                height: 8
+                width: workspace.active ? Theme.indicatorActiveWidth : Theme.indicatorSize
+                height: Theme.indicatorSize
                 radius: height / 2
                 color: {
                     if (workspace.modelData.is_urgent)
                         return Theme.red;
                     if (workspace.active)
                         return Theme.accent;
-                    return hover.hovered ? Qt.alpha(Theme.accent, 0.6) : Qt.alpha(Theme.muted, 0.45);
+                    return hover.hovered ? Theme.muted : Qt.alpha(Theme.muted, Theme.disabledOpacity);
                 }
 
                 Behavior on width {
                     NumberAnimation {
-                        duration: 180
+                        duration: Theme.durationNormal
                         easing.type: Easing.OutCubic
                     }
                 }
 
                 Behavior on color {
                     ColorAnimation {
-                        duration: 180
+                        duration: Theme.durationNormal
                     }
                 }
             }

@@ -13,7 +13,7 @@ in
     settings = {
       inherit (colors) background foreground;
       # Enough translucency for Niri's blur and grain to read as frosted glass.
-      background_opacity = theme.opacity.surface;
+      background_opacity = theme.opacity.terminal;
       background_blur = 1;
       selection_background = colors.accent;
       selection_foreground = colors.background;

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  # Cycles power-saver -> balanced -> performance and confirms via mako.
+  # Cycles power-saver -> balanced -> performance and confirms with a notification.
   cyclePowerProfile = pkgs.writeShellScript "cycle-power-profile" ''
     ppc=${pkgs.power-profiles-daemon}/bin/powerprofilesctl
 

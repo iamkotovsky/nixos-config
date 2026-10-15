@@ -24,10 +24,19 @@ PanelWindow {
     // Reserve the whole strip: niri adds its own gap below it, so windows (and
     // their focus ring) start one full gap under the strip.
     exclusiveZone: implicitHeight
-    color: Qt.alpha(Theme.background, Theme.stripOpacity)
+    color: "transparent"
 
     // Matched by the blur layer-rule in config/niri/config.kdl.
     WlrLayershell.namespace: "quickshell-bar"
+
+    // Glass backdrop, edge to edge, with no rim.
+    Glass {
+        anchors.fill: parent
+        level: "strip"
+        radius: 0
+        border.width: 0
+        highlight: false
+    }
 
     Workspaces {
         id: left

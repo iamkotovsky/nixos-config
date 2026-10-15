@@ -13,7 +13,9 @@ configuration {
 
 * {
     bg: #@SURFACE_HEX@@SURFACE_ALPHA@;
-    bg-alt: #@FOREGROUND_HEX@1a;
+    rim: #@FOREGROUND_HEX@@RIM_ALPHA@;
+    fill: #@FOREGROUND_HEX@@FILL_ALPHA@;
+    fill-hover: #@FOREGROUND_HEX@@FILL_HOVER_ALPHA@;
     fg: #@FOREGROUND_HEX@ff;
     muted: #@MUTED_HEX@ff;
     accent: #@ACCENT_HEX@ff;
@@ -25,10 +27,11 @@ configuration {
 window {
     width: 560px;
     background-color: @bg;
-    border: 2px;
-    border-color: @accent;
-    border-radius: @RADIUS_MEDIUM@px;
-    padding: @SPACING_MEDIUM@px @SPACING_MEDIUM@px @SPACING_SMALL@px @SPACING_MEDIUM@px;
+    /* Frosted glass card: niri blurs behind it, a light rim on the edge. */
+    border: 1px;
+    border-color: @rim;
+    border-radius: @RADIUS_LARGE@px;
+    padding: @SPACING_LARGE@px @SPACING_LARGE@px @SPACING_MEDIUM@px @SPACING_LARGE@px;
     location: center;
 }
 
@@ -39,7 +42,9 @@ mainbox {
 }
 
 inputbar {
-    background-color: @bg-alt;
+    background-color: @fill;
+    border: 1px;
+    border-color: @fill;
     border-radius: @RADIUS_SMALL@px;
     padding: @SPACING_MEDIUM@px;
     children: [ "entry" ];
@@ -65,6 +70,8 @@ listview {
 
 element {
     padding: @SPACING_SMALL@px;
+    border: 1px;
+    border-color: transparent;
     border-radius: @RADIUS_SMALL@px;
     orientation: horizontal;
     spacing: @SPACING_MEDIUM@px;
@@ -76,8 +83,10 @@ element alternate.urgent, element normal.active, element alternate.active {
     text-color: @fg;
 }
 
+/* Selected row: the hover fill plus an accent rim, nothing more. */
 element selected.normal, element selected.urgent, element selected.active {
-    background-color: @bg-alt;
+    background-color: @fill-hover;
+    border-color: @accent;
     text-color: @fg;
 }
 

@@ -6,32 +6,90 @@
     size = 16;
   };
 
+  # Type scale; body is font.size. See .claude/rules/design.md for roles.
+  fontSizes = {
+    caption = 12;
+    small = 14;
+    title = 18;
+  };
+
+  # small: list rows, thumbnails; medium: windows, bar pills, tiles;
+  # large: cards (panel, notifications, rofi). "Full" is height / 2.
   radius = {
     small = 6;
     medium = 10;
+    large = 16;
   };
 
+  # 4px grid: xs tight icon/label, small between items in a row, medium inside
+  # tiles and between rows, large card padding.
   spacing = {
-    small = 6;
-    medium = 10;
+    xs = 4;
+    small = 8;
+    medium = 12;
+    large = 16;
   };
 
   # One gap for the whole desktop: screen edges, between windows, and around
   # the floating bar (niri `gaps` and the quickshell bar both use it).
-  gap = 9;
+  gap = 8;
+
+  # Durations in ms. fast: hover/color; normal: fades, values, reflow; slow:
+  # surfaces entering (OutBack with this overshoot). Exits run at 0.7x.
+  motion = {
+    fast = 150;
+    normal = 250;
+    slow = 350;
+    overshoot = "1.2";
+  };
+
+  # Soft shadows, only for elevation and hover lift (blur radius and y offset
+  # in px). `pad` is the room layer windows reserve around a shadowed shape so
+  # it is never clipped.
+  elevation = {
+    raised = {
+      blur = 6;
+      y = 2;
+      opacity = "0.25";
+    };
+    floating = {
+      blur = 20;
+      y = 6;
+      opacity = "0.35";
+    };
+    pad = 24;
+  };
 
   cursor = {
     name = "phinger-cursors-dark";
     size = 28;
   };
 
+  # Strings, so they drop into config text without float-formatting artifacts.
   opacity = {
-    # Shared translucency for kitty, the bar, rofi and mako backgrounds; kept as a
-    # string so it drops into config text without float-formatting artifacts.
-    surface = "0.84";
+    # Kitty: denser than the shell's glass, for reading.
+    terminal = "0.84";
+    # Frosted glass levels: strip is the bar backdrop (on `background`);
+    # raised is bar pills and rofi, overlay is panel/notification/OSD cards
+    # (both on `surface`).
+    strip = "0.55";
+    raised = "0.62";
+    overlay = "0.55";
+    # Light rim around glass, and the faint top highlight inside it.
+    rim = "0.12";
+    highlight = "0.06";
   };
 
-  # Strips the leading "#" for consumers that want bare hex (hyprlock, rofi, mako).
+  # Foreground fills on glass for chips, tiles, buttons and launcher rows, by
+  # state; `rim` is their own hairline border.
+  fill = {
+    rest = "0.08";
+    hover = "0.14";
+    pressed = "0.20";
+    rim = "0.08";
+  };
+
+  # Strips the leading "#" for consumers that want bare hex (hyprlock, rofi).
   hex = color: builtins.substring 1 6 color;
 
   # Renders an opacity string like "0.84" as a two-digit hex alpha suffix ("d6").

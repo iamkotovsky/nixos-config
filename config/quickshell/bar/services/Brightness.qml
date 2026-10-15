@@ -47,9 +47,42 @@ Singleton {
         id: current
 
         path: root.device ? "/sys/class/backlight/" + root.device + "/brightness" : ""
+        // step() needs the fresh value right after reload().
+        blockAllReads: true
         onLoaded: {
             if (root.pending < 0)
                 root.brightness = parseInt(text());
+        }
+    }
+
+    property real lastStep: 0
+
+    // Brightness keys (niri binds) call this over IPC, because sysfs sends no
+    // change events the bar could show the slider for. During rapid presses,
+    // build on our own last value (brightnessctl may not have written it yet);
+    // otherwise re-read the file in case something else changed it.
+    function step(delta) {
+        if (!root.available)
+            return;
+        const now = Date.now();
+        if (now - root.lastStep > 1000) {
+            current.reload();
+            root.brightness = parseInt(current.text());
+        }
+        root.lastStep = now;
+        root.set(root.percent + delta);
+        Osd.show("brightness");
+    }
+
+    IpcHandler {
+        target: "brightness"
+
+        function up(): void {
+            root.step(5);
+        }
+
+        function down(): void {
+            root.step(-5);
         }
     }
 

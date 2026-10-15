@@ -5,6 +5,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
+import "controls"
 
 // StatusNotifier tray. Left-click activates (or opens the menu for menu-only
 // items), right-click opens the app's menu under its icon. Symbolic icons
@@ -40,6 +41,21 @@ Pill {
             implicitWidth: Theme.iconSize
             implicitHeight: Theme.iconSize
 
+            StateLayer {
+                outset: Theme.spacingXs
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: mouse => {
+                    const item = trayItem.modelData;
+                    const wantsMenu = mouse.button === Qt.RightButton || item.onlyMenu;
+                    if (wantsMenu && item.hasMenu)
+                        menu.open();
+                    else if (mouse.button === Qt.RightButton)
+                        item.secondaryActivate();
+                    else
+                        item.activate();
+                }
+            }
+
             IconImage {
                 id: image
 
@@ -63,22 +79,6 @@ Pill {
                     maskSource: image
                     maskThresholdMin: 0.5
                     maskSpreadAtMin: 1
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: mouse => {
-                    const item = trayItem.modelData;
-                    const wantsMenu = mouse.button === Qt.RightButton || item.onlyMenu;
-                    if (wantsMenu && item.hasMenu)
-                        menu.open();
-                    else if (mouse.button === Qt.RightButton)
-                        item.secondaryActivate();
-                    else
-                        item.activate();
                 }
             }
 

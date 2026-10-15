@@ -14,14 +14,18 @@ let
     FONT = theme.font.mono;
     FONT_SIZE = toString theme.font.size;
     SURFACE_HEX = theme.hex colors.surface;
-    SURFACE_ALPHA = theme.alphaHex theme.opacity.surface;
+    SURFACE_ALPHA = theme.alphaHex theme.opacity.raised;
+    RIM_ALPHA = theme.alphaHex theme.opacity.rim;
+    FILL_ALPHA = theme.alphaHex theme.fill.rest;
+    FILL_HOVER_ALPHA = theme.alphaHex theme.fill.hover;
     FOREGROUND_HEX = theme.hex colors.foreground;
     MUTED_HEX = theme.hex colors.muted;
     ACCENT_HEX = theme.hex colors.accent;
     RADIUS_SMALL = toString theme.radius.small;
-    RADIUS_MEDIUM = toString theme.radius.medium;
+    RADIUS_LARGE = toString theme.radius.large;
     SPACING_SMALL = toString theme.spacing.small;
     SPACING_MEDIUM = toString theme.spacing.medium;
+    SPACING_LARGE = toString theme.spacing.large;
   };
 in
 {

@@ -1,10 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
+import "controls"
 
-// Rounded applet background. Children are laid out in a vertically centered
-// row; the pill sizes itself to them. Set `interactive` to get clicked/scrolled
-// over the whole pill (tray-style pills handle input per child instead).
-Rectangle {
+// Rounded glass applet. Children are laid out in a vertically centered row;
+// the pill sizes itself to them. Set `interactive` to get clicked/scrolled
+// over the whole pill, with hover/press feedback (tray-style pills handle
+// input per child instead).
+Glass {
     id: root
 
     default property alias content: row.data
@@ -17,22 +19,27 @@ Rectangle {
 
     implicitWidth: row.implicitWidth + horizontalPadding * 2
     implicitHeight: Theme.pillHeight
-    color: Qt.alpha(Theme.surface, Theme.pillOpacity)
-    radius: Theme.moduleRadius
+    level: "raised"
+
+    Behavior on implicitWidth {
+        NumberAnimation {
+            duration: Theme.durationNormal
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    StateLayer {
+        enabled: root.interactive
+        visible: root.interactive
+        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+        onClicked: mouse => root.clicked(mouse)
+        onWheel: wheel => root.scrolled(wheel.angleDelta.y)
+    }
 
     RowLayout {
         id: row
 
         anchors.centerIn: parent
         spacing: Theme.spacingSmall
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        enabled: root.interactive
-        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-        cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: mouse => root.clicked(mouse)
-        onWheel: wheel => root.scrolled(wheel.angleDelta.y)
     }
 }

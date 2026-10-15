@@ -86,11 +86,13 @@ window-rule {
     }
 }
 
-// Rofi is a layer surface rather than a regular window.
+// Rofi is a layer surface rather than a regular window. Frost what is really
+// behind it (windows), not just the wallpaper.
 layer-rule {
     match namespace="^rofi$"
     background-effect {
         blur true
+        xray false
     }
 }
 
@@ -115,11 +117,12 @@ layer-rule {
     }
 }
 
-// Mako is a layer surface rather than a regular window.
+// Notification popups and the volume/brightness slider: like the panel, their
+// cards request their own blur regions, so only xray is turned off here.
 layer-rule {
-    match namespace="^notifications$"
+    match namespace="^quickshell-(notifications|osd)$"
     background-effect {
-        blur true
+        xray false
     }
 }
 
@@ -183,8 +186,9 @@ binds {
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
     XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+    // Through the bar (instant floating slider); plain brightnessctl if it isn't running.
+    XF86MonBrightnessUp allow-when-locked=true { spawn "sh" "-c" "quickshell ipc --config bar call brightness up || brightnessctl set 5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "quickshell ipc --config bar call brightness down || brightnessctl set 5%-"; }
 
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }

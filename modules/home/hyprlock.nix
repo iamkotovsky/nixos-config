@@ -93,6 +93,8 @@ let
     ACCENT_HEX = theme.hex colors.accent;
     BLUE_HEX = theme.hex colors.blue;
     RED_HEX = theme.hex colors.red;
+    RADIUS_LARGE = toString theme.radius.large;
+    RAISED_ALPHA = theme.alphaHex theme.opacity.raised;
   };
 in
 {

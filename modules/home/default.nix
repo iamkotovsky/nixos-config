@@ -8,7 +8,6 @@
     ./git.nix
     ./hyprlock.nix
     ./kitty.nix
-    ./mako.nix
     ./niri.nix
     ./opencode.nix
     ./quickshell.nix

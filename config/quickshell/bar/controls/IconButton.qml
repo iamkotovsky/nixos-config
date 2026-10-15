@@ -1,8 +1,9 @@
 import QtQuick
 import ".."
 
-// Round icon button with a hover highlight. `active` fills it with the accent.
-Rectangle {
+// Round icon button: a frosted chip that lifts on hover. `active` fills it
+// with the accent.
+Glass {
     id: root
 
     property string icon
@@ -11,30 +12,27 @@ Rectangle {
 
     signal clicked(var mouse)
 
-    implicitWidth: 36
-    implicitHeight: 36
+    implicitWidth: Theme.buttonSize
+    implicitHeight: Theme.buttonSize
     radius: height / 2
-    color: active ? Theme.accent : Qt.alpha(Theme.foreground, mouse.containsMouse ? 0.14 : 0.07)
+    color: active ? Theme.accent : Qt.alpha(Theme.foreground, Theme.fillRest)
+    border.color: Qt.alpha(Theme.foreground, Theme.fillRim)
+    highlight: false
 
-    Behavior on color {
-        ColorAnimation {
-            duration: 150
-        }
+    StateLayer {
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: event => root.clicked(event)
     }
 
     MaterialIcon {
         anchors.centerIn: parent
         name: root.icon
         color: root.iconColor
-    }
 
-    MouseArea {
-        id: mouse
-
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        cursorShape: Qt.PointingHandCursor
-        onClicked: event => root.clicked(event)
+        Behavior on color {
+            ColorAnimation {
+                duration: Theme.durationFast
+            }
+        }
     }
 }
