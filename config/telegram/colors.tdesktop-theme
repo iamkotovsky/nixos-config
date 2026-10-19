@@ -1,0 +1,504 @@
+// Rendered by modules/home/telegram.nix: @NAME@ placeholders are replaced with
+// the active theme's colours and mixes (see .claude/rules/design.md).
+// Telegram lays a theme over its default light palette, so every key that
+// would otherwise show a light default is set here. A value may name another
+// key instead of a colour.
+//
+// Design: neutral dark surfaces; pink only for state (unread, links, ticks,
+// send, focus, online). Outgoing bubbles and the selected chat are a soft
+// pink tint with normal light text, never solid pink.
+
+// Window
+windowBg: @BACKGROUND@;
+windowFg: @FOREGROUND@;
+windowBgOver: @HOVER@;
+windowBgRipple: @PRESSED@;
+windowFgOver: windowFg;
+windowSubTextFg: @MUTED@;
+windowSubTextFgOver: windowSubTextFg;
+windowBoldFg: windowFg;
+windowBoldFgOver: windowFg;
+windowBgActive: @ACCENT@;
+windowFgActive: @BACKGROUND@;
+windowActiveTextFg: @ACCENT@;
+windowShadowFg: #000000;
+windowShadowFgFallback: @BACKGROUND@;
+shadowFg: #00000040;
+slideFadeOutBg: #0000003c;
+slideFadeOutShadowFg: windowShadowFg;
+imageBg: #000000;
+imageBgTransparent: #ffffff;
+layerBg: #00000080;
+cancelIconFg: windowSubTextFg;
+cancelIconFgOver: windowFg;
+smallCloseIconFg: windowSubTextFg;
+smallCloseIconFgOver: windowFg;
+
+// Buttons
+activeButtonBg: @ACCENT@;
+activeButtonBgOver: @ACCENT_HOVER@;
+activeButtonBgRipple: @ACCENT_PRESSED@;
+activeButtonFg: @BACKGROUND@;
+activeButtonFgOver: activeButtonFg;
+activeButtonSecondaryFg: @TINT@;
+activeButtonSecondaryFgOver: activeButtonSecondaryFg;
+activeLineFg: @ACCENT@;
+activeLineFgError: @RED@;
+lightButtonBg: @BACKGROUND@;
+lightButtonBgOver: @HOVER@;
+lightButtonBgRipple: @PRESSED@;
+lightButtonFg: @ACCENT@;
+lightButtonFgOver: lightButtonFg;
+attentionButtonFg: @RED@;
+attentionButtonFgOver: @RED@;
+attentionButtonBgOver: @RED_HOVER@;
+attentionButtonBgRipple: @RED_PRESSED@;
+
+// Menus, scrollbars, small controls
+menuBg: @SURFACE@;
+menuBgOver: @SURFACE_HOVER@;
+menuBgRipple: @SURFACE_PRESSED@;
+menuIconFg: windowSubTextFg;
+menuIconFgOver: windowFg;
+menuSubmenuArrowFg: windowSubTextFg;
+menuFgDisabled: @DISABLED@;
+menuSeparatorFg: @RIM@;
+scrollBarBg: @SCROLL@;
+scrollBarBgOver: @SCROLL_HOVER@;
+scrollBg: #00000000;
+scrollBgOver: @FILL_REST@;
+radialFg: @ACCENT@;
+radialBg: #00000056;
+placeholderFg: windowSubTextFg;
+placeholderFgActive: @DISABLED@;
+inputBorderFg: @RIM@;
+filterInputBorderFg: @ACCENT@;
+filterInputActiveBg: @SURFACE@;
+filterInputInactiveBg: @HOVER@;
+checkboxFg: windowSubTextFg;
+sliderBgInactive: @RIM@;
+sliderBgActive: @ACCENT@;
+tooltipBg: @SURFACE@;
+tooltipFg: windowFg;
+tooltipBorderFg: @RIM@;
+importantTooltipBg: @SURFACE@;
+importantTooltipFg: windowFg;
+importantTooltipFgLink: @ACCENT@;
+toastBg: @SURFACE@;
+toastFg: windowFg;
+spellUnderline: @RED@;
+
+// Bot keyboards
+botKbBg: @SURFACE@;
+botKbDownBg: @SURFACE_HOVER@;
+botKbColor: windowFg;
+
+// Title bar and tray
+titleShadow: #00000000;
+titleBg: windowBg;
+titleBgActive: titleBg;
+titleButtonBg: titleBg;
+titleButtonFg: windowSubTextFg;
+titleButtonBgOver: @HOVER@;
+titleButtonFgOver: windowFg;
+titleButtonBgActive: titleButtonBg;
+titleButtonFgActive: titleButtonFg;
+titleButtonBgActiveOver: titleButtonBgOver;
+titleButtonFgActiveOver: titleButtonFgOver;
+titleButtonCloseBg: titleButtonBg;
+titleButtonCloseFg: titleButtonFg;
+titleButtonCloseBgOver: @RED@;
+titleButtonCloseFgOver: windowFgActive;
+titleButtonCloseBgActive: titleButtonCloseBg;
+titleButtonCloseFgActive: titleButtonCloseFg;
+titleButtonCloseBgActiveOver: titleButtonCloseBgOver;
+titleButtonCloseFgActiveOver: titleButtonCloseFgOver;
+titleFg: windowSubTextFg;
+titleFgActive: windowFg;
+trayCounterBg: @ACCENT@;
+trayCounterBgMute: @DISABLED@;
+trayCounterFg: @BACKGROUND@;
+
+// Dialog boxes (settings, popups) and the side menu draw parts of their
+// content with windowBg, so their own backgrounds must match it. Gaps between
+// settings sections are a darker step, so sections read as grouped blocks;
+// the dimmed layer behind sets dialogs apart.
+boxBg: windowBg;
+boxTextFg: windowFg;
+boxTextFgGood: @GREEN@;
+boxTextFgError: @RED@;
+boxTitleFg: windowFg;
+boxSearchBg: boxBg;
+boxTitleAdditionalFg: windowSubTextFg;
+boxTitleCloseFg: windowSubTextFg;
+boxTitleCloseFgOver: windowFg;
+boxDividerBg: @DEEP@;
+boxDividerFg: @RIM@;
+membersAboutLimitFg: windowSubTextFg;
+
+// Contacts and profile
+contactsBg: boxBg;
+contactsBgOver: windowBgOver;
+contactsNameFg: windowFg;
+contactsStatusFg: windowSubTextFg;
+contactsStatusFgOver: windowSubTextFg;
+contactsStatusFgOnline: @ACCENT@;
+profileStatusFgOver: windowSubTextFg;
+profileVerifiedCheckBg: @ACCENT@;
+profileAdminStartFg: @ACCENT@;
+photoCropFadeBg: layerBg;
+photoCropPointFg: windowFg;
+
+// Intro (login)
+introBg: windowBg;
+introTitleFg: windowFg;
+introDescriptionFg: windowSubTextFg;
+
+// Left folder sidebar
+sideBarBg: @BACKGROUND@;
+sideBarBgActive: @TINT@;
+sideBarBgRipple: @PRESSED@;
+sideBarTextFg: windowSubTextFg;
+sideBarTextFgActive: windowFg;
+sideBarIconFg: windowSubTextFg;
+sideBarIconFgActive: @ACCENT@;
+sideBarBadgeBg: @ACCENT@;
+sideBarBadgeBgActive: @ACCENT@;
+sideBarBadgeBgMuted: @DISABLED@;
+sideBarBadgeBgMutedActive: @DISABLED@;
+sideBarBadgeFg: @BACKGROUND@;
+
+// Main menu
+mainMenuBg: windowBg;
+mainMenuCoverBg: windowBg;
+mainMenuCloudFg: @ACCENT@;
+mainMenuCloudBg: @HOVER@;
+
+// Chat list: flat rows, a fill on hover, the soft tint when selected.
+dialogsMenuIconFg: windowSubTextFg;
+dialogsMenuIconFgOver: windowFg;
+dialogsBg: windowBg;
+dialogsNameFg: windowFg;
+dialogsChatIconFg: windowSubTextFg;
+dialogsDateFg: windowSubTextFg;
+dialogsTextFg: windowSubTextFg;
+dialogsTextFgService: windowFg;
+dialogsDraftFg: @RED@;
+dialogsVerifiedIconBg: @ACCENT@;
+dialogsVerifiedIconFg: @BACKGROUND@;
+dialogsSendingIconFg: windowSubTextFg;
+dialogsSentIconFg: @ACCENT@;
+dialogsUnreadBg: @ACCENT@;
+dialogsUnreadBgMuted: @DISABLED@;
+dialogsUnreadFg: @BACKGROUND@;
+dialogsArchiveFg: windowSubTextFg;
+dialogsOnlineBadgeFg: @GREEN@;
+dialogsScamFg: @RED@;
+dialogsMentionIconFg: @ACCENT@;
+dialogsReactionIconFg: @ACCENT@;
+dialogsPollIconFg: windowSubTextFg;
+
+dialogsBgOver: @HOVER@;
+dialogsNameFgOver: dialogsNameFg;
+dialogsChatIconFgOver: dialogsChatIconFg;
+dialogsDateFgOver: dialogsDateFg;
+dialogsTextFgOver: dialogsTextFg;
+dialogsTextFgServiceOver: dialogsTextFgService;
+dialogsDraftFgOver: dialogsDraftFg;
+dialogsVerifiedIconBgOver: dialogsVerifiedIconBg;
+dialogsVerifiedIconFgOver: dialogsVerifiedIconFg;
+dialogsSendingIconFgOver: dialogsSendingIconFg;
+dialogsSentIconFgOver: dialogsSentIconFg;
+dialogsUnreadBgOver: dialogsUnreadBg;
+dialogsUnreadBgMutedOver: dialogsUnreadBgMuted;
+dialogsUnreadFgOver: dialogsUnreadFg;
+dialogsArchiveFgOver: dialogsArchiveFg;
+dialogsScamFgOver: dialogsScamFg;
+
+dialogsBgActive: @TINT@;
+dialogsNameFgActive: windowFg;
+dialogsChatIconFgActive: windowFg;
+dialogsDateFgActive: @TINT_TEXT@;
+dialogsTextFgActive: @TINT_TEXT@;
+dialogsTextFgServiceActive: windowFg;
+dialogsDraftFgActive: @RED@;
+dialogsVerifiedIconBgActive: @ACCENT@;
+dialogsVerifiedIconFgActive: @BACKGROUND@;
+dialogsSendingIconFgActive: @TINT_TEXT@;
+dialogsSentIconFgActive: @ACCENT@;
+dialogsUnreadBgActive: @ACCENT@;
+dialogsUnreadBgMutedActive: @DISABLED@;
+dialogsUnreadFgActive: @BACKGROUND@;
+dialogsOnlineBadgeFgActive: @GREEN@;
+dialogsScamFgActive: @RED@;
+dialogsRippleBg: @PRESSED@;
+dialogsRippleBgActive: @TINT_PRESSED@;
+
+// Search
+searchedBarBg: @SURFACE@;
+searchedBarFg: windowSubTextFg;
+searchedTextMatchBg: @TINT@;
+searchedTextMatchFg: windowFg;
+searchedTextCurrentMatchBg: @ACCENT@;
+searchedTextCurrentMatchFg: @BACKGROUND@;
+
+// Chat header and pinned bar
+topBarBg: windowBg;
+historyPinnedBg: windowBg;
+
+// Emoji and stickers
+emojiPanBg: @SURFACE@;
+emojiPanCategories: @SURFACE@;
+emojiPanHeaderFg: windowSubTextFg;
+emojiPanHeaderBg: @SURFACE@;
+emojiIconFg: windowSubTextFg;
+emojiSubIconFgActive: @ACCENT@;
+stickerPanDeleteBg: #000000cc;
+stickerPanDeleteFg: windowFg;
+stickerPreviewBg: #000000b0;
+
+// Message text
+historyTextInFg: windowFg;
+historyTextInFgSelected: windowFg;
+historyTextOutFg: windowFg;
+historyTextOutFgSelected: windowFg;
+historyLinkInFg: @ACCENT@;
+historyLinkInFgSelected: @ACCENT@;
+historyLinkOutFg: @ACCENT@;
+historyLinkOutFgSelected: @ACCENT@;
+historyFileNameInFg: windowFg;
+historyFileNameInFgSelected: windowFg;
+historyFileNameOutFg: windowFg;
+historyFileNameOutFgSelected: windowFg;
+historyOutIconFg: @ACCENT@;
+historyOutIconFgSelected: @ACCENT@;
+historyIconFgInverted: windowFg;
+historySendingOutIconFg: @TINT_TEXT@;
+historySendingInIconFg: windowSubTextFg;
+historySendingInvertedIconFg: #ffffffc8;
+historyCallArrowInFg: @GREEN@;
+historyCallArrowInFgSelected: @GREEN@;
+historyCallArrowMissedInFg: @RED@;
+historyCallArrowOutFg: @GREEN@;
+historyCallArrowOutFgSelected: @GREEN@;
+historyUnreadBarBg: @SURFACE@;
+historyUnreadBarBorder: @RIM@;
+historyUnreadBarFg: @ACCENT@;
+historyForwardChooseBg: #0000004c;
+historyForwardChooseFg: windowFg;
+historyPeerUserpicFg: @BACKGROUND@;
+historyPeer1UserpicBg: @RED@;
+historyPeer2UserpicBg: @GREEN@;
+historyPeer3UserpicBg: @YELLOW@;
+historyPeer4UserpicBg: @BLUE@;
+historyPeer5UserpicBg: @MAGENTA@;
+historyPeer6UserpicBg: @CYAN@;
+historyPeer7UserpicBg: @RED@;
+historyPeer8UserpicBg: @YELLOW@;
+historyPeer1NameFg: @RED@;
+historyPeer2NameFg: @GREEN@;
+historyPeer3NameFg: @YELLOW@;
+historyPeer4NameFg: @BLUE@;
+historyPeer5NameFg: @MAGENTA@;
+historyPeer6NameFg: @CYAN@;
+historyPeer7NameFg: @RED@;
+historyPeer8NameFg: @YELLOW@;
+historyPeerSavedMessagesBg: @ACCENT@;
+historyPeerArchiveUserpicBg: @DISABLED@;
+settingsIconFg: windowSubTextFg;
+
+// Bubbles: incoming on the surface, outgoing in the soft tint, both with
+// normal text; selected ones a step stronger.
+msgInBg: @SURFACE@;
+msgInBgSelected: @SURFACE_PRESSED@;
+msgOutBg: @TINT@;
+msgOutBgSelected: @TINT_PRESSED@;
+msgSelectOverlay: #ffffff14;
+msgStickerOverlay: #00000040;
+msgInServiceFg: @ACCENT@;
+msgInServiceFgSelected: @ACCENT@;
+msgOutServiceFg: @ACCENT@;
+msgOutServiceFgSelected: @ACCENT@;
+msgInShadow: #00000000;
+msgInShadowSelected: #00000000;
+msgOutShadow: #00000000;
+msgOutShadowSelected: #00000000;
+msgInDateFg: windowSubTextFg;
+msgInDateFgSelected: windowSubTextFg;
+msgOutDateFg: @TINT_TEXT@;
+msgOutDateFgSelected: @TINT_TEXT@;
+msgServiceBg: #00000066;
+msgServiceBgSelected: #00000080;
+msgServiceFg: windowFg;
+msgInReplyBarColor: @ACCENT@;
+msgInReplyBarSelColor: @ACCENT@;
+msgOutReplyBarColor: @ACCENT@;
+msgOutReplyBarSelColor: @ACCENT@;
+msgImgReplyBarColor: windowFg;
+msgInMonoFg: @ACCENT@;
+msgOutMonoFg: @ACCENT@;
+msgInMonoFgSelected: @ACCENT@;
+msgOutMonoFgSelected: @ACCENT@;
+msgDateImgFg: windowFg;
+msgDateImgBg: #00000066;
+msgDateImgBgOver: #00000080;
+msgDateImgBgSelected: #00000099;
+msgFileThumbLinkInFg: @ACCENT@;
+msgFileThumbLinkInFgSelected: @ACCENT@;
+msgFileThumbLinkOutFg: @ACCENT@;
+msgFileThumbLinkOutFgSelected: @ACCENT@;
+msgFileInBg: @ACCENT@;
+msgFileInBgOver: @ACCENT_HOVER@;
+msgFileInBgSelected: @ACCENT@;
+msgFileOutBg: @ACCENT@;
+msgFileOutBgSelected: @ACCENT@;
+msgFile1Bg: @BLUE@;
+msgFile1BgDark: @BLUE@;
+msgFile1BgOver: @BLUE@;
+msgFile1BgSelected: @BLUE@;
+msgFile2Bg: @GREEN@;
+msgFile2BgDark: @GREEN@;
+msgFile2BgOver: @GREEN@;
+msgFile2BgSelected: @GREEN@;
+msgFile3Bg: @RED@;
+msgFile3BgDark: @RED@;
+msgFile3BgOver: @RED@;
+msgFile3BgSelected: @RED@;
+msgFile4Bg: @YELLOW@;
+msgFile4BgDark: @YELLOW@;
+msgFile4BgOver: @YELLOW@;
+msgFile4BgSelected: @YELLOW@;
+historyFileThumbIconFg: windowFg;
+historyFileThumbRadialFg: windowFg;
+historyVideoMessageProgressFg: windowFg;
+msgWaveformInActive: @ACCENT@;
+msgWaveformInActiveSelected: @ACCENT@;
+msgWaveformInInactive: @DISABLED@;
+msgWaveformInInactiveSelected: @DISABLED@;
+msgWaveformOutActive: @ACCENT@;
+msgWaveformOutActiveSelected: @ACCENT@;
+msgWaveformOutInactive: @TINT_TEXT@;
+msgWaveformOutInactiveSelected: @TINT_TEXT@;
+msgBotKbOverBgAdd: #ffffff14;
+msgBotKbIconFg: windowFg;
+msgBotKbRippleBg: #ffffff20;
+mediaInFg: windowSubTextFg;
+mediaInFgSelected: windowSubTextFg;
+mediaOutFg: @TINT_TEXT@;
+mediaOutFgSelected: @TINT_TEXT@;
+
+// Scroll-to-bottom button
+historyToDownBg: @SURFACE@;
+historyToDownBgOver: @SURFACE_HOVER@;
+historyToDownBgRipple: @SURFACE_PRESSED@;
+historyToDownFg: windowSubTextFg;
+historyToDownFgOver: windowFg;
+historyToDownShadow: #00000040;
+
+// Compose area
+historyComposeAreaBg: windowBg;
+historyComposeAreaFg: windowFg;
+historyComposeAreaFgService: windowSubTextFg;
+historyComposeIconFg: windowSubTextFg;
+historyComposeIconFgOver: windowFg;
+historySendIconFg: @ACCENT@;
+historySendIconFgOver: @ACCENT@;
+historyReplyBg: windowBg;
+historyReplyIconFg: @ACCENT@;
+historyReplyCancelFg: windowSubTextFg;
+historyReplyCancelFgOver: windowFg;
+historyComposeButtonBg: windowBg;
+historyComposeButtonBgOver: @HOVER@;
+historyComposeButtonBgRipple: @PRESSED@;
+
+// Shared media, notifications, player
+overviewCheckBg: #00000040;
+overviewCheckBgActive: @ACCENT@;
+overviewCheckBorder: windowBg;
+overviewPhotoSelectOverlay: #ffffff20;
+notificationBg: @SURFACE@;
+notificationsBoxMonitorFg: windowFg;
+notificationsBoxScreenBg: @BACKGROUND@;
+notificationSampleUserpicFg: @DISABLED@;
+notificationSampleCloseFg: @DISABLED@;
+notificationSampleTextFg: @DISABLED@;
+notificationSampleNameFg: windowSubTextFg;
+mediaPlayerBg: windowBg;
+mediaPlayerActiveFg: @ACCENT@;
+mediaPlayerInactiveFg: @RIM@;
+mediaPlayerDisabledFg: @DISABLED@;
+
+// Media viewer
+mediaviewFileBg: @SURFACE@;
+mediaviewFileNameFg: windowFg;
+mediaviewFileSizeFg: windowSubTextFg;
+mediaviewFileExtFg: windowFg;
+mediaviewMenuBg: @SURFACE@;
+mediaviewMenuBgOver: @SURFACE_HOVER@;
+mediaviewMenuBgRipple: @SURFACE_PRESSED@;
+mediaviewMenuFg: windowFg;
+mediaviewBg: #000000eb;
+mediaviewVideoBg: imageBg;
+mediaviewControlBg: #0000003c;
+mediaviewControlFg: windowFg;
+mediaviewCaptionBg: #00000080;
+mediaviewCaptionFg: windowFg;
+mediaviewTextLinkFg: @ACCENT@;
+mediaviewSaveMsgBg: toastBg;
+mediaviewSaveMsgFg: toastFg;
+mediaviewPlaybackActive: @ACCENT@;
+mediaviewPlaybackInactive: #ffffff40;
+mediaviewPlaybackActiveOver: @ACCENT@;
+mediaviewPlaybackInactiveOver: #ffffff60;
+mediaviewPlaybackProgressFg: #ffffffc7;
+mediaviewPlaybackIconFg: windowFg;
+mediaviewPlaybackIconFgOver: windowFg;
+mediaviewPlaybackIconRipple: #ffffff14;
+mediaviewPipControlsFg: windowFg;
+mediaviewPipControlsFgOver: windowFg;
+mediaviewPipPlaybackActive: @ACCENT@;
+mediaviewPipPlaybackInactive: #ffffff40;
+mediaviewTransparentBg: #ffffff;
+mediaviewTransparentFg: #cccccc;
+
+// Calls
+callBg: #1b1b1bf2;
+callBgOpaque: @BACKGROUND@;
+callBgButton: #00000000;
+callNameFg: windowFg;
+callStatusFg: windowSubTextFg;
+callIconBg: @SURFACE@;
+callIconBgActive: windowFg;
+callIconFgActive: @BACKGROUND@;
+callAnswerBg: @GREEN@;
+callHangupBg: @RED@;
+callBarBg: @TINT@;
+callBarBgMuted: @SURFACE@;
+callBarFg: windowFg;
+groupCallBg: @BACKGROUND@;
+groupCallMembersBg: @SURFACE@;
+groupCallMembersBgOver: @SURFACE_HOVER@;
+groupCallMembersBgRipple: @SURFACE_PRESSED@;
+groupCallMembersFg: windowFg;
+groupCallMenuBg: @SURFACE@;
+groupCallMenuBgOver: @SURFACE_HOVER@;
+groupCallMenuBgRipple: @SURFACE_PRESSED@;
+groupCallActiveFg: @ACCENT@;
+groupCallMemberActiveIcon: @ACCENT@;
+groupCallMemberActiveStatus: @ACCENT@;
+groupCallMemberInactiveIcon: windowSubTextFg;
+groupCallMemberInactiveStatus: windowSubTextFg;
+groupCallMemberMutedIcon: @RED@;
+groupCallIconFg: windowFg;
+groupCallLeaveBg: @RED@;
+
+// Wallet and statistics headers
+walletTitleBg: titleBg;
+walletTopBg: @SURFACE@;
+statisticsChartInactive: @DISABLED@;
+statisticsChartActive: windowFg;
+
+// Update banner
+outdatedFg: windowFg;
+outdateSoonBg: @YELLOW@;
+outdatedBg: @RED@;

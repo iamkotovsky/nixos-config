@@ -3,6 +3,7 @@ paths:
   - "config/quickshell/**"
   - "config/rofi/**"
   - "config/firefox/**"
+  - "config/telegram/**"
   - "config/hypr/**"
   - "config/niri/**"
   - "theme/**"
@@ -11,6 +12,7 @@ paths:
   - "modules/home/hyprlock.nix"
   - "modules/home/kitty.nix"
   - "modules/home/firefox.nix"
+  - "modules/home/telegram.nix"
 ---
 
 # Desktop design system
@@ -45,6 +47,7 @@ The single source of truth is `theme/base.nix`, with colors in `theme/presets/*.
 - `config/rofi/config.rasi` via `modules/home/rofi.nix`;
 - `config/hypr/hyprlock.conf` via `modules/home/hyprlock.nix`;
 - `config/niri/config.kdl` via `modules/home/niri.nix`.
+- `config/telegram/colors.tdesktop-theme` via `modules/home/telegram.nix`. Telegram lays a theme over its light default palette, so every key gets set (unset keys show light defaults). Hover/pressed/tint shades are mixed in Nix (`mix a b t`), and only keys that exist in the installed Telegram are allowed (check the binary). Outgoing bubbles and the selected chat use the soft accent tint, not solid accent.
 - `config/firefox/userChrome.css` via `modules/home/firefox.nix`. Opacities become `color-mix` percentages; Firefox's own theme variables are mapped onto `--ds-*` tokens at the top of the file.
 
 Component sizes that only QML uses live in the last section of `Theme.qml`.
