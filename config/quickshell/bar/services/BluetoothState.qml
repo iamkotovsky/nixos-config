@@ -60,11 +60,6 @@ Singleton {
         device.forget();
     }
 
-    // Like GNOME: "off" also sets the rfkill soft block, and "on" lifts it
-    // first. While soft-blocked (e.g. by blueman, a hotkey or a previous
-    // session), BlueZ silently refuses to power the adapter on, so setting
-    // `adapter.enabled` alone does nothing. The user can write /dev/rfkill
-    // (uaccess), so no root is needed.
     // Discover nearby devices only while the Bluetooth page is open.
     Binding {
         target: root.adapter
@@ -84,15 +79,20 @@ Singleton {
         }
     }
 
+    // Off: power the adapter down through BlueZ first (it disconnects
+    // devices cleanly and returns once done), then set the rfkill soft block,
+    // like GNOME. One step after the other: cutting the radio while BlueZ is
+    // still tearing down an audio connection hung this Intel controller's
+    // firmware (HCI Reset timeouts; restarting bluetoothd did not help).
+    // On: lift the block, then power on, retrying while the adapter
+    // re-registers; while soft-blocked BlueZ refuses to power on. The user
+    // can write /dev/rfkill (uaccess), so no root is needed.
     function toggle() {
         if (!available)
             return;
-        if (enabled) {
-            adapter.enabled = false;
-            Quickshell.execDetached(["rfkill", "block", "bluetooth"]);
-        } else {
-            // The adapter re-registers after unblocking; give it a moment.
-            Quickshell.execDetached(["sh", "-c", "rfkill unblock bluetooth && sleep 0.5 && bluetoothctl power on"]);
-        }
+        if (enabled)
+            Quickshell.execDetached(["sh", "-c", "bluetoothctl power off; rfkill block bluetooth"]);
+        else
+            Quickshell.execDetached(["sh", "-c", "rfkill unblock bluetooth; for i in 1 2 3 4 5 6 7 8 9 10; do bluetoothctl power on && exit 0; sleep 0.5; done"]);
     }
 }

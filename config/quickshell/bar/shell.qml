@@ -7,6 +7,12 @@ import "services"
 // Runs as the quickshell-bar user service (modules/home/quickshell.nix) via
 // `quickshell --config bar`.
 ShellRoot {
+    // Singletons are only created when something first reads them. These
+    // must run from start-up, not only once a panel or popup touches them:
+    // Audio shows the OSD on volume changes, Brightness owns the brightness
+    // IPC handler, Notifications owns the notification server.
+    readonly property var services: [Audio, Brightness, Notifications]
+
     Variants {
         model: Quickshell.screens
 

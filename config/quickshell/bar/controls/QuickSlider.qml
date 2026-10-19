@@ -39,11 +39,9 @@ RowLayout {
 
         BarText {
             Layout.fillWidth: true
-            Layout.leftMargin: slider.leftPadding
             visible: root.label !== ""
             text: root.label
-            color: Theme.muted
-            font.pixelSize: Theme.fontCaption
+            font.pixelSize: Theme.fontSmall
             elide: Text.ElideRight
         }
 

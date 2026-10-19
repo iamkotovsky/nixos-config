@@ -3,52 +3,70 @@ import Quickshell
 import Quickshell.Wayland
 import "services"
 
-// Notification popups, top right under the bar, on the screen in use. New
-// cards spring in from the right; the rest glide into place when one closes.
-// Only the cards take input and get frosted; the window leaves room around
-// them for their shadows.
+// Notification popups, bottom right corner of the screen in use: the newest
+// card sits one gap from the corner and older ones stack upward. New cards
+// spring in from the right; the rest glide into place when one closes.
+// Only the cards take input and get frosted.
 PanelWindow {
     id: popups
 
     required property string screenName
 
-    // Where the first card's top edge goes: below the bar's strip (gap + pill
-    // + gap), plus one gap.
-    readonly property int cardsTop: Theme.gap * 3 + Theme.pillHeight
+    // Cards sit two gaps in from the screen edges: one gap inside a tiled
+    // window's border instead of right on top of it (and its focus ring),
+    // which also leaves room below and to the right for the shadow. To the
+    // left the window keeps a full shadow pad.
+    readonly property int inset: Theme.gap * 2
+    // One rounded region per card (leaving ones included), for the input mask
+    // and the blur, so the gaps between cards stay clear.
+    readonly property var cardRegions: list.contentItem.children.filter(child => child.blurRegion !== undefined).map(child => child.blurRegion)
 
+    // Always mapped, a fixed full-height column on the right edge, and never
+    // resized: every resize or unmap/remap of a layer surface is a new
+    // configure round-trip (and niri fades closing layers), which made cards
+    // stutter, vanish mid-animation and flash back. The window is fully
+    // transparent; the input mask and blur cover only the cards, so it costs
+    // nothing and clicks pass through everywhere else.
     anchors {
         top: true
+        bottom: true
         right: true
     }
-    margins.top: Math.max(0, cardsTop - Theme.shadowPad)
-    implicitWidth: Theme.notificationWidth + Theme.gap + Theme.shadowPad
-    implicitHeight: Math.max(1, list.y + list.contentHeight + Theme.shadowPad)
+    implicitWidth: Theme.shadowPad + Theme.notificationWidth + inset
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
-    visible: Notifications.popups.length > 0 && Osd.output === screenName
+    // Only the cards take input; the rest of the column passes clicks through.
     mask: Region {
-        item: list
+        regions: popups.cardRegions
     }
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "quickshell-notifications"
 
-    // One rounded region per card, so the gaps between cards stay clear.
     BackgroundEffect.blurRegion: Region {
-        regions: list.contentItem.children.filter(child => child.blurRegion !== undefined).map(child => child.blurRegion)
+        regions: popups.cardRegions
     }
 
     ListView {
         id: list
 
+        // Fills the whole column (cards stack from the bottom). Sized to its
+        // content instead, the list shrinks as a card is removed, the leaving
+        // card falls outside it, and ListView destroys it mid-animation.
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            bottomMargin: popups.inset
+        }
         x: Theme.shadowPad
-        y: popups.cardsTop - popups.margins.top
         width: Theme.notificationWidth
-        height: contentHeight
         interactive: false
+        // Newest (first) at the bottom, nearest the corner.
+        verticalLayoutDirection: ListView.BottomToTop
         spacing: Theme.gap
         model: ScriptModel {
-            values: Notifications.popups
+            // Only on the screen in use; switching screens moves the cards.
+            values: Osd.output === popups.screenName ? Notifications.popups : []
         }
 
         delegate: NotificationCard {
@@ -75,17 +93,13 @@ PanelWindow {
             }
         }
 
+        // Slides off the screen edge without fading: the card's blur can't
+        // fade, so a faded card would leave a ghost frost rectangle behind.
         remove: Transition {
             NumberAnimation {
                 property: "x"
-                to: Theme.notificationWidth
+                to: Theme.notificationWidth + popups.inset
                 duration: Theme.exitDuration(Theme.durationSlow)
-                easing.type: Easing.InCubic
-            }
-            NumberAnimation {
-                property: "opacity"
-                to: 0
-                duration: Theme.exitDuration(Theme.durationNormal)
                 easing.type: Easing.InCubic
             }
         }

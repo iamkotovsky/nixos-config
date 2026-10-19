@@ -110,7 +110,7 @@ Singleton {
 
     function outputIcon(node) {
         const name = (node.name ?? "").toLowerCase();
-        if (name.includes("bluez"))
+        if (name.includes("bluez") || name.includes("headphone") || name.includes("headset"))
             return "headphones";
         if (name.includes("hdmi"))
             return "tv";

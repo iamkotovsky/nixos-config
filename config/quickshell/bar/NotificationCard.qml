@@ -9,9 +9,9 @@ import "services"
 import "controls"
 
 // One notification popup: a glass card like the control panel. Hovering lifts
-// it and pauses the timeout (the thin line along the bottom); clicking runs
-// the app's default action (or just dismisses). Critical ones get a red
-// border and stay until dismissed.
+// it and pauses its timeout (there is no visible countdown); clicking runs the
+// app's default action (or just dismisses). Critical ones get a red border
+// and stay until dismissed.
 Glass {
     id: card
 
@@ -76,9 +76,20 @@ Glass {
     readonly property var defaultAction: (info.actions ?? []).find(a => a.identifier === "default") ?? null
     readonly property var buttons: (info.actions ?? []).filter(a => a.identifier !== "default")
 
+    // Set once the notification is going away (dismissed, expired, or closed
+    // by the app). From then on the card only animates out: it ignores input
+    // and never touches the notification again, which may already be gone.
+    property bool closing: false
+
+    enabled: !closing
+    // Covers every way out, including the app closing it.
+    ListView.onRemove: closing = true
+
     function dismiss() {
-        if (card.notification)
-            card.notification.dismiss();
+        if (card.closing || !card.notification)
+            return;
+        card.closing = true;
+        card.notification.dismiss();
     }
     property real remaining: 1
 
@@ -100,32 +111,34 @@ Glass {
     radius: Theme.radiusLarge
     level: "overlay"
     elevation: "raised"
-    border.width: critical ? Theme.criticalBorder : 1
     border.color: critical ? Theme.red : Qt.alpha(Theme.foreground, Theme.rimOpacity)
 
     HoverHandler {
         id: hover
     }
 
-    // Drives both the expiry and the bottom progress line.
+    // Counts down to expiry; paused while hovered.
     NumberAnimation {
         target: card
         property: "remaining"
         from: 1
         to: 0
         duration: card.timeout
-        running: card.timeout > 0
-        paused: hover.hovered
+        running: card.timeout > 0 && !card.closing
+        // Only meaningful while counting down; critical cards have no timer.
+        paused: card.timeout > 0 && hover.hovered
         onFinished: {
-            if (card.notification)
-                card.notification.expire();
+            if (card.closing || !card.notification)
+                return;
+            card.closing = true;
+            card.notification.expire();
         }
     }
 
     StateLayer {
         squash: false
         onClicked: {
-            if (card.notification && card.defaultAction)
+            if (!card.closing && card.notification && card.defaultAction)
                 card.defaultAction.invoke();
             card.dismiss();
         }
@@ -255,7 +268,7 @@ Glass {
 
                     StateLayer {
                         onClicked: {
-                            if (card.notification)
+                            if (!card.closing && card.notification)
                                 button.modelData.invoke();
                             card.dismiss();
                         }
@@ -272,20 +285,5 @@ Glass {
                 }
             }
         }
-    }
-
-    // Time left until expiry, along the straight part of the bottom edge.
-    Rectangle {
-        visible: card.timeout > 0
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-            leftMargin: card.radius
-            bottomMargin: card.border.width
-        }
-        width: (parent.width - card.radius * 2) * card.remaining
-        height: Theme.progressHeight
-        radius: height / 2
-        color: Qt.alpha(Theme.accent, Theme.progressOpacity)
     }
 }

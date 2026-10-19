@@ -17,11 +17,8 @@ ColumnLayout {
         onBack: ControlCenter.back()
     }
 
-    BarText {
-        Layout.leftMargin: Theme.spacingMedium
+    SectionLabel {
         text: "Output"
-        color: Theme.muted
-        font.pixelSize: Theme.fontCaption
     }
 
     ScrollList {
@@ -41,11 +38,8 @@ ColumnLayout {
         }
     }
 
-    BarText {
-        Layout.leftMargin: Theme.spacingMedium
+    SectionLabel {
         text: "Apps"
-        color: Theme.muted
-        font.pixelSize: Theme.fontCaption
     }
 
     BarText {

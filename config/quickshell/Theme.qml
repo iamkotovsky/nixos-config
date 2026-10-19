@@ -116,8 +116,6 @@ Singleton {
     property int indicatorSize: 8
     property int indicatorActiveWidth: 22
     property int thumbnailSize: 48
-    property int criticalBorder: 2
-    property int progressHeight: 2
     property int panelWidth: 360
     property int notificationWidth: 380
     property int osdWidth: 300

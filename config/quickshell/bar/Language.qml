@@ -4,7 +4,14 @@ import QtQuick
 Pill {
     visible: NiriEvents.layoutCode !== ""
     interactive: true
+    spacing: Theme.spacingXs
     onClicked: NiriEvents.switchLayout()
+
+    // Filled, like the other bar status glyphs.
+    MaterialIcon {
+        name: "public"
+        filled: true
+    }
 
     BarText {
         text: NiriEvents.layoutCode

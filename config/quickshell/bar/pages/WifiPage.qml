@@ -166,7 +166,7 @@ ColumnLayout {
                         right: parent.right
                         top: parent.top
                         topMargin: Theme.spacingSmall
-                        leftMargin: Theme.spacingMedium
+                        leftMargin: Theme.buttonSize + Theme.spacingMedium
                         rightMargin: Theme.spacingMedium
                     }
                     onAccepted: password => Network.connectTo(entry.modelData, password)

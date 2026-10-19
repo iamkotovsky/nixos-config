@@ -51,7 +51,7 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 | Gap | `gap` | 8 | Screen edges, between windows (niri `gaps`), around the bar, between stacked cards |
 | Spacing | `spacingXs/Small/Medium/Large` | 4 / 8 / 12 / 16 | xs: icon↔label. small: items in a row. medium: inside tiles, between rows. large: card padding |
 | Radius | `radiusSmall/Medium/Large`, full = `height / 2` | 6 / 10 / 16 | small: list rows, thumbnails. medium: windows, bar pills, tiles, OSD. large: panel, notifications, rofi. full: buttons, chips, sliders. Nested: inner = outer − padding |
-| Type | `fontFamily` (Inter, `font.ui`), `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | Inter everywhere in the shell, rofi and hyprlock, with tabular digits (`BarText` sets `tnum`). JetBrains Mono (`font.mono`) only for the terminal, code and Nerd Font glyphs. caption: app names, sublabels (muted). small: tile titles, body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
+| Type | `fontFamily` (Inter, `font.ui`), `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | Inter everywhere in the shell, rofi and hyprlock, with tabular digits (`BarText` sets `tnum`). JetBrains Mono (`font.mono`) only for the terminal, code and Nerd Font glyphs. caption: sublabels and status lines under a title (muted). small: tile and row titles, item names above sliders, section headings (`SectionLabel`: medium weight, muted), body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
 | Icons | `iconSize`, `iconSizeLarge`, `iconWeight` | 18 / 24, 450 | Material Symbols Rounded only |
 | Glass | `stripOpacity`, `raisedOpacity`, `overlayOpacity` | 0.55 / 0.62 / 0.55 | strip: bar backdrop (on `background`). raised: bar pills, rofi. overlay: panel, notifications, OSD (on `surface`). Kitty uses a separate `opacity.terminal` (0.84) |
 | Rim | `rimOpacity`, `highlightOpacity` | 0.12 / 0.06 | 1px foreground border on glass (not the edge-to-edge bar strip, which has no border); a faint top gradient inside it |
@@ -59,7 +59,7 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 | Other alphas | `trackOpacity`, `progressOpacity`, `subtleTextOpacity`, `disabledOpacity` | 0.25 / 0.6 / 0.8 / 0.4 | Slider tracks, progress lines, secondary readable text, disabled |
 | Elevation | raised / floating shadow `Blur`, `Y`, `Opacity`; `shadowPad` | 6px, 2, 0.25 / 20px, 6, 0.35; 24 | flat: strip, chips at rest. raised: pills and tiles on hover, cards at rest. floating: panel, OSD, a card on hover |
 | Motion | `durationFast/Normal/Slow`, `overshoot`, `exitDuration()` | 150 / 250 / 350 ms, 1.2, ×0.7 | fast + OutCubic: hover, color, press. normal + OutCubic: fades, values, reflow. slow + OutBack: surfaces entering. Exits: `exitDuration(...)`, InCubic, no overshoot |
-| Borders | — | 1px rim; 1px accent; `criticalBorder` 2px red | Rim on all glass except the bar strip. Accent for focus (niri focus ring, rofi selected row). Red for critical notifications |
+| Borders | — | 1px everywhere: rim, accent, red | Rim on all glass except the bar strip. Accent for focus (niri focus ring, rofi selected row). Red (same 1px, colour only) for critical notifications |
 
 ## Color semantics
 
@@ -81,7 +81,7 @@ Reuse these before writing new widgets:
 - **`controls/IconButton`** (`buttonSize` 36, full), **`ToggleTile`** (`tileHeight` 56, medium), **`QuickSlider`** (track 6, knob 16 → 18 on hover or drag), **`MaterialIcon`**, **`BarText`**.
 - **List rows** (`controls/ListRow`) have one status slot at the end, never a row of icons. It shows one thing: a hover action (forget) in place of the status, else the state (a check when connected), else a hint (a lock only when a password is still needed). The glyphs cross-fade. Saved or connected things never show a lock.
 - **Sound page:** list only outputs that can play (unplugged HDMI/DP ports are hidden), and one slider per app, not per stream.
-- **Cards:** panel (`panelWidth` 360), notification (`notificationWidth` 380, rests raised and lifts to floating on hover), OSD (`osdWidth` 300 × `osdHeight` 44, radius medium like the bar pills).
+- **Cards:** panel (`panelWidth` 360), notification (`notificationWidth` 380, bottom-right corner inset two gaps so it never sits on a window's border or focus ring, newest at the bottom, no visible countdown, rests raised and lifts to floating on hover), OSD (`osdWidth` 300 × `osdHeight` 44, radius medium like the bar pills).
 
 ## Windows and the compositor
 
@@ -89,6 +89,9 @@ Reuse these before writing new widgets:
 - New layer namespaces are named `quickshell-<name>` and get a layer-rule.
 - Windows that show shadowed shapes leave `shadowPad` of room where the shadow falls. Keep the input `mask`, exclusive zone and gap maths based on the visible shapes, not the padding.
 - A `Region { item: ... }` ignores transforms (`scale`, `Translate`) and only re-maps on geometry changes. For a card that animates with transforms, build the blur `Region` from explicit `x/y/width/height` that include the transform, and switch to an empty region as soon as it starts hiding. Don't press-scale surfaces that carry their own blur region (`StateLayer { squash: false }`).
+- Blur can't fade: a surface with its own blur region either drops the region when it starts leaving (panel, OSD) or leaves by sliding off-screen at full opacity (notifications). Never fade it with the frost still on, which leaves a ghost frost rectangle.
+- A `ListView` destroys delegates that fall outside its bounds, even mid remove-transition. A list that animates items out must not shrink to its content; let it fill a fixed area, and take masks and blur from the items, not the list.
+- Popup windows whose contents come and go (notifications) stay mapped at a fixed size, transparent, with the input mask and blur covering only the visible cards. Don't toggle `visible` or resize per item: every unmap/remap or resize of a layer surface is a configure round-trip (and niri fades closing layers), which shows as stutter, cards vanishing mid-animation and flashing back.
 - Never resize an element that its parent positions by size (a slider knob, for example). Animate `scale` instead, so it doesn't shift.
 - Enter animations: fade, a small translate and a scale from `pressScale`, using slow OutBack. Exits use `exitDuration`, InCubic. Keep the window mapped (`visible: shown || card.opacity > 0`) until the exit finishes.
 
@@ -113,3 +116,4 @@ Reuse these before writing new widgets:
   - the user rebuilds with `rebuild`; don't run it for them.
 - After a token change, also run `nix flake check` (statix) and `nixos-rebuild build`.
 - New files must be known to git (`git add -N <file>`) before building: the flake only sees tracked files, and a missing QML file only fails at runtime ("X is not defined"), not in `nix flake check` or the build. Check with `git status --short | grep "^??"` before reporting.
+- Quickshell singletons are created lazily, on first read. A service that must work from start-up (signal handlers, `IpcHandler`, servers) has to be listed in `shell.qml`'s `services` property, or it stays dead until some UI happens to read it.

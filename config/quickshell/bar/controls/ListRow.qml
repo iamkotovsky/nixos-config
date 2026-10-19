@@ -37,13 +37,14 @@ Item {
     RowLayout {
         anchors {
             fill: parent
-            leftMargin: Theme.spacingMedium
+            // The icon sits in a button-wide column, so row icons line up with
+            // the back button and slider icons, and titles share one edge.
             rightMargin: Theme.spacingMedium
         }
         spacing: Theme.spacingMedium
 
         Item {
-            implicitWidth: Theme.iconSize
+            implicitWidth: Theme.buttonSize
             implicitHeight: Theme.iconSize
 
             MaterialIcon {
