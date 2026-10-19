@@ -59,7 +59,7 @@ Singleton {
     property int iconSizeLarge: 24
     // Stroke weight for Material Symbols, a touch heavier than regular so
     // outlined glyphs hold up next to the UI font.
-    property int iconWeight: 450
+    property int iconWeight: @ICON_WEIGHT@
     // The horizontal battery glyph reads small at iconSize.
     property int batteryIconSize: iconSize + 4
 
@@ -82,7 +82,7 @@ Singleton {
     property real trackOpacity: 0.25
     property real progressOpacity: 0.6
     property real disabledOpacity: 0.4
-    property real pressScale: 0.96
+    property real pressScale: @PRESS_SCALE@
 
     // Elevation: soft shadows for depth and hover lift only.
     property int shadowPad: @SHADOW_PAD@

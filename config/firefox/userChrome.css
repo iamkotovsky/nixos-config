@@ -1,0 +1,138 @@
+/* Rendered by modules/home/firefox.nix: @NAME@ placeholders are replaced with
+   design tokens from theme/base.nix at build time (see .claude/rules/design.md).
+
+   Firefox's chrome follows the shell: transparent toolbars over niri's blur,
+   foreground fills for hover and pressed states, a 1px accent rim only on the
+   selected tab and the focused address bar, Inter for the UI. Web pages stay
+   opaque. */
+
+:root {
+    /* Design tokens. */
+    --ds-fg: @FOREGROUND@;
+    --ds-muted: @MUTED@;
+    --ds-accent: @ACCENT@;
+    --ds-surface: @SURFACE@;
+    --ds-fill-rest: color-mix(in srgb, @FOREGROUND@ @FILL_REST@%, transparent);
+    --ds-fill-hover: color-mix(in srgb, @FOREGROUND@ @FILL_HOVER@%, transparent);
+    --ds-fill-pressed: color-mix(in srgb, @FOREGROUND@ @FILL_PRESSED@%, transparent);
+    --ds-rim: color-mix(in srgb, @FOREGROUND@ @RIM@%, transparent);
+    --ds-raised: color-mix(in srgb, @SURFACE@ @RAISED@%, transparent);
+    --ds-fast: @DURATION_FAST@ms;
+
+    /* Firefox's own theme variables, mapped onto the tokens. */
+    --toolbar-bgcolor: transparent !important;
+    --toolbar-color: var(--ds-fg) !important;
+    --toolbar-field-background-color: var(--ds-fill-rest) !important;
+    --toolbar-field-color: var(--ds-fg) !important;
+    --toolbar-field-border-color: var(--ds-rim) !important;
+    --toolbar-field-focus-background-color: var(--ds-raised) !important;
+    --toolbar-field-focus-color: var(--ds-fg) !important;
+    --toolbar-field-focus-border-color: var(--ds-accent) !important;
+    --lwt-accent-color: transparent !important;
+    --lwt-text-color: var(--ds-fg) !important;
+    --lwt-selected-tab-background-color: var(--ds-fill-hover) !important;
+    --tab-selected-bgcolor: var(--ds-fill-hover) !important;
+    --tab-selected-textcolor: var(--ds-fg) !important;
+    --tab-hover-background-color: var(--ds-fill-rest) !important;
+    --tab-border-radius: @RADIUS_MEDIUM@px !important;
+    --focus-outline-color: var(--ds-accent) !important;
+    --button-hover-bgcolor: var(--ds-fill-hover) !important;
+    --button-active-bgcolor: var(--ds-fill-pressed) !important;
+    --toolbarbutton-hover-background: var(--ds-fill-hover) !important;
+    --toolbarbutton-active-background: var(--ds-fill-pressed) !important;
+    --toolbarbutton-border-radius: @RADIUS_SMALL@px !important;
+
+    /* Menus and panels are separate popup surfaces that niri doesn't blur,
+       so they stay solid. */
+    --arrowpanel-background: var(--ds-surface) !important;
+    --arrowpanel-color: var(--ds-fg) !important;
+    --arrowpanel-border-color: var(--ds-rim) !important;
+    --panel-border-color: var(--ds-rim) !important;
+    --arrowpanel-border-radius: @RADIUS_LARGE@px !important;
+    --panel-item-hover-bgcolor: var(--ds-fill-hover) !important;
+    --panel-item-active-bgcolor: var(--ds-fill-pressed) !important;
+}
+
+/* Inter for the browser's own UI (tabs, address bar, menus). */
+* {
+    font-family: "@FONT@", sans-serif !important;
+}
+
+#navigator-toolbox,
+#TabsToolbar,
+#nav-bar {
+    background-color: transparent !important;
+    color: var(--ds-fg) !important;
+    border: none !important;
+}
+
+/* Navigation over bookmarks; saved bookmarks stay in the profile. */
+#PersonalToolbar,
+#bookmarks-menu-button,
+#star-button-box {
+    display: none !important;
+}
+
+/* Tabs: flat at rest, a fill on hover, the hover fill plus an accent rim
+   when selected (the rofi selected-row treatment). */
+.tab-background {
+    border-radius: @RADIUS_MEDIUM@px !important;
+    margin-block: @SPACING_XS@px !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: background-color var(--ds-fast) ease-out,
+        border-color var(--ds-fast) ease-out !important;
+}
+
+.tabbrowser-tab:hover:not([selected], [visuallyselected]) .tab-background {
+    background: var(--ds-fill-rest) !important;
+}
+
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-background {
+    background: var(--ds-fill-hover) !important;
+    border-color: var(--ds-accent) !important;
+}
+
+.tabbrowser-tab .tab-label {
+    color: var(--ds-muted) !important;
+}
+
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-label {
+    color: var(--ds-fg) !important;
+}
+
+/* A tab asking for attention is state, so it gets the accent. */
+.tabbrowser-tab[attention] .tab-label,
+.tabbrowser-tab[pinned][titlechanged] .tab-label {
+    color: var(--ds-accent) !important;
+}
+
+/* Address bar, through Firefox's own variables (Firefox 157 "nova" bar):
+   a frosted chip with a light rim at rest; focused, a 1px accent outline on
+   the input only. Open, the bar's background becomes the results panel:
+   it keeps the light rim, large radius and a solid surface so results stay
+   readable. Don't put borders on .urlbar-background directly: open, it is
+   the whole dropdown. */
+.urlbar,
+#searchbar {
+    --toolbar-field-border-color: var(--ds-rim) !important;
+    --toolbar-field-border-color-focus: var(--ds-accent) !important;
+    --urlbar-input-container-border-width: 1px !important;
+    --urlbar-input-container-border-width-open: 1px !important;
+    --urlbarview-border-radius: @RADIUS_LARGE@px !important;
+    --urlbar-background-color: var(--ds-fill-rest) !important;
+    --urlbar-background-color-focus: var(--ds-surface) !important;
+}
+
+.urlbar-background {
+    transition: background-color var(--ds-fast) ease-out !important;
+}
+
+/* Toolbar buttons: the shared hover/press fills, animated. */
+.toolbarbutton-1 > .toolbarbutton-icon,
+.toolbarbutton-1 > .toolbarbutton-badge-stack,
+.toolbarbutton-1 > .toolbarbutton-text {
+    border-radius: @RADIUS_SMALL@px !important;
+    transition: background-color var(--ds-fast) ease-out !important;
+}

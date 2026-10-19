@@ -1,0 +1,13 @@
+/* Rendered by modules/home/firefox.nix. Web pages stay opaque; only Firefox's
+   own new tab and home pages are transparent, so they show niri's blur like
+   the toolbars above them. */
+
+@-moz-document url("about:home"), url("about:newtab") {
+    :root,
+    body,
+    #root,
+    .activity-stream,
+    .outer-wrapper {
+        background: transparent !important;
+    }
+}

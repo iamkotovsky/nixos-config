@@ -42,6 +42,8 @@ let
     DURATION_NORMAL = toString theme.motion.normal;
     DURATION_SLOW = toString theme.motion.slow;
     OVERSHOOT = theme.motion.overshoot;
+    PRESS_SCALE = theme.motion.pressScale;
+    ICON_WEIGHT = toString theme.iconWeight;
     RAISED_SHADOW_BLUR = toString theme.elevation.raised.blur;
     RAISED_SHADOW_Y = toString theme.elevation.raised.y;
     RAISED_SHADOW_OPACITY = theme.elevation.raised.opacity;

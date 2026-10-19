@@ -2,6 +2,7 @@
 paths:
   - "config/quickshell/**"
   - "config/rofi/**"
+  - "config/firefox/**"
   - "config/hypr/**"
   - "config/niri/**"
   - "theme/**"
@@ -9,6 +10,7 @@ paths:
   - "modules/home/rofi.nix"
   - "modules/home/hyprlock.nix"
   - "modules/home/kitty.nix"
+  - "modules/home/firefox.nix"
 ---
 
 # Desktop design system
@@ -43,6 +45,7 @@ The single source of truth is `theme/base.nix`, with colors in `theme/presets/*.
 - `config/rofi/config.rasi` via `modules/home/rofi.nix`;
 - `config/hypr/hyprlock.conf` via `modules/home/hyprlock.nix`;
 - `config/niri/config.kdl` via `modules/home/niri.nix`.
+- `config/firefox/userChrome.css` via `modules/home/firefox.nix`. Opacities become `color-mix` percentages; Firefox's own theme variables are mapped onto `--ds-*` tokens at the top of the file.
 
 Component sizes that only QML uses live in the last section of `Theme.qml`.
 

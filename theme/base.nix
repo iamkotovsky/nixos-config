@@ -44,7 +44,13 @@
     normal = 250;
     slow = 350;
     overshoot = "1.2";
+    # Scale of a pressed control.
+    pressScale = "0.96";
   };
+
+  # Material Symbols stroke weight: a touch heavier than regular so outlined
+  # glyphs hold up next to the UI font.
+  iconWeight = 450;
 
   # Soft shadows, only for elevation and hover lift (blur radius and y offset
   # in px). `pad` is the room layer windows reserve around a shadowed shape so
