@@ -1,5 +1,7 @@
 import QtQuick
-import "services"
+import ".."
+import "../ui"
+import "../services"
 
 // Network, Bluetooth and battery at a glance; click opens the control panel
 // for this screen, scroll changes the volume (like GNOME).

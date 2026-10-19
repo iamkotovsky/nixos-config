@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell
+import ".."
 
 // Frosted glass surface: translucent fill over the compositor's blur, a 1px
 // light rim and a faint top highlight, plus an optional soft shadow.
@@ -19,6 +20,14 @@ Rectangle {
 
     readonly property int elevationLevel: Math.min(2, ["flat", "raised", "floating"].indexOf(elevation) + (lifted ? 1 : 0))
 
+    // level and elevation are strings; catch typos instead of failing silently.
+    Component.onCompleted: {
+        if (!["strip", "raised", "overlay"].includes(level))
+            console.warn("Glass: unknown level", level);
+        if (!["flat", "raised", "floating"].includes(elevation))
+            console.warn("Glass: unknown elevation", elevation);
+    }
+
     // For BackgroundEffect.blurRegion, rounded like the surface.
     readonly property Region blurRegion: Region {
         item: glass
@@ -35,9 +44,7 @@ Rectangle {
     border.color: Qt.alpha(Theme.foreground, Theme.rimOpacity)
 
     Behavior on color {
-        ColorAnimation {
-            duration: Theme.durationFast
-        }
+        ColorFade {}
     }
 
     // Light catching the top edge.
@@ -86,22 +93,13 @@ Rectangle {
         }
 
         Behavior on blur {
-            NumberAnimation {
-                duration: Theme.durationNormal
-                easing.type: Easing.OutCubic
-            }
+            Anim {}
         }
         Behavior on offset {
-            NumberAnimation {
-                duration: Theme.durationNormal
-                easing.type: Easing.OutCubic
-            }
+            Anim {}
         }
         Behavior on strength {
-            NumberAnimation {
-                duration: Theme.durationNormal
-                easing.type: Easing.OutCubic
-            }
+            Anim {}
         }
 
         RectangularShadow {

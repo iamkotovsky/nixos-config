@@ -2,12 +2,16 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import ".."
+import "../windows"
 
-// On-screen display state: which value to show ("volume" / "brightness"),
-// on which output, and for how long. Osd.qml (one per screen) renders it.
+// On-screen display state: which value to show (Osd.volume or
+// Osd.brightness), on which output, and for how long. OsdPopup (one per
+// screen) renders it.
 Singleton {
     id: root
+
+    readonly property string volume: "volume"
+    readonly property string brightness: "brightness"
 
     property string kind: ""
     property bool shown: false

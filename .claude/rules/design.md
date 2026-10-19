@@ -74,18 +74,35 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 - `red`: critical, errors, low battery. `green`, `yellow` and the others: status only.
 - `background` / `surface`: the glass tints. Shadows use `Theme.shadow`.
 
-## Building blocks (config/quickshell/bar)
+## Code layout (config/quickshell/bar)
+
+- `shell.qml`: per screen, one of each window. `Theme.qml` is rendered next to it.
+- `windows/`: the layer windows: `Bar`, `ControlPanel`, `OsdPopup`, `NotificationPopups`.
+- `widgets/`: bar applets: `Pill` and everything built on it (`Clock`, `Workspaces`, `Tray`, `Language`, `StatusButton`).
+- `ui/`: reusable building blocks (below), not tied to any service.
+- `pages/`: control panel pages: `MainPage`, `WifiPage`, `SoundPage`, `BluetoothPage`.
+- `notifications/`: `NotificationCard` and its `NotificationHeader` / `NotificationActions`.
+- `services/`: singletons for state (`Audio`, `AudioPorts`, `Network`, `BluetoothState`, `Brightness`, `Power`, `Caffeine`, `Notifications`, `NiriEvents`, `Osd`, `ControlCenter`, `Icons`). No visuals here.
+- Subfolders import siblings relatively (`import "../ui"`) and `import ".."` for `Theme`. Keep files focused: a window file holds the window, a page holds its content, logic lives in services.
+- Use the named constants, not strings: `ControlCenter.openPage(ControlCenter.wifiPage)`, `ControlCenter.showing(...)`, `Osd.show(Osd.volume)`.
+
+## Building blocks (ui/)
 
 Reuse these before writing new widgets:
 - **`Glass`:** every surface. It has:
-  - `level` (strip, raised or overlay) and `elevation` (flat, raised or floating);
+  - `level` (strip, raised or overlay) and `elevation` (flat, raised or floating); unknown values warn;
   - `lifted`, set on hover by `StateLayer`;
-  - a `blurRegion` to hand to `BackgroundEffect.blurRegion`.
+  - a `blurRegion` to hand to `BackgroundEffect.blurRegion` (only for surfaces that don't move).
   - Override `color` / `border.color` for chips and tiles (fill tokens). The shadow is cut out under the glass, so it never darkens the fill.
-- **`controls/StateLayer`:** the hover/press tint, cursor, press scale and lift for anything clickable. Declare it before the content. Use `outset` for bare icons (tray).
-- **`Pill`:** a bar applet (`pillHeight` 30, radius medium, raised glass). Set `interactive` for click and scroll.
-- **`controls/IconButton`** (`buttonSize` 36, full), **`ToggleTile`** (`tileHeight` 56, medium), **`QuickSlider`** (track 6, knob 16 → 18 on hover or drag), **`MaterialIcon`**, **`BarText`**.
-- **List rows** (`controls/ListRow`) have one status slot at the end, never a row of icons. It shows one thing: a hover action (forget) in place of the status, else the state (a check when connected), else a hint (a lock only when a password is still needed). The glyphs cross-fade. Saved or connected things never show a lock.
+- **`PopupSurface`:** a `Glass` that appears and disappears (`shown`, `transformOrigin`, `slideFrom`). It springs in and leaves quicker, and its `liveBlurRegion` follows the scale and slide, switches on once the surface is half faded in (the compositor applies blur ahead of the card's first frames) and empties as it starts hiding. Use it for any card that pops up.
+- **`PageStack`:** a main page plus named sub-pages that slide in and out while its height animates (`main`, `pages`, `current`, `padding`).
+- **`Anim` / `ColorFade`:** the motion tokens as one-liners: `Behavior on x { Anim {} }`, `Anim { speed: "fast" }`, `Anim { speed: "slow"; spring: true }`, `Anim { leaving: true }`, `Behavior on color { ColorFade {} }`. Write a raw `NumberAnimation` only for transitions with custom `from`/`to`.
+- **`StateLayer`:** the hover/press tint, cursor, press scale and lift for anything clickable. Declare it before the content. Use `outset` for bare icons (tray).
+- **`MaterialIcon`** and **`BarText`** fade colour changes themselves (never add another `Behavior on color` to them); `BarText { fadeText: true }` crossfades whole-word changes (clock, layout), not numbers.
+- **`Pill`** (`widgets/`): a bar applet (`pillHeight` 30, radius medium, raised glass). Set `interactive` for click and scroll.
+- **`IconButton`** (`buttonSize` 36, full), **`ToggleTile`** (`tileHeight` 56, medium), **`QuickSlider`** (track 6, knob 16 → 18 on hover or drag), **`Switch`**, **`PasswordField`**, **`PageHeader`**, **`SectionLabel`**, **`ScrollList`**, **`Spinner`**.
+- **List rows** (`ListRow`) have one status slot at the end, never a row of icons: use **`RowSlot`**. It shows one thing: a hover action (forget) in place of the status, else the state (a check when connected), else a hint (a lock only when a password is still needed). The glyphs cross-fade. Saved or connected things never show a lock.
+- **App icons:** `Icons.resolve(icon, app)` (theme name, path or URL, else the desktop entry), so notifications and per-app volume agree.
 - **Sound page:** list only outputs that can play (unplugged HDMI/DP ports are hidden), and one slider per app, not per stream.
 - **Cards:** panel (`panelWidth` 360), notification (`notificationWidth` 380, bottom-right corner inset two gaps so it never sits on a window's border or focus ring, newest at the bottom, no visible countdown, rests raised and lifts to floating on hover), OSD (`osdWidth` 300 × `osdHeight` 44, radius medium like the bar pills).
 
@@ -97,9 +114,9 @@ Reuse these before writing new widgets:
 - A `Region { item: ... }` ignores transforms (`scale`, `Translate`) and only re-maps on geometry changes. For a card that animates with transforms, build the blur `Region` from explicit `x/y/width/height` that include the transform, and switch to an empty region as soon as it starts hiding. Don't press-scale surfaces that carry their own blur region (`StateLayer { squash: false }`).
 - Blur can't fade: a surface with its own blur region either drops the region when it starts leaving (panel, OSD) or leaves by sliding off-screen at full opacity (notifications). Never fade it with the frost still on, which leaves a ghost frost rectangle.
 - A `ListView` destroys delegates that fall outside its bounds, even mid remove-transition. A list that animates items out must not shrink to its content; let it fill a fixed area, and take masks and blur from the items, not the list.
-- Popup windows whose contents come and go (notifications) stay mapped at a fixed size, transparent, with the input mask and blur covering only the visible cards. Don't toggle `visible` or resize per item: every unmap/remap or resize of a layer surface is a configure round-trip (and niri fades closing layers), which shows as stutter, cards vanishing mid-animation and flashing back.
+- Popup windows (panel, OSD, notifications) stay mapped all the time at a fixed size, transparent, with the input mask and blur covering only what is visible (and no keyboard focus while closed). Don't toggle `visible` or resize them: every unmap/remap or resize of a layer surface is a configure round-trip (and niri fades closing layers), which shows as stutter, cards vanishing mid-animation and flashing back, and a window mapped on demand draws its first frames about 0.4 s after the compositor's blur appears.
 - Never resize an element that its parent positions by size (a slider knob, for example). Animate `scale` instead, so it doesn't shift.
-- Enter animations: fade, a small translate and a scale from `pressScale`, using slow OutBack. Exits use `exitDuration`, InCubic. Keep the window mapped (`visible: shown || card.opacity > 0`) until the exit finishes.
+- Enter animations: fade, a small translate and a scale from `pressScale`, using slow OutBack. Exits use `exitDuration`, InCubic. `PopupSurface` and `Anim` implement this.
 
 ## Icons
 

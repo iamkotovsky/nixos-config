@@ -65,7 +65,7 @@ Singleton {
         target: root.adapter
         property: "discovering"
         value: true
-        when: root.enabled && ControlCenter.openOn !== "" && ControlCenter.page === "bluetooth"
+        when: root.enabled && ControlCenter.showing(ControlCenter.bluetoothPage)
     }
 
     Connections {

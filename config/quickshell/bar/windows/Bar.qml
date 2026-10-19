@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import ".."
+import "../widgets"
+import "../ui"
 
 // One bar per output: pills on a subtle frosted strip. Everything sits on
 // Theme.gap: pills are one gap from the top and side edges and one gap above

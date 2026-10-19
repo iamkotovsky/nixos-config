@@ -5,7 +5,8 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
-import "controls"
+import ".."
+import "../ui"
 
 // StatusNotifier tray. Left-click activates (or opens the menu for menu-only
 // items), right-click opens the app's menu under its icon. Symbolic icons

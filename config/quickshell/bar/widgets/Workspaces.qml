@@ -1,9 +1,14 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Quickshell
+import ".."
+import "../ui"
+import "../services"
 
 // One rounded indicator per workspace on this bar's output: the active one
-// stretches into a pill, urgent ones turn red. Click focuses that workspace.
+// stretches into a pill, urgent ones turn red, new ones grow in. Click focuses
+// that workspace.
 Pill {
     id: root
 
@@ -15,7 +20,12 @@ Pill {
     spacing: 0
 
     Repeater {
-        model: root.workspaces
+        // Keyed by workspace id: niri events replace every workspace object, and
+        // a plain array would rebuild all dots each time, so nothing animated.
+        model: ScriptModel {
+            values: root.workspaces
+            objectProp: "id"
+        }
 
         // The slot is the click target; the indicator inside it animates.
         delegate: Item {
@@ -24,6 +34,10 @@ Pill {
             required property var modelData
 
             readonly property bool active: modelData.is_active
+            // False for the first frame, so a new dot grows in from nothing.
+            property bool shown: false
+
+            Component.onCompleted: shown = true
 
             implicitWidth: indicator.width + Theme.spacingSmall * 2
             implicitHeight: Theme.pillHeight
@@ -32,7 +46,7 @@ Pill {
                 id: indicator
 
                 anchors.centerIn: parent
-                width: workspace.active ? Theme.indicatorActiveWidth : Theme.indicatorSize
+                width: !workspace.shown ? 0 : workspace.active ? Theme.indicatorActiveWidth : Theme.indicatorSize
                 height: Theme.indicatorSize
                 radius: height / 2
                 color: {
@@ -44,10 +58,7 @@ Pill {
                 }
 
                 Behavior on width {
-                    NumberAnimation {
-                        duration: Theme.durationNormal
-                        easing.type: Easing.OutCubic
-                    }
+                    Anim {}
                 }
 
                 Behavior on color {

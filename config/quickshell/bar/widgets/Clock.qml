@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import "../ui"
 
 // HH:MM; click toggles the weekday/date form.
 Pill {
@@ -17,6 +18,7 @@ Pill {
     }
 
     BarText {
+        fadeText: true
         text: root.showDate ? Qt.formatDate(clock.date, "dddd, dd MMMM") : Qt.formatTime(clock.date, "hh:mm")
     }
 }

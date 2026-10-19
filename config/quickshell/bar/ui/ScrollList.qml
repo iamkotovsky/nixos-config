@@ -12,10 +12,7 @@ ListView {
     boundsBehavior: Flickable.StopAtBounds
 
     Behavior on implicitHeight {
-        NumberAnimation {
-            duration: Theme.durationNormal
-            easing.type: Easing.OutCubic
-        }
+        Anim {}
     }
 
     add: Transition {

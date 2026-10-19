@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Pipewire
 
 // Default output (sink) volume straight from PipeWire, shared by the status
@@ -31,7 +30,7 @@ Singleton {
     readonly property var allOutputs: Pipewire.nodes.values.filter(n => n.audio && n.isSink && !n.isStream)
     // Hides outputs whose port is unplugged (HDMI / DisplayPort with no
     // display attached); the current default always stays listed.
-    readonly property var outputs: allOutputs.filter(n => n === sink || !unplugged.includes(n.name))
+    readonly property var outputs: allOutputs.filter(n => n === sink || !AudioPorts.unplugged.includes(n.name))
     readonly property var streams: Pipewire.nodes.values.filter(n => n.audio && !n.isSink && n.isStream)
     // One entry per app, however many streams it opens (Vesktop opens
     // several): { name, streams }.
@@ -52,55 +51,8 @@ Singleton {
         return groups;
     }
 
-    // Node names of outputs whose port PipeWire reports as unavailable.
-    // Quickshell doesn't expose port availability, so it is read from
-    // `pw-dump`: each sink's card.profile.device maps to one of its card's
-    // routes, which carries `available`.
-    property var unplugged: []
-
-    function readRoutes(text) {
-        let objects;
-        try {
-            objects = JSON.parse(text);
-        } catch (e) {
-            return;
-        }
-        const devices = objects.filter(o => o.type === "PipeWire:Interface:Device");
-        const result = [];
-        for (const o of objects) {
-            const props = o.info?.props ?? {};
-            if (props["media.class"] !== "Audio/Sink")
-                continue;
-            const device = devices.find(d => d.id === props["device.id"]);
-            const routes = device?.info?.params?.EnumRoute ?? [];
-            const index = Number(props["card.profile.device"]);
-            const route = routes.find(r => r.direction === "Output" && (r.devices ?? []).includes(index));
-            if (route && route.available === "no")
-                result.push(props["node.name"]);
-        }
-        root.unplugged = result;
-    }
-
-    Process {
-        id: routeReader
-
-        command: ["pw-dump"]
-        stdout: StdioCollector {
-            onStreamFinished: root.readRoutes(text)
-        }
-    }
-
-    // Re-read when outputs come or go, and every few seconds while the Sound
-    // page is open (plugging a display changes availability, not the nodes).
-    onAllOutputsChanged: routeReader.running = true
-
-    Timer {
-        interval: 2000
-        repeat: true
-        triggeredOnStart: true
-        running: ControlCenter.openOn !== "" && ControlCenter.page === "sound"
-        onTriggered: routeReader.running = true
-    }
+    // Outputs came or went: re-check which ports are plugged in.
+    onAllOutputsChanged: AudioPorts.refresh()
 
     // The short port name ("Speaker", "HDMI / DisplayPort 1 Output"); the
     // description repeats the sound card's long name for every output.
@@ -122,14 +74,9 @@ Singleton {
         return props["application.name"] || props["node.name"] || stream.name;
     }
 
-    // The app's own icon (theme name from the stream, else its desktop
-    // entry), or "" to fall back to a glyph.
+    // The app's own icon, or "" to fall back to a glyph.
     function appIcon(stream) {
-        const name = stream.properties["application.icon-name"];
-        if (name)
-            return Quickshell.iconPath(name, true);
-        const entry = DesktopEntries.heuristicLookup(appName(stream));
-        return entry ? Quickshell.iconPath(entry.icon, true) : "";
+        return Icons.resolve(stream.properties["application.icon-name"], appName(stream));
     }
 
     function setDefault(node) {
@@ -177,12 +124,12 @@ Singleton {
 
         function onVolumeChanged() {
             if (ControlCenter.openOn === "")
-                Osd.show("volume");
+                Osd.show(Osd.volume);
         }
 
         function onMutedChanged() {
             if (ControlCenter.openOn === "")
-                Osd.show("volume");
+                Osd.show(Osd.volume);
         }
     }
 }

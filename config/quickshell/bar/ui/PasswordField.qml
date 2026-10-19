@@ -29,9 +29,7 @@ Glass {
     highlight: false
 
     Behavior on border.color {
-        ColorAnimation {
-            duration: Theme.durationFast
-        }
+        ColorFade {}
     }
 
     transform: Translate {

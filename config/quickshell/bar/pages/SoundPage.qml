@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import ".."
-import "../controls"
+import "../ui"
 import "../services"
 
 // Sound: pick the output device, and set each playing app's volume.

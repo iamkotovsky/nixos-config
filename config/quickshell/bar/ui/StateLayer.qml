@@ -27,9 +27,8 @@ MouseArea {
     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
     Behavior on pressAmount {
-        NumberAnimation {
-            duration: Theme.durationFast
-            easing.type: Easing.OutCubic
+        Anim {
+            speed: "fast"
         }
     }
 
@@ -56,9 +55,7 @@ MouseArea {
         color: Qt.alpha(Theme.foreground, root.tint)
 
         Behavior on color {
-            ColorAnimation {
-                duration: Theme.durationFast
-            }
+            ColorFade {}
         }
     }
 }

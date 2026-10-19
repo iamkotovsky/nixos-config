@@ -52,12 +52,6 @@ Item {
                 visible: !root.busy
                 name: root.icon
                 color: root.active ? Theme.accent : Theme.foreground
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: Theme.durationFast
-                    }
-                }
             }
 
             Spinner {

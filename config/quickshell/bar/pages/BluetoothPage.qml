@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import ".."
-import "../controls"
+import "../ui"
 import "../services"
 
 // Bluetooth devices: click to connect/disconnect, or pair a new one found by
@@ -69,65 +69,13 @@ ColumnLayout {
                 font.pixelSize: Theme.fontCaption
             }
 
-            // One slot at the end: forget (a paired device, on hover), else the
+            // One status slot: forget on hover (paired devices), else the
             // check (connected).
-            Item {
-                id: slot
-
-                readonly property bool forgetting: row.modelData.paired && (row.hovered || forgetLayer.containsMouse)
-
-                implicitWidth: Theme.iconSize
-                implicitHeight: Theme.iconSize
-
-                StateLayer {
-                    id: forgetLayer
-
-                    enabled: row.modelData.paired
-                    visible: row.modelData.paired
-                    outset: Theme.spacingXs
-                    lift: false
-                    onClicked: BluetoothState.forget(row.modelData)
-                }
-
-                MaterialIcon {
-                    anchors.centerIn: parent
-                    name: "delete"
-                    color: Theme.muted
-                    opacity: slot.forgetting ? 1 : 0
-                    scale: slot.forgetting ? 1 : Theme.pressScale
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: Theme.durationFast
-                        }
-                    }
-                    Behavior on scale {
-                        NumberAnimation {
-                            duration: Theme.durationFast
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                }
-
-                MaterialIcon {
-                    anchors.centerIn: parent
-                    name: "check"
-                    color: Theme.accent
-                    opacity: row.modelData.connected && !slot.forgetting ? 1 : 0
-                    scale: row.modelData.connected && !slot.forgetting ? 1 : Theme.pressScale
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: Theme.durationFast
-                        }
-                    }
-                    Behavior on scale {
-                        NumberAnimation {
-                            duration: Theme.durationFast
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                }
+            RowSlot {
+                rowHovered: row.hovered
+                action: row.modelData.paired ? "delete" : ""
+                status: row.modelData.connected ? "check" : ""
+                onTriggered: BluetoothState.forget(row.modelData)
             }
         }
     }

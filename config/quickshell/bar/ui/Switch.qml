@@ -17,9 +17,7 @@ Rectangle {
     border.color: checked ? Theme.accent : Qt.alpha(Theme.foreground, Theme.fillRim)
 
     Behavior on color {
-        ColorAnimation {
-            duration: Theme.durationFast
-        }
+        ColorFade {}
     }
 
     StateLayer {
@@ -46,9 +44,7 @@ Rectangle {
         }
 
         Behavior on color {
-            ColorAnimation {
-                duration: Theme.durationFast
-            }
+            ColorFade {}
         }
     }
 }

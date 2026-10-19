@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import "controls"
+import ".."
+import "../ui"
 
 // Rounded glass applet. Children are laid out in a vertically centered row;
 // the pill sizes itself to them. Set `interactive` to get clicked/scrolled
@@ -22,10 +23,7 @@ Glass {
     level: "raised"
 
     Behavior on implicitWidth {
-        NumberAnimation {
-            duration: Theme.durationNormal
-            easing.type: Easing.OutCubic
-        }
+        Anim {}
     }
 
     StateLayer {

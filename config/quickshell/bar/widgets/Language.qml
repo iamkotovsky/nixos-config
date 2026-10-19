@@ -1,4 +1,7 @@
 import QtQuick
+import ".."
+import "../ui"
+import "../services"
 
 // Active keyboard layout (EN/RU) from niri; click switches to the next one.
 Pill {
@@ -14,6 +17,7 @@ Pill {
     }
 
     BarText {
+        fadeText: true
         text: NiriEvents.layoutCode
     }
 }

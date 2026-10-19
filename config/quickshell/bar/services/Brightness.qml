@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Qt.labs.folderlistmodel
 
 // Screen brightness from sysfs. The kernel emits no change events for these
 // files, so the value is re-read every second, and only while the control
@@ -29,12 +30,16 @@ Singleton {
             apply.start();
     }
 
-    // One-shot lookup of the first backlight device (e.g. intel_backlight).
-    Process {
-        running: true
-        command: ["sh", "-c", "ls /sys/class/backlight | head -n 1"]
-        stdout: StdioCollector {
-            onStreamFinished: root.device = this.text.trim()
+    // The first backlight device (e.g. intel_backlight).
+    FolderListModel {
+        id: backlights
+
+        folder: "file:///sys/class/backlight"
+        showFiles: false
+        showDirs: true
+        onCountChanged: {
+            if (count > 0)
+                root.device = get(0, "fileName");
         }
     }
 
@@ -71,7 +76,7 @@ Singleton {
         }
         root.lastStep = now;
         root.set(root.percent + delta);
-        Osd.show("brightness");
+        Osd.show(Osd.brightness);
     }
 
     IpcHandler {

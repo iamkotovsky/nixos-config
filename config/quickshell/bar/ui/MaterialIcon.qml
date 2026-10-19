@@ -1,4 +1,5 @@
 import QtQuick
+import ".."
 
 // Rounded Material Symbols glyph, picked by ligature name, e.g.
 // MaterialIcon { name: "volume_up" }. Outlined by default; solid status
@@ -24,4 +25,10 @@ Text {
         })
     verticalAlignment: Text.AlignVCenter
     horizontalAlignment: Text.AlignHCenter
+
+    // State colour changes (on/off, muted, connected) fade everywhere; don't
+    // add another Behavior on color where it is used.
+    Behavior on color {
+        ColorFade {}
+    }
 }

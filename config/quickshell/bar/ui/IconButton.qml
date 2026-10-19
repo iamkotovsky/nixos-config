@@ -40,11 +40,5 @@ Glass {
         visible: root.image === ""
         name: root.icon
         color: root.iconColor
-
-        Behavior on color {
-            ColorAnimation {
-                duration: Theme.durationFast
-            }
-        }
     }
 }

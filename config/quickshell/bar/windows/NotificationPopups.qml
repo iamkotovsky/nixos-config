@@ -1,7 +1,9 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import "services"
+import ".."
+import "../notifications"
+import "../services"
 
 // Notification popups, bottom right corner of the screen in use: the newest
 // card sits one gap from the corner and older ones stack upward. New cards

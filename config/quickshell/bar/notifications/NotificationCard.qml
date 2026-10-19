@@ -5,8 +5,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Notifications
 import Quickshell.Widgets
-import "services"
-import "controls"
+import ".."
+import "../ui"
+import "../services"
 
 // One notification popup: a glass card like the control panel. Hovering lifts
 // it and pauses its timeout (there is no visible countdown); clicking runs the
@@ -91,20 +92,12 @@ Glass {
         card.closing = true;
         card.notification.dismiss();
     }
-    property real remaining: 1
+    // Driven by the countdown below: a NumberAnimation is used as a timer
+    // because, unlike Timer, it can pause (while hovered).
+    property real countdown: 1
 
     // App icon: explicit icon (name or path), else the app's desktop entry.
-    readonly property string iconSource: {
-        const icon = info.appIcon ?? "";
-        if (icon.startsWith("/"))
-            return "file://" + icon;
-        if (icon.startsWith("file://") || icon.startsWith("image://"))
-            return icon;
-        if (icon !== "")
-            return Quickshell.iconPath(icon, true);
-        const entry = DesktopEntries.heuristicLookup(info.desktopEntry || info.appName || "");
-        return entry ? Quickshell.iconPath(entry.icon, true) : "";
-    }
+    readonly property string iconSource: Icons.resolve(info.appIcon, info.desktopEntry || info.appName)
 
     width: Theme.notificationWidth
     implicitHeight: content.implicitHeight + Theme.spacingLarge * 2
@@ -120,7 +113,7 @@ Glass {
     // Counts down to expiry; paused while hovered.
     NumberAnimation {
         target: card
-        property: "remaining"
+        property: "countdown"
         from: 1
         to: 0
         duration: card.timeout
@@ -155,45 +148,12 @@ Glass {
         }
         spacing: Theme.spacingSmall
 
-        // App icon, app name, close button.
-        RowLayout {
+        NotificationHeader {
             Layout.fillWidth: true
-            spacing: Theme.spacingSmall
-
-            IconImage {
-                visible: card.iconSource !== ""
-                implicitSize: Theme.iconSize
-                source: card.iconSource
-                asynchronous: true
-            }
-
-            MaterialIcon {
-                visible: card.iconSource === ""
-                name: "notifications"
-                color: Theme.muted
-            }
-
-            BarText {
-                Layout.fillWidth: true
-                text: card.info.appName || "Notification"
-                color: Theme.muted
-                font.pixelSize: Theme.fontCaption
-                elide: Text.ElideRight
-            }
-
-            IconButton {
-                implicitWidth: Theme.smallButtonSize
-                implicitHeight: Theme.smallButtonSize
-                opacity: hover.hovered ? 1 : 0
-                icon: "close"
-                onClicked: card.dismiss()
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: Theme.durationFast
-                    }
-                }
-            }
+            iconSource: card.iconSource
+            appName: card.info.appName ?? ""
+            hovered: hover.hovered
+            onCloseClicked: card.dismiss()
         }
 
         // Summary and body, with the notification image on the right.
@@ -245,44 +205,13 @@ Glass {
             }
         }
 
-        // Action buttons (except the default action, which is the card click).
-        RowLayout {
+        NotificationActions {
             Layout.fillWidth: true
-            visible: card.buttons.length > 0
-            spacing: Theme.spacingSmall
-
-            Repeater {
-                model: card.buttons
-
-                delegate: Glass {
-                    id: button
-
-                    required property var modelData
-
-                    Layout.fillWidth: true
-                    implicitHeight: Theme.chipHeight
-                    radius: height / 2
-                    color: Qt.alpha(Theme.foreground, Theme.fillRest)
-                    border.color: Qt.alpha(Theme.foreground, Theme.fillRim)
-                    highlight: false
-
-                    StateLayer {
-                        onClicked: {
-                            if (!card.closing && card.notification)
-                                button.modelData.invoke();
-                            card.dismiss();
-                        }
-                    }
-
-                    BarText {
-                        anchors.centerIn: parent
-                        width: parent.width - Theme.spacingLarge
-                        horizontalAlignment: Text.AlignHCenter
-                        text: button.modelData.text
-                        font.pixelSize: Theme.fontSmall
-                        elide: Text.ElideRight
-                    }
-                }
+            buttons: card.buttons
+            onTriggered: action => {
+                if (!card.closing && card.notification)
+                    action.invoke();
+                card.dismiss();
             }
         }
     }

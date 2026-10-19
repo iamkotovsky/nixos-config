@@ -73,6 +73,6 @@ Singleton {
         target: root.wifiDevice
         property: "scannerEnabled"
         value: true
-        when: root.wifiDevice !== null && ControlCenter.openOn !== "" && ControlCenter.page === "wifi"
+        when: root.wifiDevice !== null && ControlCenter.showing(ControlCenter.wifiPage)
     }
 }

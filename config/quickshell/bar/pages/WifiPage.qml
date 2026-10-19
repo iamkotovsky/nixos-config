@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import ".."
-import "../controls"
+import "../ui"
 import "../services"
 
 // Wi-Fi networks: click to connect (or disconnect the current one); a new
@@ -80,68 +80,16 @@ ColumnLayout {
                         page.asking = entry.asking ? null : n;
                 }
 
-                // One slot at the end: forget (a saved network, on hover), else
-                // the check (connected), else a lock (needs a password first).
-                Item {
-                    id: slot
+                // One status slot: forget on hover (saved networks), else the
+                // check (connected), else a lock (needs a password first).
+                RowSlot {
+                    readonly property var network: entry.modelData
 
-                    readonly property bool forgetting: entry.modelData.known && (row.hovered || forgetLayer.containsMouse)
-                    readonly property string shown: forgetting ? "forget" : entry.modelData.connected ? "check" : !entry.modelData.known && Network.secured(entry.modelData) ? "lock" : ""
-
-                    implicitWidth: Theme.iconSize
-                    implicitHeight: Theme.iconSize
-
-                    StateLayer {
-                        id: forgetLayer
-
-                        enabled: entry.modelData.known
-                        visible: entry.modelData.known
-                        outset: Theme.spacingXs
-                        lift: false
-                        onClicked: entry.modelData.forget()
-                    }
-
-                    Repeater {
-                        model: [
-                            {
-                                key: "forget",
-                                glyph: "delete",
-                                tint: Theme.muted
-                            },
-                            {
-                                key: "check",
-                                glyph: "check",
-                                tint: Theme.accent
-                            },
-                            {
-                                key: "lock",
-                                glyph: "lock",
-                                tint: Theme.muted
-                            }
-                        ]
-
-                        delegate: MaterialIcon {
-                            required property var modelData
-
-                            anchors.centerIn: parent
-                            name: modelData.glyph
-                            color: modelData.tint
-                            opacity: slot.shown === modelData.key ? 1 : 0
-                            scale: slot.shown === modelData.key ? 1 : Theme.pressScale
-
-                            Behavior on opacity {
-                                NumberAnimation {
-                                    duration: Theme.durationFast
-                                }
-                            }
-                            Behavior on scale {
-                                NumberAnimation {
-                                    duration: Theme.durationFast
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-                        }
-                    }
+                    rowHovered: row.hovered
+                    action: network.known ? "delete" : ""
+                    status: network.connected ? "check" : !network.known && Network.secured(network) ? "lock" : ""
+                    statusColor: network.connected ? Theme.accent : Theme.muted
+                    onTriggered: network.forget()
                 }
             }
 
@@ -152,10 +100,7 @@ ColumnLayout {
                 clip: true
 
                 Behavior on implicitHeight {
-                    NumberAnimation {
-                        duration: Theme.durationNormal
-                        easing.type: Easing.OutCubic
-                    }
+                    Anim {}
                 }
 
                 PasswordField {

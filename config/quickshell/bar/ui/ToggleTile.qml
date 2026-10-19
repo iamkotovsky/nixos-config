@@ -43,12 +43,6 @@ Glass {
         MaterialIcon {
             name: root.icon
             color: root.contentColor
-
-            Behavior on color {
-                ColorAnimation {
-                    duration: Theme.durationFast
-                }
-            }
         }
 
         ColumnLayout {
@@ -62,12 +56,6 @@ Glass {
                 font.pixelSize: Theme.fontSmall
                 font.bold: true
                 elide: Text.ElideRight
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: Theme.durationFast
-                    }
-                }
             }
 
             BarText {
@@ -77,12 +65,6 @@ Glass {
                 color: root.active ? Qt.alpha(Theme.background, Theme.subtleTextOpacity) : Theme.muted
                 font.pixelSize: Theme.fontCaption
                 elide: Text.ElideRight
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: Theme.durationFast
-                    }
-                }
             }
         }
     }
@@ -101,9 +83,7 @@ Glass {
         color: Qt.alpha(root.contentColor, Theme.fillRest)
 
         Behavior on color {
-            ColorAnimation {
-                duration: Theme.durationFast
-            }
+            ColorFade {}
         }
 
         StateLayer {

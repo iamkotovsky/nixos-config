@@ -75,16 +75,11 @@ RowLayout {
                     Behavior on width {
                         enabled: !slider.pressed
 
-                        NumberAnimation {
-                            duration: Theme.durationNormal
-                            easing.type: Easing.OutCubic
-                        }
+                        Anim {}
                     }
 
                     Behavior on color {
-                        ColorAnimation {
-                            duration: Theme.durationFast
-                        }
+                        ColorFade {}
                     }
                 }
             }
@@ -101,18 +96,14 @@ RowLayout {
                 scale: slider.hovered || slider.pressed ? Theme.sliderKnobHover / Theme.sliderKnob : 1
 
                 Behavior on scale {
-                    NumberAnimation {
-                        duration: Theme.durationFast
-                        easing.type: Easing.OutCubic
+                    Anim {
+                        speed: "fast"
                     }
                 }
                 Behavior on x {
                     enabled: !slider.pressed
 
-                    NumberAnimation {
-                        duration: Theme.durationNormal
-                        easing.type: Easing.OutCubic
-                    }
+                    Anim {}
                 }
             }
         }
