@@ -9,7 +9,6 @@
     ./lockscreen.nix
     ./kitty.nix
     ./niri.nix
-    ./opencode.nix
     ./quickshell.nix
     ./rofi.nix
     ./session.nix
