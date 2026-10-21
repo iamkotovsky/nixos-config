@@ -1,9 +1,35 @@
-{ pkgs, theme, ... }:
+{ lib, pkgs, theme, ... }:
 let
+  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  # Selected text is the neutral selection grey, not the accent.
+  selection = mix theme.colors.background theme.colors.foreground theme.tint.selection;
+
+  gtkTheme = {
+    name = "adw-gtk3-dark";
+    package = pkgs.adw-gtk3;
+  };
+
   accentCss = ''
     @define-color accent_color ${theme.colors.accent};
     @define-color accent_bg_color ${theme.colors.accent};
     @define-color accent_fg_color ${theme.colors.background};
+
+    selection {
+      background-color: ${selection};
+    }
+  '';
+  # GTK 4 (adw-gtk3's libadwaita sheet) reads the accent from CSS variables.
+  accentCss4 = accentCss + ''
+    :root {
+      --accent-color: ${theme.colors.accent};
+      --accent-bg-color: ${theme.colors.accent};
+      --accent-fg-color: ${theme.colors.background};
+    }
+
+    /* The theme's focused selection is more specific than plain `selection`. */
+    selection:focus-within {
+      background-color: ${selection};
+    }
   '';
 in
 {
@@ -20,15 +46,22 @@ in
   # suggested buttons, links).
   gtk = {
     enable = true;
+    # Dark in GTK 3 and 4 settings, not only through the portal.
+    colorScheme = "dark";
     gtk3.extraCss = accentCss;
-    gtk4.extraCss = accentCss;
-    theme = {
-      name = "adw-gtk3-dark";
-      package = pkgs.adw-gtk3;
+    theme = gtkTheme;
+    gtk4 = {
+      # GTK 4 ignores the theme name, so Home Manager imports the theme's
+      # GTK 4 stylesheet into gtk-4.0/gtk.css, but only when it is set here.
+      # Without it plain GTK 4 apps (pavucontrol) were light Adwaita.
+      theme = gtkTheme;
+      extraCss = accentCss4;
     };
     iconTheme = {
       name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
+      # Grey folders instead of Papirus's blue: folders are neutral (bold in
+      # file listings), not a colour.
+      package = pkgs.papirus-icon-theme.override { color = "grey"; };
     };
   };
 

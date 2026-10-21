@@ -99,12 +99,13 @@
   };
 
   # Solid tints for apps that need opaque shades (`mix background colour t`,
-  # theme/color.nix): selection is the accent behind selected text and
-  # hovered rows (Helix, yazi, kitty, bat); diff and diffEmphasis are green
+  # theme/color.nix): selection is the neutral grey (towards the foreground,
+  # never the accent) behind selected text, the selected chat and hovered
+  # rows (Helix, yazi, kitty, bat, fzf, GTK, Telegram); diff and diffEmphasis are green
   # and red behind added and removed lines, and the changed words in them
   # (delta).
   tint = {
-    selection = 0.3;
+    selection = 0.25;
     diff = 0.15;
     diffEmphasis = 0.3;
   };

@@ -3,8 +3,8 @@ let
   inherit (theme) colors;
   inherit (import ../../theme/color.nix { inherit lib; }) mix;
 
-  # Selected text: the background tinted toward the accent.
-  selection = mix colors.background colors.accent theme.tint.selection;
+  # Selected text: the neutral selection grey (background towards foreground).
+  selection = mix colors.background colors.foreground theme.tint.selection;
 in
 {
   programs.helix = {
@@ -49,7 +49,7 @@ in
         modifiers = [ "bold" "underlined" ];
       };
       "ui.cursorline.primary" = { bg = colors.surface; };
-      # A soft accent tint, not a second hue.
+      # Neutral grey, never the accent.
       "ui.selection" = { bg = selection; };
       "ui.selection.primary" = { bg = selection; };
       "ui.linenr" = { fg = colors.muted; };

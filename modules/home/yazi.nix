@@ -5,15 +5,15 @@
 # (spacing separates them), a quiet status line (size and position only), one
 # muted glyph per kind instead of per-type coloured icons, and one accent on
 # neutral greys. Red, yellow and green only mean status (cut, modified,
-# added); the accent marks state (hovered row, selection, current tab).
+# added); the accent marks state (selected and copied files, current tab);
+# the hovered row is the neutral selection grey.
 { lib, pkgs, theme, ... }:
 let
   inherit (theme) colors;
   inherit (import ../../theme/color.nix { inherit lib; }) mix;
 
-  # The hovered row: the background tinted toward the accent, as Helix's
-  # selection.
-  hovered = mix colors.background colors.accent theme.tint.selection;
+  # The hovered row: the neutral selection grey, as in Helix.
+  hovered = mix colors.background colors.foreground theme.tint.selection;
 
   # Code previews use the shared highlighting theme (theme/syntax.nix).
   previewTheme = pkgs.writeText "zenbook.tmTheme" (import ../../theme/syntax.nix {

@@ -28,7 +28,7 @@ in
           <key>background</key><string>${colors.background}</string>
           ${fg colors.foreground}
           <key>caret</key><string>${colors.foreground}</string>
-          <key>selection</key><string>${mix colors.background colors.accent selectionTint}</string>
+          <key>selection</key><string>${mix colors.background colors.foreground selectionTint}</string>
           <key>lineHighlight</key><string>${colors.surface}</string>
           <key>gutter</key><string>${colors.background}</string>
           <key>gutterForeground</key><string>${colors.muted}</string>

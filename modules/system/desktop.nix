@@ -1,5 +1,45 @@
-{ pkgs, ... }:
+{ lib, pkgs, theme, ... }:
+let
+  inherit (theme) colors;
+
+  # The login screen in the design system's colours. The Linux console only
+  # has its 16-colour palette, so the palette itself is the theme (the same
+  # slots as kitty's) and tuigreet names slots: darkgray is muted, white the
+  # foreground, magenta the accent (only the action keys), black the
+  # background.
+  greeterTheme = lib.concatStringsSep ";" [
+    "container=black"
+    "border=darkgray"
+    "title=white"
+    "text=white"
+    "greet=darkgray"
+    "time=darkgray"
+    "prompt=darkgray"
+    "input=white"
+    "action=darkgray"
+    "button=magenta"
+  ];
+in
 {
+  console.colors = map theme.hex [
+    colors.background
+    colors.red
+    colors.green
+    colors.yellow
+    colors.blue
+    colors.accent
+    colors.cyan
+    colors.foreground
+    colors.muted
+    colors.red
+    colors.green
+    colors.yellow
+    colors.blue
+    colors.accent
+    colors.cyan
+    colors.foreground
+  ];
+
   programs.niri = {
     enable = true;
     # Use the lightweight GTK portal chooser instead of pulling in Nautilus.
@@ -16,7 +56,7 @@
       enable = true;
       useTextGreeter = true;
       settings.default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.niri}/bin/niri-session";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --theme '${greeterTheme}' --cmd ${pkgs.niri}/bin/niri-session";
         user = "greeter";
       };
     };

@@ -5,8 +5,8 @@
 // key instead of a colour.
 //
 // Design: neutral dark surfaces; pink only for state (unread, links, ticks,
-// send, focus, online). Outgoing bubbles and the selected chat are a soft
-// pink tint with normal light text, never solid pink.
+// send, focus, online). Outgoing bubbles are a soft pink tint with normal
+// light text, never solid pink; the selected chat and folder are neutral grey.
 
 // Window
 windowBg: @BACKGROUND@;
@@ -156,7 +156,7 @@ introDescriptionFg: windowSubTextFg;
 
 // Left folder sidebar
 sideBarBg: @BACKGROUND@;
-sideBarBgActive: @TINT@;
+sideBarBgActive: @SELECTED@;
 sideBarBgRipple: @PRESSED@;
 sideBarTextFg: windowSubTextFg;
 sideBarTextFgActive: windowFg;
@@ -174,7 +174,8 @@ mainMenuCoverBg: windowBg;
 mainMenuCloudFg: @ACCENT@;
 mainMenuCloudBg: @HOVER@;
 
-// Chat list: flat rows, a fill on hover, the soft tint when selected.
+// Chat list: flat rows, a fill on hover, the neutral selection grey when
+// selected.
 dialogsMenuIconFg: windowSubTextFg;
 dialogsMenuIconFgOver: windowFg;
 dialogsBg: windowBg;
@@ -215,16 +216,16 @@ dialogsUnreadFgOver: dialogsUnreadFg;
 dialogsArchiveFgOver: dialogsArchiveFg;
 dialogsScamFgOver: dialogsScamFg;
 
-dialogsBgActive: @TINT@;
+dialogsBgActive: @SELECTED@;
 dialogsNameFgActive: windowFg;
 dialogsChatIconFgActive: windowFg;
-dialogsDateFgActive: @TINT_TEXT@;
-dialogsTextFgActive: @TINT_TEXT@;
+dialogsDateFgActive: windowSubTextFg;
+dialogsTextFgActive: windowSubTextFg;
 dialogsTextFgServiceActive: windowFg;
 dialogsDraftFgActive: @RED@;
 dialogsVerifiedIconBgActive: @ACCENT@;
 dialogsVerifiedIconFgActive: @BACKGROUND@;
-dialogsSendingIconFgActive: @TINT_TEXT@;
+dialogsSendingIconFgActive: windowSubTextFg;
 dialogsSentIconFgActive: @ACCENT@;
 dialogsUnreadBgActive: @ACCENT@;
 dialogsUnreadBgMutedActive: @DISABLED@;
@@ -232,7 +233,7 @@ dialogsUnreadFgActive: @BACKGROUND@;
 dialogsOnlineBadgeFgActive: @GREEN@;
 dialogsScamFgActive: @RED@;
 dialogsRippleBg: @PRESSED@;
-dialogsRippleBgActive: @TINT_PRESSED@;
+dialogsRippleBgActive: @SELECTED_PRESSED@;
 
 // Search
 searchedBarBg: @SURFACE@;

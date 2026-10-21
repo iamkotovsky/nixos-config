@@ -18,6 +18,7 @@ paths:
   - "modules/home/shell-tools.nix"
   - "modules/home/git.nix"
   - "modules/home/zsh.nix"
+  - "modules/system/desktop.nix"
   - "modules/home/fastfetch.nix"
   - "modules/home/theme.nix"
   - "modules/home/session.nix"
@@ -54,7 +55,7 @@ The single source of truth is `theme/base.nix`, with colors in `theme/presets/*.
 - `config/quickshell/Theme.qml` via `modules/home/quickshell.nix`;
 - `config/rofi/config.rasi` via `modules/home/rofi.nix`;
 - `config/niri/config.kdl` via `modules/home/niri.nix`.
-- `config/telegram/colors.tdesktop-theme` via `modules/home/telegram.nix`. Telegram lays a theme over its light default palette, so every key gets set (unset keys show light defaults). Hover/pressed/tint shades are mixed in Nix (`mix a b t`), and only keys that exist in the installed Telegram are allowed (check the binary). Outgoing bubbles and the selected chat use the soft accent tint, not solid accent.
+- `config/telegram/colors.tdesktop-theme` via `modules/home/telegram.nix`. Telegram lays a theme over its light default palette, so every key gets set (unset keys show light defaults). Hover/pressed/tint shades are mixed in Nix (`mix a b t`), and only keys that exist in the installed Telegram are allowed (check the binary). Outgoing bubbles use the soft accent tint, not solid accent; the selected chat and folder are the neutral selection grey.
 - `config/firefox/userChrome.css` via `modules/home/firefox.nix`. Opacities become `color-mix` percentages; Firefox's own theme variables are mapped onto `--ds-*` tokens at the top of the file.
 
 Component sizes that only QML uses live in the last section of `Theme.qml`.
@@ -98,8 +99,10 @@ The same rule holds in every themed app: one accent, everything else neutral. Co
 
   This covers diagnostics, diffs, git status, the prompt's exit status and file-manager marks. Blue, cyan and magenta have no status meaning, so use neutral or the accent instead.
 - **Terminal ANSI colours** (kitty `color0–15`) stay a full set, since command-line tools need distinct colours to be readable. Keep them muted, not saturated, so tool output doesn't fight the neutral UI.
-- **Selection, current line, search matches and links** use the accent or a soft tint of it, never a second hue. **The text cursor stays neutral** (foreground): the user doesn't want the accent on it.
+- **Selection is neutral:** selected text, hovered and selected rows (yazi, fzf, the selected chat in Telegram) use the selection grey (`mix background foreground tint.selection`), never the accent. **The text cursor stays neutral** too (foreground). The user wants neither in pink.
+- **Current line, search matches and links** use the accent or a soft tint of it, never a second hue.
 - **One highlighting theme:** `theme/syntax.nix` renders the code rule as a `.tmTheme`, shared by bat, delta (through bat's theme cache) and yazi's previews; Helix and zsh's command-line highlighting follow the same mapping. File listings (`LS_COLORS` via dircolors, `EZA_COLORS`) are neutral: folders bold, details muted, colour only for status (git, broken links, setuid). Solid tints come from `tint` in `theme/base.nix` through `mix` (`theme/color.nix`).
+- **Outside the terminal:** the login screen uses the Linux console palette (`console.colors`, the same slots as kitty) with tuigreet naming slots (`modules/system/desktop.nix`): muted chrome, foreground text, the accent only on the action keys. GTK apps are dark and take the accent (`modules/home/theme.nix`): GTK 3 through `@define-color accent_*`, GTK 4 through the `--accent-*` CSS variables. GTK 4 only gets adw-gtk3 at all because `gtk.gtk4.theme` is set; without it plain GTK 4 apps (pavucontrol) are light Adwaita. Papirus folders are grey, not blue.
 - A new app, or a theme for one, starts from the neutral greys plus the accent. Add another hue only for a status meaning above.
 
 ## Code layout (config/quickshell)

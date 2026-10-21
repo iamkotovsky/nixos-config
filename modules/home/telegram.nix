@@ -10,7 +10,8 @@ let
   rest = fraction theme.fill.rest;
   hover = fraction theme.fill.hover;
   pressed = fraction theme.fill.pressed;
-  # The soft accent tint for outgoing bubbles and the selected chat.
+  # The soft accent tint for outgoing bubbles (the selected chat is neutral,
+  # SELECTED below).
   tint = 0.22;
   tintPressed = 0.32;
   tintBubble = mix c.surface c.accent tint;
@@ -37,6 +38,10 @@ let
     RED_HOVER = mix c.background c.red rest;
     RED_PRESSED = mix c.background c.red hover;
     TINT = tintBubble;
+    # The selected chat and folder: the neutral selection grey, never the
+    # accent (that stays on outgoing bubbles).
+    SELECTED = mix c.background c.foreground theme.tint.selection;
+    SELECTED_PRESSED = mix c.background c.foreground (theme.tint.selection + rest);
     TINT_PRESSED = mix c.surface c.accent tintPressed;
     # Secondary text (dates, previews) on the tint: readable but quieter.
     TINT_TEXT = mix tintBubble c.foreground 0.6;

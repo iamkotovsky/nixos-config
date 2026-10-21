@@ -36,7 +36,6 @@
       pkgs.dust
       pkgs.fd
       pkgs.file
-      pkgs.fzf
       pkgs.grim
       pkgs.jq
       pkgs.ncdu

@@ -4,7 +4,7 @@
 { lib, pkgs, theme, ... }:
 let
   inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) rgb sgr;
+  inherit (import ../../theme/color.nix { inherit lib; }) mix rgb sgr;
 
   # LS_COLORS-style codes: no colour, bold, a palette colour.
   plain = "00";
@@ -79,7 +79,7 @@ let
   # Code highlighting for bat and delta (theme/syntax.nix).
   syntaxTheme = import ../../theme/syntax.nix {
     inherit colors;
-    inherit (import ../../theme/color.nix { inherit lib; }) mix;
+    inherit mix;
     selectionTint = theme.tint.selection;
   };
 
@@ -138,7 +138,34 @@ in
         theme = "zenbook";
         italic-text = "always";
       };
-      themes.zenbook = syntaxTheme;
+      themes.zenbook = {
+        src = pkgs.writeTextDir "zenbook.tmTheme" syntaxTheme;
+        file = "zenbook.tmTheme";
+      };
+    };
+
+    # Colours only; the shell keybindings (Ctrl-R, Ctrl-T) stay off as before.
+    fzf = {
+      enable = true;
+      enableZshIntegration = false;
+      colors = {
+        fg = colors.foreground;
+        bg = "-1";
+        hl = colors.accent;
+        "fg+" = colors.foreground;
+        "bg+" = mix colors.background colors.foreground theme.tint.selection;
+        "hl+" = colors.accent;
+        gutter = "-1";
+        info = colors.muted;
+        border = colors.muted;
+        separator = colors.muted;
+        scrollbar = colors.muted;
+        header = colors.muted;
+        prompt = colors.accent;
+        pointer = colors.accent;
+        marker = colors.accent;
+        spinner = colors.muted;
+      };
     };
 
     zoxide = {

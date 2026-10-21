@@ -3,9 +3,9 @@ import ".."
 
 // Password entry: a frosted chip with hidden text and a show/hide toggle.
 // Enter accepts, Esc cancels; `error` gives it a red rim and `shake()` nudges
-// it side to side (wrong password). `neutral` swaps the accent focus rim and
-// selection for a brighter light rim (the lock screen, where the field always
-// has focus, so the accent would mean nothing).
+// it side to side (wrong password). `neutral` swaps the accent focus rim for a
+// brighter light rim (the lock screen, where the field always has focus, so
+// the accent would mean nothing). Selected text is always neutral.
 Glass {
     id: root
 
@@ -85,7 +85,7 @@ Glass {
         }
         clip: true
         color: Theme.foreground
-        selectionColor: root.neutral ? Qt.alpha(Theme.foreground, Theme.trackOpacity) : Qt.alpha(Theme.accent, Theme.progressOpacity)
+        selectionColor: Qt.alpha(Theme.foreground, Theme.trackOpacity)
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSmall
         echoMode: root.reveal ? TextInput.Normal : TextInput.Password

@@ -16,9 +16,9 @@ in
       # Enough translucency for Niri's blur and grain to read as frosted glass.
       background_opacity = theme.opacity.terminal;
       background_blur = 1;
-      # Selection is a soft accent tint that keeps the text's own colours, as in
-      # Helix and yazi; links are the accent. The cursor stays neutral.
-      selection_background = mix colors.background colors.accent theme.tint.selection;
+      # Selection is a neutral grey that keeps the text's own colours, as in
+      # Helix and yazi; links are the accent. The cursor stays neutral too.
+      selection_background = mix colors.background colors.foreground theme.tint.selection;
       selection_foreground = "none";
       cursor = colors.foreground;
       cursor_text_color = colors.background;
