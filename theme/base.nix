@@ -38,12 +38,14 @@
   gap = 8;
 
   # Durations in ms. fast: hover/color; normal: fades, values, reflow; slow:
-  # surfaces entering (OutBack with this overshoot). Exits run at 0.7x.
+  # surfaces entering (OutCubic; OutBack with this overshoot only for real
+  # travel). Exits run at `exitScale` of the duration.
   motion = {
     fast = 150;
     normal = 250;
     slow = 350;
     overshoot = "1.2";
+    exitScale = "0.7";
     # Scale of a pressed control.
     pressScale = "0.96";
   };

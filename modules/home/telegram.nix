@@ -1,4 +1,9 @@
-{ lib, pkgs, theme, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   c = theme.colors;
 
@@ -54,10 +59,10 @@ let
     SCROLL_HOVER = c.foreground + theme.alphaHex "0.30";
   };
 
-  colorsFile = builtins.replaceStrings
-    (map (name: "@${name}@") (builtins.attrNames substitutions))
-    (builtins.attrValues substitutions)
-    (builtins.readFile ../../config/telegram/colors.tdesktop-theme);
+  colorsFile =
+    builtins.replaceStrings (map (name: "@${name}@") (builtins.attrNames substitutions))
+      (builtins.attrValues substitutions)
+      (builtins.readFile ../../config/telegram/colors.tdesktop-theme);
 
   themePackage = pkgs.runCommand "telegram-${theme.active}-theme" { } ''
     mkdir -p $out

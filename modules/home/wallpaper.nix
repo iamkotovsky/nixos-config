@@ -1,4 +1,10 @@
-{ config, lib, pkgs, theme, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   setInitialWallpaper = pkgs.writeShellScript "awww-set-initial-wallpaper" ''
     if [[ ! -f ${builtins.toJSON config.wallpaper.path} ]]; then

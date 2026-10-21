@@ -1,4 +1,10 @@
-{ config, lib, pkgs, theme, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   inherit (theme) colors;
 
@@ -50,6 +56,7 @@ let
     DURATION_NORMAL = toString theme.motion.normal;
     DURATION_SLOW = toString theme.motion.slow;
     OVERSHOOT = theme.motion.overshoot;
+    EXIT_SCALE = theme.motion.exitScale;
     PRESS_SCALE = theme.motion.pressScale;
     ICON_WEIGHT = toString theme.iconWeight;
     RAISED_SHADOW_BLUR = toString theme.elevation.raised.blur;
@@ -62,10 +69,9 @@ let
     LOCK_BACKDROP = toString lockBackdrop;
   };
 
-  themeQml = builtins.replaceStrings
-    (map (name: "@${name}@") (builtins.attrNames substitutions))
-    (builtins.attrValues substitutions)
-    (builtins.readFile ../../config/quickshell/Theme.qml);
+  themeQml = builtins.replaceStrings (map (name: "@${name}@") (
+    builtins.attrNames substitutions
+  )) (builtins.attrValues substitutions) (builtins.readFile ../../config/quickshell/Theme.qml);
 
   # config/quickshell without the Theme.qml template.
   shellConfig = builtins.path {

@@ -1,4 +1,9 @@
-{ lib, pkgs, theme, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   inherit (import ../../theme/color.nix { inherit lib; }) mix;
   # Selected text is the neutral selection grey, not the accent.

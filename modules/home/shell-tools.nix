@@ -1,7 +1,12 @@
 # Command-line tools, coloured by the design system (.claude/rules/design.md,
 # "The palette in apps"): neutral greys and one accent, with red, yellow and
 # green only for status (and green/yellow for string/number literals in code).
-{ lib, pkgs, theme, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   inherit (theme) colors;
   inherit (import ../../theme/color.nix { inherit lib; }) mix rgb sgr;
@@ -17,64 +22,67 @@ let
   # eza's own colour keys, on top of LS_COLORS: `reset` drops its built-in
   # per-file-type colours (images, archives, documents...), then names stay
   # foreground, folders bold, and the detail columns muted.
-  ezaColors = lib.concatStringsSep ":" ([ "reset" ] ++ lib.mapAttrsToList (k: v: "${k}=${v}") {
-    # File kinds.
-    fi = plain;
-    di = bold;
-    ex = plain;
-    ln = muted;
-    lp = muted;
-    or = red;
-    bO = red;
-    pi = muted;
-    so = muted;
-    bd = muted;
-    cd = muted;
-    mp = "01;04";
-    # Permissions, size, owner, links, dates and the rest of the details.
-    ur = muted;
-    uw = muted;
-    ux = muted;
-    ue = muted;
-    gr = muted;
-    gw = muted;
-    gx = muted;
-    tr = muted;
-    tw = muted;
-    tx = muted;
-    xa = muted;
-    # setuid / setgid: worth a warning.
-    su = yellow;
-    sf = yellow;
-    sn = plain;
-    sb = muted;
-    uu = muted;
-    un = muted;
-    gu = muted;
-    gn = muted;
-    uR = yellow;
-    gR = yellow;
-    lc = muted;
-    lm = muted;
-    da = muted;
-    "in" = muted;
-    bl = muted;
-    xx = muted;
-    hd = "01;04";
-    cc = red;
-    # Git status: added green, modified yellow, deleted or conflicted red.
-    ga = green;
-    gm = yellow;
-    gv = yellow;
-    gt = yellow;
-    gd = red;
-    gc = red;
-    gi = muted;
-    Gm = muted;
-    Go = muted;
-    Gc = green;
-    Gd = yellow;
-  });
+  ezaColors = lib.concatStringsSep ":" (
+    [ "reset" ]
+    ++ lib.mapAttrsToList (k: v: "${k}=${v}") {
+      # File kinds.
+      fi = plain;
+      di = bold;
+      ex = plain;
+      ln = muted;
+      lp = muted;
+      or = red;
+      bO = red;
+      pi = muted;
+      so = muted;
+      bd = muted;
+      cd = muted;
+      mp = "01;04";
+      # Permissions, size, owner, links, dates and the rest of the details.
+      ur = muted;
+      uw = muted;
+      ux = muted;
+      ue = muted;
+      gr = muted;
+      gw = muted;
+      gx = muted;
+      tr = muted;
+      tw = muted;
+      tx = muted;
+      xa = muted;
+      # setuid / setgid: worth a warning.
+      su = yellow;
+      sf = yellow;
+      sn = plain;
+      sb = muted;
+      uu = muted;
+      un = muted;
+      gu = muted;
+      gn = muted;
+      uR = yellow;
+      gR = yellow;
+      lc = muted;
+      lm = muted;
+      da = muted;
+      "in" = muted;
+      bl = muted;
+      xx = muted;
+      hd = "01;04";
+      cc = red;
+      # Git status: added green, modified yellow, deleted or conflicted red.
+      ga = green;
+      gm = yellow;
+      gv = yellow;
+      gt = yellow;
+      gd = red;
+      gc = red;
+      gi = muted;
+      Gm = muted;
+      Go = muted;
+      Gc = green;
+      Gd = yellow;
+    }
+  );
 
   # Code highlighting for bat and delta (theme/syntax.nix).
   syntaxTheme = import ../../theme/syntax.nix {

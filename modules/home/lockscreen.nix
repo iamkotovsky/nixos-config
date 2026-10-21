@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # The lock screen is a Quickshell process of its own (config/quickshell/
   # lock.qml), separate from the shell, run as the `lockscreen` user unit:

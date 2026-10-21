@@ -76,7 +76,9 @@ Singleton {
         }
         root.lastStep = now;
         root.set(root.percent + delta);
-        Osd.show(Osd.brightness);
+        // The open control panel shows its own slider (same as Audio).
+        if (ControlCenter.openOn === "")
+            Osd.show(Osd.brightness);
     }
 
     IpcHandler {

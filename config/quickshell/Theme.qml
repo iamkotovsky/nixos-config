@@ -99,15 +99,16 @@ Singleton {
     property int floatingShadowY: @FLOATING_SHADOW_Y@
     property real floatingShadowOpacity: @FLOATING_SHADOW_OPACITY@
 
-    // Motion. Enter with OutBack (overshoot) for movement, OutCubic for
-    // fades; exits are shorter, InCubic, never overshoot.
+    // Motion. Enter with OutCubic; OutBack (overshoot) only for real travel.
+    // Exits are shorter (exitDuration), InCubic, never overshoot.
     property int durationFast: @DURATION_FAST@
     property int durationNormal: @DURATION_NORMAL@
     property int durationSlow: @DURATION_SLOW@
     property real overshoot: @OVERSHOOT@
+    property real exitScale: @EXIT_SCALE@
 
     function exitDuration(duration) {
-        return Math.round(duration * 0.7);
+        return Math.round(duration * exitScale);
     }
 
     // Component sizes.

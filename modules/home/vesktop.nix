@@ -43,7 +43,11 @@ in
     comment = "Alternative Discord client with Vencord built-in";
     exec = "vesktop %U";
     icon = "${icon}";
-    categories = [ "Network" "InstantMessaging" "Chat" ];
+    categories = [
+      "Network"
+      "InstantMessaging"
+      "Chat"
+    ];
     mimeType = [ "x-scheme-handler/discord" ];
     settings = {
       Keywords = "discord;vencord;electron;chat";
@@ -55,8 +59,8 @@ in
   # across presets, so enabling it once (Vesktop: Settings -> Themes) keeps it
   # following whichever preset is active. Only the theme file is managed:
   # Vesktop's settings.json stays writable by Vesktop.
-  xdg.configFile."vesktop/themes/zenbook.theme.css".text = builtins.replaceStrings
-    (map (name: "@${name}@") (builtins.attrNames substitutions))
-    (builtins.attrValues substitutions)
-    (builtins.readFile ../../config/vesktop/theme.css);
+  xdg.configFile."vesktop/themes/zenbook.theme.css".text = builtins.replaceStrings (map
+    (name: "@${name}@")
+    (builtins.attrNames substitutions)
+  ) (builtins.attrValues substitutions) (builtins.readFile ../../config/vesktop/theme.css);
 }

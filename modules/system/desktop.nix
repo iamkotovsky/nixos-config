@@ -1,4 +1,9 @@
-{ lib, pkgs, theme, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   inherit (theme) colors;
 
@@ -46,9 +51,8 @@ in
     useNautilus = false;
   };
 
-  # Niri ships with XWayland disabled; X11-only apps (e.g. zoom-us) need this
-  # to display a window at all. Spawned via config.kdl's spawn-at-startup,
-  # which niri has explicit support for waiting on.
+  # X11 support: niri has no built-in XWayland, and starts this from PATH on
+  # demand when an X11 app connects (it also exports DISPLAY).
   environment.systemPackages = [ pkgs.xwayland-satellite ];
 
   services = {

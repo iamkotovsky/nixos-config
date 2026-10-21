@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   niri = "${pkgs.niri}/bin/niri";
   jq = lib.getExe pkgs.jq;

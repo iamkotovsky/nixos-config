@@ -1,14 +1,21 @@
-{ lib, pkgs, theme, username, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  username,
+  ...
+}:
 let
   inherit (theme) colors;
 
   # Opacity strings ("0.08") as CSS color-mix percentages ("8").
   percent = opacity: toString (builtins.floor (builtins.fromJSON opacity * 100 + 0.5));
 
-  render = substitutions: file: builtins.replaceStrings
-    (map (name: "@${name}@") (builtins.attrNames substitutions))
-    (builtins.attrValues substitutions)
-    (builtins.readFile file);
+  render =
+    substitutions: file:
+    builtins.replaceStrings (map (name: "@${name}@") (
+      builtins.attrNames substitutions
+    )) (builtins.attrValues substitutions) (builtins.readFile file);
 
   # Design tokens shared by userChrome.css and the start page; each attribute
   # fills the matching @NAME@ placeholder.
@@ -70,14 +77,17 @@ let
   ];
 
   # New tab and home page: clock, date, search and the links above.
-  startpage = pkgs.writeText "firefox-startpage.html" (render
-    (tokens // {
-      SEARCH_URL = "https://www.google.com/search?q=";
-      LINKS = lib.concatMapStrings
-        (link: ''<a class="tile" href="${link.url}"><img src="${link.icon}" alt="">${link.name}</a>'')
-        links;
-    })
-    ../../config/firefox/startpage.html);
+  startpage = pkgs.writeText "firefox-startpage.html" (
+    render (
+      tokens
+      // {
+        SEARCH_URL = "https://www.google.com/search?q=";
+        LINKS = lib.concatMapStrings (
+          link: ''<a class="tile" href="${link.url}"><img src="${link.icon}" alt="">${link.name}</a>''
+        ) links;
+      }
+    ) ../../config/firefox/startpage.html
+  );
   startpageUrl = "file://${startpage}";
 in
 {
@@ -103,7 +113,6 @@ in
       # Keep Mozilla's promotional, experimentation, and data-collection
       # surfaces out of the browser without restricting normal browsing or Sync.
       DisableFirefoxStudies = true;
-      DisablePocket = true;
       DisableTelemetry = true;
       DisplayBookmarksToolbar = "never";
       UserMessaging = {

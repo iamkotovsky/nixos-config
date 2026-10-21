@@ -23,7 +23,6 @@
       "wheel"
       "networkmanager"
       "video"
-      "audio"
     ];
   };
 

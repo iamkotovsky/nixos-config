@@ -22,10 +22,8 @@ cursor {
 
 prefer-no-csd
 
-// XWayland is disabled by default; this is required for X11-only apps
-// (e.g. Zoom) to display a window at all. Niri waits for it and exports
-// DISPLAY to subsequently spawned processes.
-spawn-at-startup "xwayland-satellite"
+// X11 apps: niri starts xwayland-satellite (from PATH) on demand and exports
+// DISPLAY, so no spawn-at-startup is needed.
 
 // Smooth diffusion and fine grain give transparent surfaces a frosted-glass look.
 blur {
@@ -171,7 +169,8 @@ binds {
 
     Super+Alt+L { spawn "@LOCK_SCRIPT@"; }
     Super+Alt+S { spawn "systemctl" "suspend"; }
-    Mod+P hotkey-overlay-title="Cycle power profile" { spawn "@POWER_PROFILE_SCRIPT@"; }
+    // Through the bar (Power service); the plain script if it isn't running.
+    Mod+P hotkey-overlay-title="Cycle power profile" { spawn "sh" "-c" "quickshell ipc call powerprofile cycle || @POWER_PROFILE_SCRIPT@"; }
     // The control panel's Power page (sessionctl closes windows, then leaves
     // cleanly); niri's own quit dialog if the bar isn't running.
     Mod+Shift+E hotkey-overlay-title="Power menu" { spawn "sh" "-c" "quickshell ipc call panel power || niri msg action quit"; }
@@ -182,6 +181,11 @@ binds {
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
     XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
     // Through the bar (instant floating slider); plain brightnessctl if it isn't running.
     XF86MonBrightnessUp allow-when-locked=true { spawn "sh" "-c" "quickshell ipc call brightness up || brightnessctl set 5%+"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "quickshell ipc call brightness down || brightnessctl set 5%-"; }

@@ -4,9 +4,9 @@
 // would otherwise show a light default is set here. A value may name another
 // key instead of a colour.
 //
-// Design: neutral dark surfaces; pink only for state (unread, links, ticks,
-// send, focus, online). Outgoing bubbles are a soft pink tint with normal
-// light text, never solid pink; the selected chat and folder are neutral grey.
+// Design: neutral dark surfaces; the accent only for state (unread, links, ticks,
+// send, focus, online). Outgoing bubbles are a soft accent tint with normal
+// light text, never solid accent; the selected chat and folder are neutral grey.
 
 // Window
 windowBg: @BACKGROUND@;

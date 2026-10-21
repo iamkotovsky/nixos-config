@@ -1,4 +1,9 @@
-{ lib, flakeDir, theme, ... }:
+{
+  lib,
+  flakeDir,
+  theme,
+  ...
+}:
 let
   inherit (theme) colors;
   fg = color: "fg=${color}";
@@ -62,7 +67,7 @@ in
       # Transfers kitty's terminfo + shell integration to the remote on
       # connect, so `clear`/tput/full-screen apps don't break over SSH.
       # Only inside kitty: the kitten fails in a TTY or other terminals.
-      [[ $TERM == xterm-kitty ]] && alias ssh="kitty +kitten ssh"
+      [[ $TERM == xterm-kitty ]] && alias ssh="kitten ssh"
     '';
 
     history = {
@@ -86,7 +91,7 @@ in
       # `nix develop` always drops into bash by design (it needs bash to
       # source stdenv setup); this lands in zsh instead.
       develop = "nix develop --command zsh";
-      icat = "kitty +kitten icat";
+      icat = "kitten icat";
     };
   };
 }

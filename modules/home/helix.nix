@@ -1,4 +1,9 @@
-{ lib, pkgs, theme, ... }:
+{
+  lib,
+  pkgs,
+  theme,
+  ...
+}:
 let
   inherit (theme) colors;
   inherit (import ../../theme/color.nix { inherit lib; }) mix;
@@ -33,8 +38,12 @@ in
     # get their own hues, punctuation and comments are muted. Red, yellow and
     # green otherwise mean error, warning and success.
     themes.zenbook = {
-      "ui.background" = { bg = colors.background; };
-      "ui.text" = { fg = colors.foreground; };
+      "ui.background" = {
+        bg = colors.background;
+      };
+      "ui.text" = {
+        fg = colors.foreground;
+      };
       "ui.text.focus" = {
         fg = colors.background;
         bg = colors.accent;
@@ -46,14 +55,27 @@ in
       };
       "ui.cursor.match" = {
         fg = colors.accent;
-        modifiers = [ "bold" "underlined" ];
+        modifiers = [
+          "bold"
+          "underlined"
+        ];
       };
-      "ui.cursorline.primary" = { bg = colors.surface; };
+      "ui.cursorline.primary" = {
+        bg = colors.surface;
+      };
       # Neutral grey, never the accent.
-      "ui.selection" = { bg = selection; };
-      "ui.selection.primary" = { bg = selection; };
-      "ui.linenr" = { fg = colors.muted; };
-      "ui.linenr.selected" = { fg = colors.accent; };
+      "ui.selection" = {
+        bg = selection;
+      };
+      "ui.selection.primary" = {
+        bg = selection;
+      };
+      "ui.linenr" = {
+        fg = colors.muted;
+      };
+      "ui.linenr.selected" = {
+        fg = colors.accent;
+      };
       "ui.statusline" = {
         fg = colors.foreground;
         bg = colors.surface;
@@ -62,23 +84,49 @@ in
         fg = colors.muted;
         bg = colors.surface;
       };
-      "ui.popup" = { bg = colors.surface; };
-      "ui.menu" = { bg = colors.surface; };
+      "ui.popup" = {
+        bg = colors.surface;
+      };
+      "ui.menu" = {
+        bg = colors.surface;
+      };
       "ui.menu.selected" = {
         fg = colors.background;
         bg = colors.accent;
       };
-      "ui.virtual" = { fg = colors.muted; };
+      "ui.virtual" = {
+        fg = colors.muted;
+      };
       "ui.virtual.jump-label" = {
         fg = colors.accent;
         modifiers = [ "bold" ];
       };
       special = colors.accent;
 
-      "diagnostic.error" = { underline = { color = colors.red; style = "curl"; }; };
-      "diagnostic.warning" = { underline = { color = colors.yellow; style = "curl"; }; };
-      "diagnostic.info" = { underline = { color = colors.muted; style = "curl"; }; };
-      "diagnostic.hint" = { underline = { color = colors.muted; style = "dotted"; }; };
+      "diagnostic.error" = {
+        underline = {
+          color = colors.red;
+          style = "curl";
+        };
+      };
+      "diagnostic.warning" = {
+        underline = {
+          color = colors.yellow;
+          style = "curl";
+        };
+      };
+      "diagnostic.info" = {
+        underline = {
+          color = colors.muted;
+          style = "curl";
+        };
+      };
+      "diagnostic.hint" = {
+        underline = {
+          color = colors.muted;
+          style = "dotted";
+        };
+      };
       error = colors.red;
       warning = colors.yellow;
       info = colors.foreground;
@@ -119,9 +167,15 @@ in
         fg = colors.accent;
         modifiers = [ "bold" ];
       };
-      "markup.bold" = { modifiers = [ "bold" ]; };
-      "markup.italic" = { modifiers = [ "italic" ]; };
-      "markup.strikethrough" = { modifiers = [ "crossed_out" ]; };
+      "markup.bold" = {
+        modifiers = [ "bold" ];
+      };
+      "markup.italic" = {
+        modifiers = [ "italic" ];
+      };
+      "markup.strikethrough" = {
+        modifiers = [ "crossed_out" ];
+      };
       "markup.link.url" = {
         fg = colors.accent;
         modifiers = [ "underlined" ];

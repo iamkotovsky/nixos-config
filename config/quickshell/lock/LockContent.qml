@@ -28,7 +28,6 @@ Item {
     // The power menu (suspend, restart, shut down) under the power pill.
     property bool powerOpen: false
 
-
     Component.onCompleted: entered = true
 
     // Wrong password: clear, shake, and take focus back (the field is

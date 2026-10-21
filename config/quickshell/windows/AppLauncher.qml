@@ -12,8 +12,8 @@ import "../services"
 // a search field and the matching apps on a centred card of fixed size.
 // Typing filters, Up/Down (Tab, Ctrl+J/K) moves the highlight, Enter or a
 // click launches, Esc clears the search and then closes, a click outside
-// closes. Like the control
-// panel, the window stays mapped and only takes input and focus while open.
+// closes. Like the control panel, the window stays mapped and only takes
+// input and focus while open.
 PanelWindow {
     id: window
 

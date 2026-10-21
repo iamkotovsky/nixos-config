@@ -4,18 +4,33 @@
 # foreground code ("38;2;r;g;b") for LS_COLORS-style variables.
 { lib }:
 let
-  channels = color: map (i: lib.fromHexString (builtins.substring i 2 color)) [ 1 3 5 ];
+  channels =
+    color:
+    map (i: lib.fromHexString (builtins.substring i 2 color)) [
+      1
+      3
+      5
+    ];
   toHex = n: lib.toLower (lib.fixedWidthString 2 "0" (lib.toHexString n));
 in
 {
-  mix = a: b: t: "#" + lib.concatStrings (lib.zipListsWith
-    (x: y: toHex (builtins.floor (x + (y - x) * t + 0.5)))
-    (channels a)
-    (channels b));
+  mix =
+    a: b: t:
+    "#"
+    + lib.concatStrings (
+      lib.zipListsWith (x: y: toHex (builtins.floor (x + (y - x) * t + 0.5))) (channels a) (channels b)
+    );
 
-  rgb = color:
-    let c = channels color;
-    in { r = builtins.elemAt c 0; g = builtins.elemAt c 1; b = builtins.elemAt c 2; };
+  rgb =
+    color:
+    let
+      c = channels color;
+    in
+    {
+      r = builtins.elemAt c 0;
+      g = builtins.elemAt c 1;
+      b = builtins.elemAt c 2;
+    };
 
   sgr = color: "38;2;" + lib.concatMapStringsSep ";" toString (channels color);
 }

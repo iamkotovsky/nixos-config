@@ -3,7 +3,11 @@
 # It follows .claude/rules/design.md ("The palette in apps"): code is
 # foreground, keywords the accent, literals their own hue (strings green,
 # numbers and constants yellow), punctuation and comments muted.
-{ colors, mix, selectionTint }:
+{
+  colors,
+  mix,
+  selectionTint,
+}:
 let
   scope = name: scopes: settings: ''
     <dict>
@@ -28,14 +32,18 @@ in
           <key>background</key><string>${colors.background}</string>
           ${fg colors.foreground}
           <key>caret</key><string>${colors.foreground}</string>
-          <key>selection</key><string>${mix colors.background colors.foreground selectionTint}</string>
+          <key>selection</key><string>${
+            mix colors.background colors.foreground selectionTint
+          }</string>
           <key>lineHighlight</key><string>${colors.surface}</string>
           <key>gutter</key><string>${colors.background}</string>
           <key>gutterForeground</key><string>${colors.muted}</string>
         </dict>
       </dict>
       ${scope "Comment" "comment, punctuation.definition.comment" "${fg colors.muted}${italic}"}
-      ${scope "Keyword" "keyword, storage, keyword.control, markup.heading, entity.name.tag" (fg colors.accent)}
+      ${scope "Keyword" "keyword, storage, keyword.control, markup.heading, entity.name.tag" (
+        fg colors.accent
+      )}
       ${scope "String" "string, constant.character, markup.raw" (fg colors.green)}
       ${scope "Number" "constant.numeric, constant.language" (fg colors.yellow)}
       ${scope "Punctuation" "punctuation, keyword.operator" (fg colors.muted)}
