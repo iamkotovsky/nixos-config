@@ -58,6 +58,10 @@ in
 
       Service = {
         Type = "oneshot";
+        # Stays "active" after setting the wallpaper, so a rebuild that changes
+        # it (another theme) restarts the unit and the new wallpaper shows;
+        # Home Manager leaves changed but inactive units alone.
+        RemainAfterExit = true;
         ExecStart = setInitialWallpaper;
       };
 

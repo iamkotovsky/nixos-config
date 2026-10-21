@@ -1,7 +1,7 @@
 # Change this one value, then run `rebuild` (nh os switch /etc/nixos).
 # Each preset's wallpaper file lives in ./wallpapers.
 let
-  active = "pink-cross";
+  active = "white-rose";
 
   presets = {
     white-rose = import ./presets/white-rose.nix;

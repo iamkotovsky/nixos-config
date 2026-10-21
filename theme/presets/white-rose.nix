@@ -5,16 +5,19 @@
   };
 
   colors = {
-    background = "#000000";
-    surface = "#060708";
-    foreground = "#ffffff";
-    muted = "#b9bec5";
-    accent = "#9aafc2";
-    red = "#ff707b";
-    green = "#e8ebef";
-    yellow = "#ffd166";
-    blue = "#b9bec5";
-    magenta = "#9aafc2";
-    cyan = "#e8ebef";
+    # Deep blue-black taken from the wallpaper's background, with the rose's
+    # pale blue as the one accent. Status colours stay soft so they don't
+    # fight it.
+    background = "#020405";
+    surface = "#0b1115";
+    foreground = "#e9f1f4";
+    muted = "#8e9ca4";
+    accent = "#86bfd6";
+    red = "#e8838b";
+    green = "#93c7a2";
+    yellow = "#e4c37f";
+    blue = "#8ea9d8";
+    magenta = "#b8a6d9";
+    cyan = "#86c9cb";
   };
 }

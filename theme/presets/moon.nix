@@ -5,18 +5,19 @@
   };
 
   colors = {
-    # Monochrome palette matched to the moon wallpaper's deep black terrain
-    # and bright lunar surface.
-    background = "#030303";
-    surface = "#111111";
-    foreground = "#f5f5f5";
-    muted = "#b8b8b8";
-    accent = "#e6e6e6";
-    red = "#ff6d7a";
-    green = "#e8ebef";
-    yellow = "#ffd166";
-    blue = "#b8b8b8";
-    magenta = "#e6e6e6";
-    cyan = "#e8ebef";
+    # Monochrome: the wallpaper's deep black and the moon's white, with the
+    # accent a step brighter than the text instead of a hue. Status and
+    # literal colours keep only a hint of hue, enough to tell them apart.
+    background = "#020202";
+    surface = "#0d0d0d";
+    foreground = "#e6e6e6";
+    muted = "#8c8c8c";
+    accent = "#ffffff";
+    red = "#e07a82";
+    green = "#a9c2a7";
+    yellow = "#d8c690";
+    blue = "#a3abb6";
+    magenta = "#b5abba";
+    cyan = "#a5baba";
   };
 }
