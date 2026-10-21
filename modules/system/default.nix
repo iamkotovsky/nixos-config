@@ -25,7 +25,12 @@
   nixpkgs.config.allowUnfree = true;
 
   programs = {
-    zsh.enable = true;
+    zsh = {
+      enable = true;
+      # LS_COLORS comes from Home Manager's dircolors, themed in
+      # modules/home/shell-tools.nix.
+      enableLsColors = false;
+    };
 
     # Rebuilds with a package diff, and replaces nix.gc: `nh clean all` also
     # prunes Home Manager and user-profile generations.

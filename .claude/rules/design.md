@@ -15,6 +15,9 @@ paths:
   - "modules/home/helix.nix"
   - "modules/home/yazi.nix"
   - "modules/home/starship.nix"
+  - "modules/home/shell-tools.nix"
+  - "modules/home/git.nix"
+  - "modules/home/zsh.nix"
   - "modules/home/fastfetch.nix"
   - "modules/home/theme.nix"
   - "modules/home/session.nix"
@@ -95,7 +98,8 @@ The same rule holds in every themed app: one accent, everything else neutral. Co
 
   This covers diagnostics, diffs, git status, the prompt's exit status and file-manager marks. Blue, cyan and magenta have no status meaning, so use neutral or the accent instead.
 - **Terminal ANSI colours** (kitty `color0–15`) stay a full set, since command-line tools need distinct colours to be readable. Keep them muted, not saturated, so tool output doesn't fight the neutral UI.
-- **Selection, cursor, current line, search matches and links** use the accent or a soft tint of it, never a second hue.
+- **Selection, current line, search matches and links** use the accent or a soft tint of it, never a second hue. **The text cursor stays neutral** (foreground): the user doesn't want the accent on it.
+- **One highlighting theme:** `theme/syntax.nix` renders the code rule as a `.tmTheme`, shared by bat, delta (through bat's theme cache) and yazi's previews; Helix and zsh's command-line highlighting follow the same mapping. File listings (`LS_COLORS` via dircolors, `EZA_COLORS`) are neutral: folders bold, details muted, colour only for status (git, broken links, setuid). Solid tints come from `tint` in `theme/base.nix` through `mix` (`theme/color.nix`).
 - A new app, or a theme for one, starts from the neutral greys plus the accent. Add another hue only for a status meaning above.
 
 ## Code layout (config/quickshell)

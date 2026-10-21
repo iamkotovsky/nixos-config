@@ -32,7 +32,6 @@
       pkgs.claude-code
       pkgs.bitwig-studio
       pkgs.brightnessctl
-      pkgs.btop
       pkgs.curl
       pkgs.dust
       pkgs.fd

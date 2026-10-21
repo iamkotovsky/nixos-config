@@ -15,44 +15,11 @@ let
   # selection.
   hovered = mix colors.background colors.accent theme.tint.selection;
 
-  # Code previews (syntect) follow the same highlighting rule as Helix:
-  # keywords accent, literals their own hue, punctuation and comments muted,
-  # everything else foreground.
-  scope = name: scopes: settings: ''
-    <dict>
-      <key>name</key><string>${name}</string>
-      <key>scope</key><string>${scopes}</string>
-      <key>settings</key><dict>${settings}</dict>
-    </dict>'';
-  fg = color: "<key>foreground</key><string>${color}</string>";
-  italic = "<key>fontStyle</key><string>italic</string>";
-  previewTheme = pkgs.writeText "zenbook.tmTheme" ''
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-      <key>name</key><string>zenbook</string>
-      <key>settings</key>
-      <array>
-        <dict>
-          <key>settings</key>
-          <dict>
-            <key>background</key><string>${colors.background}</string>
-            ${fg colors.foreground}
-            <key>caret</key><string>${colors.accent}</string>
-            <key>selection</key><string>${hovered}</string>
-          </dict>
-        </dict>
-        ${scope "Comment" "comment, punctuation.definition.comment" "${fg colors.muted}${italic}"}
-        ${scope "Keyword" "keyword, storage, keyword.control, markup.heading, entity.name.tag" (fg colors.accent)}
-        ${scope "String" "string, constant.character, markup.raw" (fg colors.green)}
-        ${scope "Number" "constant.numeric, constant.language" (fg colors.yellow)}
-        ${scope "Punctuation" "punctuation, keyword.operator" (fg colors.muted)}
-        ${scope "Invalid" "invalid" (fg colors.red)}
-      </array>
-    </dict>
-    </plist>
-  '';
+  # Code previews use the shared highlighting theme (theme/syntax.nix).
+  previewTheme = pkgs.writeText "zenbook.tmTheme" (import ../../theme/syntax.nix {
+    inherit colors mix;
+    selectionTint = theme.tint.selection;
+  });
 
   # A muted glyph for every entry of a kind; only broken entries are red.
   glyph = text: color: { inherit text; fg = color; };

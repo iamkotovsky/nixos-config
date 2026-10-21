@@ -1,6 +1,7 @@
-{ theme, ... }:
+{ lib, theme, ... }:
 let
   inherit (theme) colors;
+  inherit (import ../../theme/color.nix { inherit lib; }) mix;
 in
 {
   programs.kitty = {
@@ -15,11 +16,13 @@ in
       # Enough translucency for Niri's blur and grain to read as frosted glass.
       background_opacity = theme.opacity.terminal;
       background_blur = 1;
-      selection_background = colors.accent;
-      selection_foreground = colors.background;
-      # Keep the insertion point clearly visible regardless of the active theme.
-      cursor = "#ffffff";
+      # Selection is a soft accent tint that keeps the text's own colours, as in
+      # Helix and yazi; links are the accent. The cursor stays neutral.
+      selection_background = mix colors.background colors.accent theme.tint.selection;
+      selection_foreground = "none";
+      cursor = colors.foreground;
       cursor_text_color = colors.background;
+      url_color = colors.accent;
 
       color0 = colors.background;
       color1 = colors.red;

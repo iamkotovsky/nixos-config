@@ -1,4 +1,7 @@
-# Minimal single-line prompt: folded path, git branch and status.
+# Minimal single-line prompt: folded path, git branch and status. Neutral
+# (.claude/rules/design.md): the path is plain text, the branch muted, the
+# prompt sign the accent (input focus) and red after a failed command; git
+# changes yellow.
 { theme, ... }:
 let
   inherit (theme) colors;
@@ -14,24 +17,24 @@ in
       format = "$directory$git_branch$git_status$character";
 
       character = {
-        success_symbol = "[>](${colors.green})";
+        success_symbol = "[>](${colors.accent})";
         error_symbol = "[>](${colors.red})";
-        vimcmd_symbol = "[:](${colors.green})";
+        vimcmd_symbol = "[:](${colors.muted})";
       };
 
       directory = {
-        style = colors.blue;
+        style = colors.foreground;
         format = "[$path]($style)[$read_only]($read_only_style) ";
         # Keeps the nearest 2 segments, folding everything above into "...".
         truncation_length = 2;
         truncation_symbol = ".../";
         truncate_to_repo = true;
         read_only = " ";
-        read_only_style = colors.red;
+        read_only_style = colors.muted;
       };
 
       git_branch = {
-        style = colors.magenta;
+        style = colors.muted;
         format = "[$symbol$branch]($style) ";
         symbol = "";
       };

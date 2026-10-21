@@ -39,9 +39,10 @@ in
         fg = colors.background;
         bg = colors.accent;
       };
+      # The cursor stays neutral; the accent is for the matching bracket.
       "ui.cursor" = {
         fg = colors.background;
-        bg = colors.accent;
+        bg = colors.foreground;
       };
       "ui.cursor.match" = {
         fg = colors.accent;

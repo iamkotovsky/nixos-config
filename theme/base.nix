@@ -98,10 +98,16 @@
     rim = "0.08";
   };
 
-  # Solid accent tints for apps that need opaque shades (`mix background
-  # accent t`, theme/color.nix): selected text in Helix, the hovered row in
-  # yazi.
-  tint.selection = 0.3;
+  # Solid tints for apps that need opaque shades (`mix background colour t`,
+  # theme/color.nix): selection is the accent behind selected text and
+  # hovered rows (Helix, yazi, kitty, bat); diff and diffEmphasis are green
+  # and red behind added and removed lines, and the changed words in them
+  # (delta).
+  tint = {
+    selection = 0.3;
+    diff = 0.15;
+    diffEmphasis = 0.3;
+  };
 
   # Strips the leading "#" for consumers that want bare hex (rofi, Telegram).
   hex = color: builtins.substring 1 6 color;

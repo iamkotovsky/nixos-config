@@ -1,10 +1,58 @@
-{ lib, flakeDir, ... }:
+{ lib, flakeDir, theme, ... }:
+let
+  inherit (theme) colors;
+  fg = color: "fg=${color}";
+  code = fg colors.foreground;
+  string = fg colors.green;
+in
 {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
+    autosuggestion = {
+      enable = true;
+      highlight = fg colors.muted;
+    };
+
+    # The command line is code too (.claude/rules/design.md): commands and
+    # arguments foreground, keywords the accent, strings green, separators,
+    # globs and comments muted, an unknown command red.
+    syntaxHighlighting = {
+      enable = true;
+      styles = {
+        default = "none";
+        unknown-token = fg colors.red;
+        reserved-word = fg colors.accent;
+        alias = code;
+        suffix-alias = code;
+        global-alias = code;
+        builtin = code;
+        function = code;
+        command = code;
+        precommand = code;
+        hashed-command = code;
+        autodirectory = code;
+        arg0 = code;
+        path = "underline";
+        path_prefix = "underline";
+        commandseparator = fg colors.muted;
+        redirection = fg colors.muted;
+        globbing = fg colors.muted;
+        history-expansion = fg colors.muted;
+        single-hyphen-option = code;
+        double-hyphen-option = code;
+        single-quoted-argument = string;
+        double-quoted-argument = string;
+        dollar-quoted-argument = string;
+        rc-quote = string;
+        dollar-double-quoted-argument = string;
+        back-double-quoted-argument = string;
+        back-dollar-quoted-argument = string;
+        back-quoted-argument = code;
+        assign = code;
+        comment = fg colors.muted;
+      };
+    };
 
     # https://devenv.sh/auto-activation/ - auto-activates devenv shells on cd,
     # no direnv/.envrc needed.
