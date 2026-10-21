@@ -8,7 +8,7 @@
     # gradually instead of letting the firmware hit hard trip points.
     thermald.enable = true;
 
-    # Battery state over D-Bus for the bar, hyprlock and power-profiles-daemon.
+    # Battery state over D-Bus for the bar, the lock screen and power-profiles-daemon.
     upower.enable = true;
   };
 

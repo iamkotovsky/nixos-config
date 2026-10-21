@@ -1,7 +1,7 @@
 # Values shared by every visual profile. Individual profiles provide colors and
 # their wallpaper, keeping a theme switch to one declarative selection.
 {
-  # ui: the shell (bar, panel, notifications, rofi, hyprlock); mono: terminal,
+  # ui: the shell (bar, panel, notifications, lock screen, rofi); mono: terminal,
   # code, and Nerd Font glyphs.
   font = {
     ui = "Inter";
@@ -98,7 +98,7 @@
     rim = "0.08";
   };
 
-  # Strips the leading "#" for consumers that want bare hex (hyprlock, rofi).
+  # Strips the leading "#" for consumers that want bare hex (rofi, Telegram).
   hex = color: builtins.substring 1 6 color;
 
   # Renders an opacity string like "0.84" as a two-digit hex alpha suffix ("d6").

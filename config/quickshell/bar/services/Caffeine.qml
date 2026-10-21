@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Io
 
 // Caffeine: while on, idle only turns the display off; the idle manager
-// (modules/home/hyprlock.nix) skips its lock and suspend steps when this flag
+// (modules/home/lockscreen.nix) skips its lock and suspend steps when this flag
 // file exists. It lives in the runtime dir, so it resets on logout.
 Singleton {
     id: root

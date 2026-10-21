@@ -6,7 +6,7 @@
     ./fastfetch.nix
     ./firefox.nix
     ./git.nix
-    ./hyprlock.nix
+    ./lockscreen.nix
     ./kitty.nix
     ./niri.nix
     ./opencode.nix

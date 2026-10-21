@@ -1,6 +1,14 @@
-{ pkgs, theme, ... }:
+{ config, lib, pkgs, theme, ... }:
 let
   inherit (theme) colors;
+
+  # The lock screen's backdrop: the wallpaper pre-blurred and scaled down at
+  # build time, so it loads instantly and costs nothing per frame (a runtime
+  # blur of the full-size image showed up only after a delay).
+  lockBackdrop = pkgs.runCommand "lock-backdrop.jpg" { } ''
+    ${lib.getExe pkgs.imagemagick} ${config.wallpaper.path} \
+      -resize 1280x1280^ -blur 0x18 -strip -quality 90 $out
+  '';
 
   # Each attribute fills the matching @NAME@ placeholder in Theme.qml.
   substitutions = {
@@ -51,6 +59,7 @@ let
     FLOATING_SHADOW_Y = toString theme.elevation.floating.y;
     FLOATING_SHADOW_OPACITY = theme.elevation.floating.opacity;
     SHADOW_PAD = toString theme.elevation.pad;
+    LOCK_BACKDROP = toString lockBackdrop;
   };
 
   themeQml = builtins.replaceStrings

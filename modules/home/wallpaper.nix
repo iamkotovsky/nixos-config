@@ -20,7 +20,7 @@ let
 in
 {
   # Each declarative theme owns a wallpaper. This remains the single path that
-  # both awww and hyprlock consume.
+  # both awww and the lock screen (pre-blurred) consume.
   options.wallpaper.path = lib.mkOption {
     type = lib.types.str;
     # Interpolating the path copies only the active wallpaper into the store.
@@ -61,7 +61,10 @@ in
         ExecStart = setInitialWallpaper;
       };
 
-      Install.WantedBy = [ "graphical-session.target" ];
+      # Pulled in by the daemon, not the session target: a target is ordered
+      # after everything it wants, and with the daemon ordered after the target
+      # that made a cycle, which systemd broke by dropping the daemon.
+      Install.WantedBy = [ "awww-daemon.service" ];
     };
   };
 }

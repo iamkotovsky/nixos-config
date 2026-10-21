@@ -27,7 +27,8 @@
 
   security = {
     polkit.enable = true;
-    pam.services.hyprlock = { };
+    # The Quickshell lock screen (config/quickshell/bar/lock.qml).
+    pam.services.quickshell-lock = { };
 
     # Show asterisk feedback while typing the sudo password.
     sudo.extraConfig = ''

@@ -4,12 +4,11 @@ paths:
   - "config/rofi/**"
   - "config/firefox/**"
   - "config/telegram/**"
-  - "config/hypr/**"
   - "config/niri/**"
   - "theme/**"
   - "modules/home/quickshell.nix"
   - "modules/home/rofi.nix"
-  - "modules/home/hyprlock.nix"
+  - "modules/home/lockscreen.nix"
   - "modules/home/kitty.nix"
   - "modules/home/firefox.nix"
   - "modules/home/telegram.nix"
@@ -17,7 +16,7 @@ paths:
 
 # Desktop design system
 
-These rules cover the visual language of the whole desktop: the Quickshell bar, control panel, OSD and notifications; rofi; hyprlock; niri. Follow them for every UI change. When a rule and a request conflict, ask the user.
+These rules cover the visual language of the whole desktop: the Quickshell bar, control panel, OSD and notifications; the lock screen; rofi; niri. Follow them for every UI change. When a rule and a request conflict, ask the user.
 
 ## Principles (in priority order)
 
@@ -45,7 +44,6 @@ These rules cover the visual language of the whole desktop: the Quickshell bar, 
 The single source of truth is `theme/base.nix`, with colors in `theme/presets/*.nix`. Templates get the values through `@NAME@` substitutions:
 - `config/quickshell/Theme.qml` via `modules/home/quickshell.nix`;
 - `config/rofi/config.rasi` via `modules/home/rofi.nix`;
-- `config/hypr/hyprlock.conf` via `modules/home/hyprlock.nix`;
 - `config/niri/config.kdl` via `modules/home/niri.nix`.
 - `config/telegram/colors.tdesktop-theme` via `modules/home/telegram.nix`. Telegram lays a theme over its light default palette, so every key gets set (unset keys show light defaults). Hover/pressed/tint shades are mixed in Nix (`mix a b t`), and only keys that exist in the installed Telegram are allowed (check the binary). Outgoing bubbles and the selected chat use the soft accent tint, not solid accent.
 - `config/firefox/userChrome.css` via `modules/home/firefox.nix`. Opacities become `color-mix` percentages; Firefox's own theme variables are mapped onto `--ds-*` tokens at the top of the file.
@@ -57,15 +55,15 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 | Gap | `gap` | 8 | Screen edges, between windows (niri `gaps`), around the bar, between stacked cards |
 | Spacing | `spacingXs/Small/Medium/Large` | 4 / 8 / 12 / 16 | xs: icon↔label. small: items in a row. medium: inside tiles, between rows. large: card padding |
 | Radius | `radiusSmall/Medium/Large`, full = `height / 2` | 6 / 10 / 16 | small: list rows, thumbnails. medium: windows, bar pills, tiles, OSD. large: panel, notifications, rofi. full: buttons, chips, sliders. Nested: inner = outer − padding |
-| Type | `fontFamily` (Inter, `font.ui`), `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | Inter everywhere in the shell, rofi and hyprlock, with tabular digits (`BarText` sets `tnum`). JetBrains Mono (`font.mono`) only for the terminal, code and Nerd Font glyphs. caption: sublabels and status lines under a title (muted). small: tile and row titles, item names above sliders, section headings (`SectionLabel`: medium weight, muted), body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
+| Type | `fontFamily` (Inter, `font.ui`), `fontCaption/Small/Size/Title` | 12 / 14 / 16 / 18 | Inter everywhere in the shell (bar, lock screen), rofi, with tabular digits (`BarText` sets `tnum`). JetBrains Mono (`font.mono`) only for the terminal, code and Nerd Font glyphs. caption: sublabels and status lines under a title (muted). small: tile and row titles, item names above sliders, section headings (`SectionLabel`: medium weight, muted), body text, buttons. body: bar text, values. title (bold): summaries, headline numbers |
 | Icons | `iconSize`, `iconSizeLarge`, `iconWeight` | 18 / 24, 450 | Material Symbols Rounded only |
 | Glass | `stripOpacity`, `raisedOpacity`, `overlayOpacity` | 0.55 / 0.62 / 0.55 | strip: bar backdrop (on `background`). raised: bar pills, rofi. overlay: panel, notifications, OSD (on `surface`). Kitty uses a separate `opacity.terminal` (0.84) |
 | Rim | `rimOpacity`, `highlightOpacity` | 0.12 / 0.06 | 1px foreground border on glass (not the edge-to-edge bar strip, which has no border); a faint top gradient inside it |
 | Fills | `fillRest/Hover/Pressed`, `fillRim` | 0.08 / 0.14 / 0.20, 0.08 | Foreground fills for chips, tiles, buttons and rofi rows, plus their own hairline |
-| Other alphas | `trackOpacity`, `progressOpacity`, `subtleTextOpacity`, `disabledOpacity` | 0.25 / 0.6 / 0.8 / 0.4 | Slider tracks, progress lines, secondary readable text, disabled |
+| Other alphas | `trackOpacity`, `progressOpacity`, `subtleTextOpacity`, `disabledOpacity`, `focusRimOpacity` | 0.25 / 0.6 / 0.8 / 0.4 / 0.3 | Slider tracks, progress lines, secondary readable text, disabled, a neutral focus rim |
 | Elevation | raised / floating shadow `Blur`, `Y`, `Opacity`; `shadowPad` | 6px, 2, 0.25 / 20px, 6, 0.35; 24 | flat: strip, chips at rest. raised: pills and tiles on hover, cards at rest. floating: panel, OSD, a card on hover |
 | Motion | `durationFast/Normal/Slow`, `overshoot`, `exitDuration()` | 150 / 250 / 350 ms, 1.2, ×0.7 | fast + OutCubic: hover, color, press. normal + OutCubic: fades, values, reflow. slow + OutBack: surfaces entering. Exits: `exitDuration(...)`, InCubic, no overshoot |
-| Borders | — | 1px everywhere: rim, accent, red | Rim on all glass except the bar strip. Accent for focus (niri focus ring, rofi selected row). Red (same 1px, colour only) for critical notifications |
+| Borders | — | 1px everywhere: rim, accent, red | Rim on all glass except the bar strip. Accent for focus (niri focus ring, rofi selected row), except where focus never moves: the lock screen field is always focused, so it uses a neutral light rim (`PasswordField { neutral: true }`). Red (same 1px, colour only) for critical notifications |
 
 ## Color semantics
 
@@ -77,6 +75,7 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 ## Code layout (config/quickshell/bar)
 
 - `shell.qml`: per screen, one of each window. `Theme.qml` is rendered next to it.
+- `lock.qml` + `lock/`: the lock screen, a separate Quickshell process (the `lockscreen` unit from `modules/home/lockscreen.nix`) sharing `Theme` and `ui/`. `LockSurface` wraps `LockContent`, which can be previewed in an ordinary window. Never test it by locking before the PAM service (`quickshell-lock`) is deployed.
 - `windows/`: the layer windows: `Bar`, `ControlPanel`, `OsdPopup`, `NotificationPopups`.
 - `widgets/`: bar applets: `Pill` and everything built on it (`Clock`, `Workspaces`, `Tray`, `Language`, `StatusButton`).
 - `ui/`: reusable building blocks (below), not tied to any service.

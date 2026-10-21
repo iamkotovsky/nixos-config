@@ -31,6 +31,9 @@ Singleton {
     property color cyan: "@CYAN@"
     property color shadow: "#000000"
 
+    // The lock screen's backdrop: the wallpaper pre-blurred at build time.
+    property string lockBackdrop: "@LOCK_BACKDROP@"
+
     // One gap everywhere: screen edges, between pills and windows, and
     // between windows (niri `gaps` uses the same theme value).
     property int gap: @GAP@
@@ -80,6 +83,8 @@ Singleton {
     // subtitles on an accent tile).
     property real subtleTextOpacity: 0.8
     property real trackOpacity: 0.25
+    // A focused field's rim where focus needs no accent (the lock screen).
+    property real focusRimOpacity: 0.3
     property real progressOpacity: 0.6
     property real disabledOpacity: 0.4
     property real pressScale: @PRESS_SCALE@
@@ -121,6 +126,11 @@ Singleton {
     property int osdWidth: 300
     property int osdHeight: 44
     property int percentWidth: 48
+    // Lock screen: the clock's size, the password field's width, and how
+    // much the blurred wallpaper is dimmed.
+    property int lockClockSize: 104
+    property int lockFieldWidth: 320
+    property real lockDim: 0.45
     // Control panel sub-pages: list rows, visible rows before scrolling, the
     // chevron area on split tiles, text fields and switches.
     property int rowHeight: 44
