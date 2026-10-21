@@ -9,19 +9,20 @@ import "../services"
 ColumnLayout {
     spacing: Theme.spacingLarge
 
-        // Battery level and charge state.
+        // Battery level and charge state, and the power button (Power page).
         RowLayout {
             Layout.fillWidth: true
-            visible: Power.hasBattery
             spacing: Theme.spacingMedium
 
             MaterialIcon {
+                visible: Power.hasBattery
                 name: Power.icon
                 color: Power.levelColor
                 size: Theme.iconSizeLarge
             }
 
             ColumnLayout {
+                visible: Power.hasBattery
                 spacing: 0
 
                 BarText {
@@ -35,6 +36,16 @@ ColumnLayout {
                     color: Theme.muted
                     font.pixelSize: Theme.fontCaption
                 }
+            }
+
+            // Pushes the power button to the right edge.
+            Item {
+                Layout.fillWidth: true
+            }
+
+            IconButton {
+                icon: "power_settings_new"
+                onClicked: ControlCenter.openPage(ControlCenter.powerPage)
             }
         }
 

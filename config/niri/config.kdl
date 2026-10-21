@@ -180,7 +180,11 @@ binds {
     Super+Alt+L { spawn "@LOCK_SCRIPT@"; }
     Super+Alt+S { spawn "systemctl" "suspend"; }
     Mod+P hotkey-overlay-title="Cycle power profile" { spawn "@POWER_PROFILE_SCRIPT@"; }
-    Mod+Shift+E { quit; }
+    // The control panel's Power page (sessionctl closes windows, then leaves
+    // cleanly); niri's own quit dialog if the bar isn't running.
+    Mod+Shift+E hotkey-overlay-title="Power menu" { spawn "sh" "-c" "quickshell ipc --config bar call panel power || niri msg action quit"; }
+    // Emergency exit: kills the compositor first, so clients crash.
+    Mod+Ctrl+Shift+E { quit; }
     XF86Sleep allow-when-locked=true { spawn "systemctl" "suspend"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "0.05+"; }

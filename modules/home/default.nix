@@ -12,6 +12,7 @@
     ./opencode.nix
     ./quickshell.nix
     ./rofi.nix
+    ./session.nix
     ./shell-tools.nix
     ./ssh.nix
     ./starship.nix

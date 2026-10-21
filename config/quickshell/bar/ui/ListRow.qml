@@ -5,7 +5,8 @@ import ".."
 // One row in a sub-page list: icon, title, muted subtitle and trailing items
 // (signal bars, battery, buttons). Flat until hovered; `active` (connected,
 // default) tints the icon and shows a check; `busy` swaps the icon for a
-// spinner.
+// spinner. `iconColor` overrides the tint (red while a power action counts
+// down).
 Item {
     id: root
 
@@ -17,6 +18,7 @@ Item {
     property bool showCheck: active
     property bool busy: false
     property bool interactive: true
+    property color iconColor: active ? Theme.accent : Theme.foreground
     readonly property bool hovered: layer.containsMouse
     default property alias trailing: trailingRow.data
 
@@ -51,7 +53,7 @@ Item {
                 anchors.centerIn: parent
                 visible: !root.busy
                 name: root.icon
-                color: root.active ? Theme.accent : Theme.foreground
+                color: root.iconColor
             }
 
             Spinner {

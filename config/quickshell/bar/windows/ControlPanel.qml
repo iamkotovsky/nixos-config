@@ -106,7 +106,8 @@ PanelWindow {
             pages: ({
                     [ControlCenter.wifiPage]: wifiPage,
                     [ControlCenter.soundPage]: soundPage,
-                    [ControlCenter.bluetoothPage]: bluetoothPage
+                    [ControlCenter.bluetoothPage]: bluetoothPage,
+                    [ControlCenter.powerPage]: powerPage
                 })
         }
 
@@ -126,6 +127,12 @@ PanelWindow {
             id: bluetoothPage
 
             BluetoothPage {}
+        }
+
+        Component {
+            id: powerPage
+
+            PowerPage {}
         }
     }
 }
