@@ -7,14 +7,20 @@ import ".."
 // Flickable's own flicking (momentum, overshoot, uneven wheel steps) stays
 // out of the way:
 //  - a touchpad follows the fingers 1:1, then keeps gliding at the speed it
-//    was let go with, slowing down;
-//  - a mouse wheel moves `step` per notch with a short glide;
+//    was let go with, slowing down under constant friction;
+//  - a mouse wheel moves about `step` per notch, through the same glide;
 //  - past either end the content stretches with growing resistance (rubber
-//    band) and springs back; a wheel notch or a glide into the end bumps;
+//    band) while dragged; a glide that reaches an end hits it at its speed
+//    and a damped spring turns what is left into the bounce and brings it
+//    back;
 //  - `revealRange(top, bottom)` brings part of the content into view
 //    (keyboard navigation).
 // A thin scrollbar shows while it scrolls (squashing while stretched) and
 // fades after.
+//
+// Glides and springs are simulated frame by frame (`motion`), not canned
+// animations: an animation aimed at the end eases out to a stop there and
+// only then bounces, which reads as a crawl and a late twitch.
 Item {
     id: root
 
@@ -35,15 +41,26 @@ Item {
         return y < minY ? y - minY : y > maxY ? y - maxY : 0;
     }
 
-    // Touchpad gesture state: the finger travel past the end (before
-    // resistance), the release speed in px/ms, and the last event's time.
-    property real pull: 0
+    // What moves it between events: nothing, a glide (friction) or the spring
+    // pulling an overscrolled end back. `velocity` is in px/ms of contentY.
+    property string motion: "none"
     property real velocity: 0
+
+    // Touchpad gesture state: whether fingers are down, the finger travel
+    // past the end (before resistance), and the last event's time.
+    property bool dragging: false
+    property real pull: 0
     property real lastWheel: 0
 
-    // The furthest the content stretches, and the glide's deceleration (px/ms²).
+    // Physics, in px and ms: glide friction; the spring's angular frequency
+    // (critically damped: back in about 0.4 s, no wobble); the furthest a
+    // drag stretches.
+    readonly property real friction: 0.0025
+    readonly property real springRate: 0.012
     readonly property real stretchLimit: step * 2
-    readonly property real deceleration: 0.0025
+    // The hardest an end can be hit: a bounce stretches at most half of what
+    // a drag can (peak = v / (rate * e) for a critically damped spring).
+    readonly property real maxImpact: stretchLimit / 2 * springRate * Math.E
 
     function clamp(y) {
         return Math.max(minY, Math.min(maxY, y));
@@ -66,8 +83,18 @@ Item {
 
     function stopMotion() {
         scroll.stop();
-        bounce.stop();
-        settle.stop();
+        motion = "none";
+        velocity = 0;
+    }
+
+    // Glide or spring from the current position at `v` px/ms.
+    function launch(v) {
+        scroll.stop();
+        linger.restart();
+        velocity = v;
+        motion = overscroll !== 0 ? "spring" : "glide";
+        if (motion === "spring")
+            velocity = Math.max(-maxImpact, Math.min(maxImpact, velocity));
     }
 
     function scrollTo(y, animate) {
@@ -76,7 +103,6 @@ Item {
         const target = clamp(y);
         if (animate) {
             scroll.to = target;
-            scroll.duration = Theme.durationFast;
             scroll.start();
         } else {
             flickable.contentY = target;
@@ -93,111 +119,77 @@ Item {
             scrollTo(bottom - flickable.height, true);
     }
 
-    // Stretch past the end by `amount` (sign picks the end) and spring back.
-    function bumpBy(amount) {
-        if (amount === 0)
-            return;
-        stopMotion();
-        linger.restart();
-        const end = amount < 0 ? minY : maxY;
-        bounceOut.from = flickable.contentY;
-        bounceOut.to = end + amount;
-        bounceBack.to = end;
-        bounce.start();
-    }
-
-    // Glide towards `target`, bumping if it lies past an end (by the
-    // stretch the overshoot would give, times `bumpScale`).
-    function glideTo(target, duration, bumpScale) {
-        const end = clamp(target);
-        const excess = target - end;
-        if (end === flickable.contentY && !scroll.running) {
-            bumpBy(rubber(excess) * bumpScale);
-            return;
-        }
-        stopMotion();
-        linger.restart();
-        scroll.to = end;
-        scroll.duration = duration;
-        scroll.pendingBump = rubber(excess) * bumpScale;
-        scroll.start();
-    }
-
-    // Fingers lifted: spring back if stretched, else keep gliding.
+    // Fingers lifted: keep going at the release speed (glide), or spring
+    // back with it if stretched.
     function release() {
         touchpadIdle.stop();
-        if (overscroll !== 0) {
-            pull = 0;
-            settle.to = clamp(flickable.contentY);
-            settle.start();
-            return;
-        }
-        const v = velocity;
-        velocity = 0;
-        if (Math.abs(v) < 0.2)
-            return;
-        const distance = v * Math.abs(v) / (2 * deceleration);
-        const duration = Math.min(Theme.durationSlow * 3, Math.abs(v) / deceleration);
-        // Half the stretch: a hard flick would otherwise bounce far.
-        glideTo(flickable.contentY + distance, Math.max(Theme.durationFast, duration), 0.5);
+        dragging = false;
+        pull = 0;
+        // Fingers that stopped before lifting carry no speed.
+        const v = Date.now() - lastWheel > 50 ? 0 : velocity;
+        if (overscroll === 0 && Math.abs(v) < 0.05)
+            return stopMotion();
+        launch(v);
     }
 
-    // Wheel glides, keyboard reveals and touchpad glides; a glide that was
-    // aimed past an end bumps when it gets there.
+    // One simulation step of `dt` ms.
+    function advance(dt) {
+        const flick = flickable;
+        if (motion === "glide") {
+            const slow = friction * dt;
+            if (Math.abs(velocity) <= slow) {
+                motion = "none";
+                velocity = 0;
+                return;
+            }
+            velocity -= Math.sign(velocity) * slow;
+            flick.contentY += velocity * dt;
+            // Hit an end: the spring takes over at the impact speed.
+            if (overscroll !== 0) {
+                motion = "spring";
+                velocity = Math.max(-maxImpact, Math.min(maxImpact, velocity));
+            }
+        } else if (motion === "spring") {
+            const x = overscroll;
+            const end = x < 0 ? minY : maxY;
+            velocity += (-springRate * springRate * x - 2 * springRate * velocity) * dt;
+            flick.contentY += velocity * dt;
+            // Settled, or pulled back into range: rest exactly at the end.
+            const back = overscroll === 0 || Math.sign(overscroll) !== Math.sign(x);
+            if (back || (Math.abs(overscroll) < 0.5 && Math.abs(velocity) < 0.01)) {
+                flick.contentY = end;
+                motion = "none";
+                velocity = 0;
+            }
+        }
+    }
+
+    FrameAnimation {
+        running: root.motion !== "none"
+        onTriggered: {
+            linger.restart();
+            // Whole frames at most, so a stalled frame doesn't fling it.
+            root.advance(Math.min(frameTime, 0.05) * 1000);
+        }
+    }
+
+    // Keyboard reveals and scrollTo: exact positions, eased.
     NumberAnimation {
         id: scroll
 
-        property real pendingBump: 0
-
         target: root.flickable
         property: "contentY"
+        duration: Theme.durationFast
         easing.type: Easing.OutCubic
-        onStopped: {
-            const amount = pendingBump;
-            pendingBump = 0;
-            if (amount !== 0 && Math.abs(root.flickable.contentY - to) < 1)
-                root.bumpBy(amount);
-        }
     }
 
-    SequentialAnimation {
-        id: bounce
-
-        NumberAnimation {
-            id: bounceOut
-
-            target: root.flickable
-            property: "contentY"
-            duration: Theme.durationFast
-            easing.type: Easing.OutCubic
-        }
-        NumberAnimation {
-            id: bounceBack
-
-            target: root.flickable
-            property: "contentY"
-            duration: Theme.durationSlow
-            easing.type: Easing.OutBack
-            easing.overshoot: Theme.overshoot
-        }
-    }
-
-    // Springing back after the fingers let go of stretched content.
-    NumberAnimation {
-        id: settle
-
-        target: root.flickable
-        property: "contentY"
-        duration: Theme.durationSlow
-        easing.type: Easing.OutBack
-        easing.overshoot: Theme.overshoot
-    }
-
-    // Some touchpads never say the fingers lifted: treat a pause as release.
+    // Fingers lifted is normally reported (an event with no movement); this
+    // only covers touchpads that never say so. Long, so holding still past
+    // an end isn't taken for letting go.
     Timer {
         id: touchpadIdle
 
-        interval: Theme.durationFast / 2
+        interval: Theme.durationSlow * 4
         onTriggered: root.release()
     }
 
@@ -206,21 +198,31 @@ Item {
         onWheel: event => {
             if (!root.scrollable)
                 return;
-            // Touchpads report pixels, wheels notches (120 each). An event
-            // with neither is a touchpad saying the fingers lifted.
-            if (event.pixelDelta.y === 0 && event.angleDelta.y === 0) {
-                if (touchpadIdle.running)
+            // Touchpads report pixels, wheels notches (120 each). Only an
+            // event with no movement at all, on either axis, is a touchpad
+            // saying the fingers lifted: resting fingers still send jitter,
+            // sideways or below a pixel (pixel delta 0, a small angle delta).
+            const pixels = event.pixelDelta;
+            const angle = event.angleDelta;
+            if (pixels.x === 0 && pixels.y === 0 && angle.x === 0 && angle.y === 0) {
+                if (root.dragging)
                     root.release();
                 return;
             }
 
             const flick = root.flickable;
-            if (event.pixelDelta.y !== 0) {
+            // While fingers are down every event is touchpad input, never a
+            // wheel notch; one without vertical pixels just keeps the hold.
+            if (root.dragging && pixels.y === 0) {
+                touchpadIdle.restart();
+                return;
+            }
+            if (pixels.y !== 0) {
                 // A new gesture picks up whatever is moving, stretch included.
-                if (!touchpadIdle.running) {
+                if (!root.dragging) {
                     root.stopMotion();
+                    root.dragging = true;
                     root.pull = root.unrubber(root.overscroll);
-                    root.velocity = 0;
                 }
                 linger.restart();
                 touchpadIdle.restart();
@@ -243,9 +245,15 @@ Item {
                     root.pull = 0;
                     flick.contentY = travel;
                 }
-            } else {
-                const from = scroll.running ? scroll.to : root.clamp(flick.contentY);
-                root.glideTo(from - event.angleDelta.y / 120 * root.step, Theme.durationFast, 1);
+            } else if (angle.y !== 0) {
+                // A notch adds `step` to wherever the glide was headed; the
+                // glide then covers it under friction, so notches at the end
+                // hit it with speed and bounce like a flick.
+                const notches = -event.angleDelta.y / 120;
+                const v = root.motion === "glide" ? root.velocity : 0;
+                const ahead = Math.sign(v) * v * v / (2 * root.friction);
+                const distance = ahead + notches * root.step;
+                root.launch(Math.sign(distance) * Math.sqrt(2 * root.friction * Math.abs(distance)));
             }
         }
     }
