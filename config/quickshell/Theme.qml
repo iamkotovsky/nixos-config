@@ -1,6 +1,7 @@
-// Rendered by modules/home/quickshell.nix into ~/.config/quickshell/bar/: @NAME@
+// Rendered by modules/home/quickshell.nix into ~/.config/quickshell/: @NAME@
 // placeholders are replaced with values from the active theme at build time.
-// Lives outside bar/ so the unrendered copy never shadows the rendered one.
+// The template itself is filtered out of the installed config, so it never
+// shadows the rendered copy.
 //
 // The design tokens for the shell; roles and rules are in
 // .claude/rules/design.md. Never hardcode a size, color, opacity or duration

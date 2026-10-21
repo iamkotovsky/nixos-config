@@ -5,8 +5,8 @@ import "services"
 
 // Per output: the top bar, its control panel, the floating
 // volume/brightness slider and notification popups.
-// Runs as the quickshell-bar user service (modules/home/quickshell.nix) via
-// `quickshell --config bar`.
+// Runs as the `quickshell` user service (modules/home/quickshell.nix), as
+// Quickshell's default config (~/.config/quickshell/shell.qml).
 ShellRoot {
     // Singletons are only created when something first reads them. These
     // must run from start-up, not only once a panel or popup touches them:

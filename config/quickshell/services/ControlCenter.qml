@@ -50,7 +50,7 @@ Singleton {
         return Quickshell.screens.length > 0 ? Quickshell.screens[0].name : "";
     }
 
-    // `quickshell ipc --config bar call panel power` (Mod+Shift+E).
+    // `quickshell ipc call panel power` (Mod+Shift+E).
     IpcHandler {
         target: "panel"
 

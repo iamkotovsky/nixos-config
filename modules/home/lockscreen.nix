@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   # The lock screen is a Quickshell process of its own (config/quickshell/
-  # bar/lock.qml), separate from the bar, run as the `lockscreen` user unit:
+  # lock.qml), separate from the shell, run as the `lockscreen` user unit:
   # the unit also guards against a second locker. It touches the marker below
   # once the session is securely locked, and removes it on unlock.
   #
@@ -21,7 +21,7 @@ let
         --unit=lockscreen \
         --collect \
         ${config.home.profileDirectory}/bin/quickshell \
-        -p ${config.xdg.configHome}/quickshell/bar/lock.qml
+        -p ${config.xdg.configHome}/quickshell/lock.qml
     fi
   '';
   lockScreenExe = "${lockScreen}/bin/lock-screen";

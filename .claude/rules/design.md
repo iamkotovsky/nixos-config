@@ -98,9 +98,9 @@ The same rule holds in every themed app: one accent, everything else neutral. Co
 - **Selection, cursor, current line, search matches and links** use the accent or a soft tint of it, never a second hue.
 - A new app, or a theme for one, starts from the neutral greys plus the accent. Add another hue only for a status meaning above.
 
-## Code layout (config/quickshell/bar)
+## Code layout (config/quickshell)
 
-- `shell.qml`: per screen, one of each window. `Theme.qml` is rendered next to it.
+- `shell.qml`: the desktop shell, per screen one of each window. It is Quickshell's default config, run by the `quickshell` user service; reach it with plain `quickshell ipc call ...`. `Theme.qml` here is the template: the installed config leaves it out and gets the rendered copy in its place.
 - `lock.qml` + `lock/`: the lock screen, a separate Quickshell process (the `lockscreen` unit from `modules/home/lockscreen.nix`) sharing `Theme` and `ui/`. `LockSurface` wraps `LockContent`, which can be previewed in an ordinary window. Never test it by locking before the PAM service (`quickshell-lock`) is deployed.
 - `windows/`: the layer windows: `Bar`, `ControlPanel`, `OsdPopup`, `NotificationPopups`.
 - `widgets/`: bar applets: `Pill` and everything built on it (`Clock`, `Workspaces`, `Tray`, `Language`, `StatusButton`).
@@ -160,7 +160,7 @@ Reuse these before writing new widgets:
 
   The only literal numbers allowed are 0 spacing and the font's variable axes.
 - **Verify every visual change with a screenshot** (`grim`, then read the PNG) before reporting:
-  - run a scratch copy of the bar config with `quickshell -p <dir>`;
+  - run a scratch copy of the shell config with `quickshell -p <dir>`, under `timeout`, and check it has exited;
   - check centring, gaps and the animation end states;
   - the user rebuilds with `rebuild`; don't run it for them.
 - After a token change, also run `nix flake check` (statix) and `nixos-rebuild build`.
