@@ -1,7 +1,7 @@
 # Values shared by every visual profile. Individual profiles provide colors and
 # their wallpaper, keeping a theme switch to one declarative selection.
 {
-  # ui: the shell (bar, panel, notifications, lock screen, rofi); mono: terminal,
+  # ui: the shell (bar, panel, launcher, notifications, lock screen); mono: terminal,
   # code, and Nerd Font glyphs.
   font = {
     ui = "Inter";
@@ -17,7 +17,7 @@
   };
 
   # small: list rows, thumbnails; medium: windows, bar pills, tiles;
-  # large: cards (panel, notifications, rofi). "Full" is height / 2.
+  # large: cards (panel, launcher, notifications). "Full" is height / 2.
   radius = {
     small = 6;
     medium = 10;
@@ -79,7 +79,7 @@
     # Kitty: denser than the shell's glass, for reading.
     terminal = "0.84";
     # Frosted glass levels: strip is the bar backdrop (on `background`);
-    # raised is bar pills and rofi, overlay is panel/notification/OSD cards
+    # raised is bar pills, overlay is panel/launcher/notification/OSD cards
     # (both on `surface`).
     strip = "0.55";
     raised = "0.62";
@@ -110,7 +110,7 @@
     diffEmphasis = 0.3;
   };
 
-  # Strips the leading "#" for consumers that want bare hex (rofi, Telegram).
+  # Strips the leading "#" for consumers that want bare hex (Telegram).
   hex = color: builtins.substring 1 6 color;
 
   # Renders an opacity string like "0.84" as a two-digit hex alpha suffix ("d6").

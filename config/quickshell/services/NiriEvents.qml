@@ -26,6 +26,15 @@ Singleton {
         return name.slice(0, 2).toUpperCase();
     }
 
+    // The output with keyboard focus (for opening popups from a keybind), or
+    // the first screen before niri has reported any workspaces.
+    function focusedOutput() {
+        const focused = root.workspaces.find(w => w.is_focused);
+        if (focused && focused.output)
+            return focused.output;
+        return Quickshell.screens.length > 0 ? Quickshell.screens[0].name : "";
+    }
+
     // Workspace idx is per output, so focus the output first.
     function focusWorkspace(output, idx) {
         Quickshell.execDetached(["sh", "-c", 'niri msg action focus-monitor "$1" && niri msg action focus-workspace "$2"', "sh", output, String(idx)]);

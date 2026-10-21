@@ -26,12 +26,21 @@ Glass {
         Anim {}
     }
 
+    // Wheel and touchpad scrolling as whole steps (`scrolled(+1/-1)` each).
+    WheelSteps {
+        id: wheelSteps
+    }
+
     StateLayer {
         enabled: root.interactive
         visible: root.interactive
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: mouse => root.clicked(mouse)
-        onWheel: wheel => root.scrolled(wheel.angleDelta.y)
+        onWheel: wheel => {
+            const steps = wheelSteps.feed(wheel);
+            for (let i = 0; i < Math.abs(steps); i++)
+                root.scrolled(Math.sign(steps));
+        }
     }
 
     RowLayout {

@@ -3,7 +3,7 @@ import Quickshell
 import "windows"
 import "services"
 
-// Per output: the top bar, its control panel, the floating
+// Per output: the top bar, its control panel, the app launcher, the floating
 // volume/brightness slider and notification popups.
 // Runs as the `quickshell` user service (modules/home/quickshell.nix), as
 // Quickshell's default config (~/.config/quickshell/shell.qml).
@@ -12,8 +12,8 @@ ShellRoot {
     // must run from start-up, not only once a panel or popup touches them:
     // Audio shows the OSD on volume changes, Brightness owns the brightness
     // IPC handler, Notifications owns the notification server, ControlCenter
-    // owns the panel IPC handler (Mod+Shift+E).
-    readonly property var services: [Audio, Brightness, Notifications, ControlCenter]
+    // owns the panel IPC handler (Mod+Shift+E), Launcher the launcher's (Mod+D).
+    readonly property var services: [Audio, Brightness, Notifications, ControlCenter, Launcher]
 
     Variants {
         model: Quickshell.screens
@@ -28,6 +28,11 @@ ShellRoot {
             }
 
             ControlPanel {
+                screen: output.modelData
+                screenName: output.modelData.name
+            }
+
+            AppLauncher {
                 screen: output.modelData
                 screenName: output.modelData.name
             }

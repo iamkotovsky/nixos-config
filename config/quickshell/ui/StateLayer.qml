@@ -18,8 +18,10 @@ MouseArea {
     // Shrink slightly on press. Off for surfaces with their own blur region,
     // which can't follow a scale.
     property bool squash: true
+    // Off when something else marks the hovered item (a list highlight).
+    property bool tinted: true
 
-    readonly property real tint: !enabled ? 0 : pressed ? Theme.fillPressed - Theme.fillRest : containsMouse ? Theme.fillHover - Theme.fillRest : 0
+    readonly property real tint: !enabled || !tinted ? 0 : pressed ? Theme.fillPressed - Theme.fillRest : containsMouse ? Theme.fillHover - Theme.fillRest : 0
     property real pressAmount: pressed ? 1 : 0
 
     anchors.fill: parent

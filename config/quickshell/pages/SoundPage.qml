@@ -52,34 +52,40 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
     }
 
-    Repeater {
-        model: ScriptModel {
-            values: Audio.apps
-        }
+    // Many apps scroll instead of stretching the panel.
+    ScrollArea {
+        Layout.fillWidth: true
+        visible: Audio.apps.length > 0
 
-        // One slider per app, driving all of its streams together.
-        delegate: QuickSlider {
-            id: app
-
-            required property var modelData
-            readonly property var streams: modelData.streams.filter(s => s.audio !== null)
-            readonly property var lead: streams.length > 0 ? streams[0] : null
-            readonly property bool muted: lead !== null && lead.audio.muted
-
-            Layout.fillWidth: true
-            label: modelData.name
-            icon: muted ? "volume_off" : "music_note"
-            image: Audio.appIcon(modelData.streams[0])
-            value: lead ? Math.min(lead.audio.volume, 1) : 0
-            dimmed: muted
-            onMoved: value => {
-                for (const s of app.streams)
-                    s.audio.volume = value;
+        Repeater {
+            model: ScriptModel {
+                values: Audio.apps
             }
-            onIconClicked: {
-                const mute = !app.muted;
-                for (const s of app.streams)
-                    s.audio.muted = mute;
+
+            // One slider per app, driving all of its streams together.
+            delegate: QuickSlider {
+                id: app
+
+                required property var modelData
+                readonly property var streams: modelData.streams.filter(s => s.audio !== null)
+                readonly property var lead: streams.length > 0 ? streams[0] : null
+                readonly property bool muted: lead !== null && lead.audio.muted
+
+                Layout.fillWidth: true
+                label: modelData.name
+                icon: muted ? "volume_off" : "music_note"
+                image: Audio.appIcon(modelData.streams[0])
+                value: lead ? Math.min(lead.audio.volume, 1) : 0
+                dimmed: muted
+                onMoved: value => {
+                    for (const s of app.streams)
+                        s.audio.volume = value;
+                }
+                onIconClicked: {
+                    const mute = !app.muted;
+                    for (const s of app.streams)
+                        s.audio.muted = mute;
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ Singleton {
     property string page: ""
 
     function toggle(screenName) {
+        Launcher.close();
         if (root.openOn !== screenName)
             root.page = "";
         root.openOn = root.openOn === screenName ? "" : screenName;
@@ -42,24 +43,17 @@ Singleton {
         return root.openOn !== "" && root.page === name;
     }
 
-    // The screen with keyboard focus, for opening the panel from a keybind.
-    function focusedScreen() {
-        const focused = NiriEvents.workspaces.find(w => w.is_focused);
-        if (focused && focused.output)
-            return focused.output;
-        return Quickshell.screens.length > 0 ? Quickshell.screens[0].name : "";
-    }
-
     // `quickshell ipc call panel power` (Mod+Shift+E).
     IpcHandler {
         target: "panel"
 
         function power(): void {
-            const screen = root.focusedScreen();
+            const screen = NiriEvents.focusedOutput();
             if (root.showing(root.powerPage) && root.openOn === screen) {
                 root.close();
                 return;
             }
+            Launcher.close();
             root.openOn = screen;
             root.openPage(root.powerPage);
         }

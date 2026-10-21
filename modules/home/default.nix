@@ -10,7 +10,6 @@
     ./kitty.nix
     ./niri.nix
     ./quickshell.nix
-    ./rofi.nix
     ./session.nix
     ./shell-tools.nix
     ./ssh.nix

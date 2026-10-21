@@ -86,16 +86,6 @@ window-rule {
     }
 }
 
-// Rofi is a layer surface rather than a regular window. Frost what is really
-// behind it (windows), not just the wallpaper.
-layer-rule {
-    match namespace="^rofi$"
-    background-effect {
-        blur true
-        xray false
-    }
-}
-
 layer-rule {
     match namespace="^quickshell-bar$"
     background-effect {
@@ -117,10 +107,11 @@ layer-rule {
     }
 }
 
-// Notification popups and the volume/brightness slider: like the panel, their
-// cards request their own blur regions, so only xray is turned off here.
+// Notification popups, the volume/brightness slider and the app launcher: like
+// the panel, their cards request their own blur regions, so only xray is
+// turned off here.
 layer-rule {
-    match namespace="^quickshell-(notifications|osd)$"
+    match namespace="^quickshell-(notifications|osd|launcher)$"
     background-effect {
         xray false
     }
@@ -133,7 +124,8 @@ output "eDP-1" {
 
 binds {
     Mod+Return { spawn "kitty"; }
-    Mod+D { spawn "rofi" "-show" "drun"; }
+    // The Quickshell app launcher.
+    Mod+D hotkey-overlay-title="App launcher" { spawn "quickshell" "ipc" "call" "launcher" "toggle"; }
     Mod+O repeat=false { toggle-overview; }
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Q { close-window; }

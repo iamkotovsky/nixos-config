@@ -136,6 +136,17 @@ Singleton {
     // chevron area on split tiles, text fields and switches.
     property int rowHeight: 44
     property int listMaxRows: 6
+    // Scrollbar: thumb width, and how long it stays after scrolling stops.
+    property int scrollbarWidth: 4
+    property int scrollbarLinger: 800
+    // App launcher: a centred card of fixed size (the list area always holds
+    // `launcherRows` rows, so the card never jumps while filtering), with a
+    // larger field, rows and app icons than the panel's.
+    property int launcherWidth: 680
+    property int launcherRows: 5
+    property int launcherRowHeight: 56
+    property int launcherFieldHeight: 52
+    property int launcherIconSize: 32
     property int chevronWidth: 36
     property int fieldHeight: 40
     property int switchWidth: 40

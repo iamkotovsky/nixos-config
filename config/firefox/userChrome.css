@@ -74,7 +74,7 @@
 }
 
 /* Tabs: flat at rest, a fill on hover, the hover fill plus an accent rim
-   when selected (the rofi selected-row treatment). */
+   when selected. */
 .tab-background {
     border-radius: @RADIUS_MEDIUM@px !important;
     margin-block: @SPACING_XS@px !important;

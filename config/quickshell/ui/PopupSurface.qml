@@ -2,11 +2,13 @@ import QtQuick
 import Quickshell
 import ".."
 
-// A Glass surface that appears and disappears: it springs in (fade, a small
-// slide and a scale from pressScale around `origin`) and leaves quicker
-// without overshoot. Its window must keep it mapped until the exit ends
-// (`visible: shown || surface.opacity > 0`) and use `liveBlurRegion` for
-// BackgroundEffect.blurRegion.
+// A Glass surface that appears and disappears: it eases in (fade, a small
+// slide and a scale from pressScale around `origin`, slow OutCubic) and leaves
+// quicker. No spring: on a 0.96 -> 1 scale and a few pixels of slide the
+// overshoot is about a pixel, which only shows as the whole card twitching
+// by a pixel just after it seemed to stop. Its window must keep it mapped
+// until the exit ends (`visible: shown || surface.opacity > 0`) and use
+// `liveBlurRegion` for BackgroundEffect.blurRegion.
 Glass {
     id: surface
 
@@ -37,7 +39,6 @@ Glass {
         Behavior on y {
             Anim {
                 speed: "slow"
-                spring: surface.shown
                 leaving: !surface.shown
             }
         }
@@ -52,7 +53,6 @@ Glass {
     Behavior on scale {
         Anim {
             speed: "slow"
-            spring: surface.shown
             leaving: !surface.shown
         }
     }
