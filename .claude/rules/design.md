@@ -12,11 +12,17 @@ paths:
   - "modules/home/kitty.nix"
   - "modules/home/firefox.nix"
   - "modules/home/telegram.nix"
+  - "modules/home/helix.nix"
+  - "modules/home/yazi.nix"
+  - "modules/home/starship.nix"
+  - "modules/home/fastfetch.nix"
+  - "modules/home/theme.nix"
+  - "modules/home/session.nix"
 ---
 
 # Desktop design system
 
-These rules cover the visual language of the whole desktop: the Quickshell bar, control panel, OSD and notifications; the lock screen; rofi; niri. Follow them for every UI change. When a rule and a request conflict, ask the user.
+These rules cover the visual language of the whole desktop: the Quickshell bar, control panel, OSD and notifications; the lock screen; rofi; niri; and every app themed from `theme/` (kitty, Helix, yazi, starship, Firefox, Telegram, GTK). Follow them for every UI change. When a rule and a request conflict, ask the user.
 
 ## Principles (in priority order)
 
@@ -36,7 +42,7 @@ These rules cover the visual language of the whole desktop: the Quickshell bar, 
    - **Disabled:** 0.4 opacity and no hover.
    - Never add hover effects to things that can't be clicked. A hover effect always means "you can click this".
 4. **Frosted glass.** Surfaces are translucent and neutral, sit over real compositor blur, and have a thin light rim.
-5. **Accent means state.** Pink marks on/active, focus, progress and links, never decoration.
+5. **One accent on a neutral palette, everywhere.** The user prefers a single accent colour (pink in the current presets) over a mostly neutral palette of greys, in every app, not just the shell. Pink marks on/active, focus, progress and links, never decoration; other hues appear only to signal status. See "The palette in apps" below.
 6. **Everything is rounded, on one gap rhythm, and centred to the pixel.** Check vertical centring in a screenshot, nudging with `Translate` if a glyph sits off-centre.
 
 ## Tokens
@@ -72,6 +78,26 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 - `red`: critical, errors, low battery. `green`, `yellow` and the others: status only.
 - `background` / `surface`: the glass tints. Shadows use `Theme.shadow`.
 
+### The palette in apps
+
+The same rule holds in every themed app: one accent, everything else neutral. Colour is a signal, so when everything is coloured nothing stands out.
+- **Code highlighting** (Helix, `bat`/`delta` if added, Firefox devtools, Telegram code blocks, anything else that highlights code) is mostly monochrome:
+  - **Code:** foreground for identifiers, functions, types, variables, modules and attributes.
+  - **Keywords:** the accent, including keyword-like syntax such as markup tags and headings.
+  - **Literals:** each literal kind may have its own palette hue, and nothing else gets one. Strings and characters are green; numbers, booleans and built-in constants (`true`, `nil`) are yellow.
+  - **Punctuation and operators:** slightly muted (`muted`).
+  - **Comments:** `muted`, in italics.
+  - No hue per token kind beyond that: functions, types and named constants stay foreground, not blue, yellow or cyan.
+- **Status colours keep their meaning and stay rare:**
+  - red: errors and deletions;
+  - yellow: warnings and modifications;
+  - green: success and additions.
+
+  This covers diagnostics, diffs, git status, the prompt's exit status and file-manager marks. Blue, cyan and magenta have no status meaning, so use neutral or the accent instead.
+- **Terminal ANSI colours** (kitty `color0–15`) stay a full set, since command-line tools need distinct colours to be readable. Keep them muted, not saturated, so tool output doesn't fight the neutral UI.
+- **Selection, cursor, current line, search matches and links** use the accent or a soft tint of it, never a second hue.
+- A new app, or a theme for one, starts from the neutral greys plus the accent. Add another hue only for a status meaning above.
+
 ## Code layout (config/quickshell/bar)
 
 - `shell.qml`: per screen, one of each window. `Theme.qml` is rendered next to it.
@@ -79,9 +105,9 @@ Component sizes that only QML uses live in the last section of `Theme.qml`.
 - `windows/`: the layer windows: `Bar`, `ControlPanel`, `OsdPopup`, `NotificationPopups`.
 - `widgets/`: bar applets: `Pill` and everything built on it (`Clock`, `Workspaces`, `Tray`, `Language`, `StatusButton`).
 - `ui/`: reusable building blocks (below), not tied to any service.
-- `pages/`: control panel pages: `MainPage`, `WifiPage`, `SoundPage`, `BluetoothPage`.
+- `pages/`: control panel pages: `MainPage`, `WifiPage`, `SoundPage`, `BluetoothPage`, `PowerPage`.
 - `notifications/`: `NotificationCard` and its `NotificationHeader` / `NotificationActions`.
-- `services/`: singletons for state (`Audio`, `AudioPorts`, `Network`, `BluetoothState`, `Brightness`, `Power`, `Caffeine`, `Notifications`, `NiriEvents`, `Osd`, `ControlCenter`, `Icons`). No visuals here.
+- `services/`: singletons for state (`Audio`, `AudioPorts`, `Network`, `BluetoothState`, `Brightness`, `Power`, `Caffeine`, `Notifications`, `NiriEvents`, `Osd`, `ControlCenter`, `Session`, `Icons`). No visuals here.
 - Subfolders import siblings relatively (`import "../ui"`) and `import ".."` for `Theme`. Keep files focused: a window file holds the window, a page holds its content, logic lives in services.
 - Use the named constants, not strings: `ControlCenter.openPage(ControlCenter.wifiPage)`, `ControlCenter.showing(...)`, `Osd.show(Osd.volume)`.
 
@@ -102,6 +128,7 @@ Reuse these before writing new widgets:
 - **`IconButton`** (`buttonSize` 36, full), **`ToggleTile`** (`tileHeight` 56, medium), **`QuickSlider`** (track 6, knob 16 → 18 on hover or drag), **`Switch`**, **`PasswordField`**, **`PageHeader`**, **`SectionLabel`**, **`ScrollList`**, **`Spinner`**.
 - **List rows** (`ListRow`) have one status slot at the end, never a row of icons: use **`RowSlot`**. It shows one thing: a hover action (forget) in place of the status, else the state (a check when connected), else a hint (a lock only when a password is still needed). The glyphs cross-fade. Saved or connected things never show a lock.
 - **App icons:** `Icons.resolve(icon, app)` (theme name, path or URL, else the desktop entry), so notifications and per-app volume agree.
+- **Power page:** lock and suspend run at once; log out, restart and shut down count down in their row (red icon, cancel in the status slot, click again to go now), and leaving the page cancels. They run `sessionctl` (`modules/home/session.nix`), which closes windows first and stops the session through systemd. Never leave the session with niri's `quit`: it kills the compositor first and every client and service crashes (`Mod+Ctrl+Shift+E` keeps it as an emergency exit only). The rows are `pages/PowerActions` (`ids` picks which), shared with the lock screen's power pill, which offers only suspend, restart and shut down (no log out: it would close apps with unsaved work for whoever is at the keyboard). `sessionctl` exits 3 when a window stays open; `Session.failure` carries it, and the lock screen shows it in its status line because notifications are hidden under the lock.
 - **Sound page:** list only outputs that can play (unplugged HDMI/DP ports are hidden), and one slider per app, not per stream.
 - **Cards:** panel (`panelWidth` 360), notification (`notificationWidth` 380, bottom-right corner inset two gaps so it never sits on a window's border or focus ring, newest at the bottom, no visible countdown, rests raised and lifts to floating on hover), OSD (`osdWidth` 300 × `osdHeight` 44, radius medium like the bar pills).
 

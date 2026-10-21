@@ -2,14 +2,8 @@
 let
   c = theme.colors;
 
-  # Colour mixing for the shades Telegram needs as solid colours: `mix a b t`
-  # is `a` moved a fraction `t` (0-1) towards `b`.
-  channels = color: map (i: lib.fromHexString (builtins.substring i 2 color)) [ 1 3 5 ];
-  toHex = n: lib.toLower (lib.fixedWidthString 2 "0" (lib.toHexString n));
-  mix = a: b: t: "#" + lib.concatStrings (lib.zipListsWith
-    (x: y: toHex (builtins.floor (x + (y - x) * t + 0.5)))
-    (channels a)
-    (channels b));
+  # Telegram needs solid shades: `mix a b t` moves `a` a fraction `t` towards `b`.
+  inherit (import ../../theme/color.nix { inherit lib; }) mix;
   fraction = builtins.fromJSON;
 
   # Hover and pressed shades follow the design system's fill levels.
