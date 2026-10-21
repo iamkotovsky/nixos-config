@@ -1,0 +1,302 @@
+/**
+ * @name zenbook
+ * @author iamkotovsky
+ * @description The desktop design system: one accent on deep neutral greys.
+ * @version 1.0.0
+ */
+
+/* Rendered by modules/home/vesktop.nix: @NAME@ placeholders are replaced with
+   values from the active theme at build time. Discord's own theme variables
+   (read from its stylesheet, `.theme-dark` and friends) are mapped onto these
+   tokens; !important because Discord sets them on the same selectors.
+
+   Rules (.claude/rules/design.md): neutral surfaces, the accent only for
+   state (selected server pill, buttons, links, mentions, focus), hover and
+   selection as neutral fills, red/yellow/green only for status, code
+   highlighted with keywords in the accent and literals in their own hue. */
+
+:root {
+    --zb-bg: @BACKGROUND@;
+    --zb-surface: @SURFACE@;
+    --zb-fg: @FOREGROUND@;
+    --zb-muted: @MUTED@;
+    --zb-accent: @ACCENT@;
+    --zb-on-accent: @BACKGROUND@;
+    --zb-red: @RED@;
+    --zb-green: @GREEN@;
+    --zb-yellow: @YELLOW@;
+
+    /* Levels from the window frame up to popouts. */
+    --zb-level-0: var(--zb-bg);
+    --zb-level-1: color-mix(in srgb, var(--zb-bg) 50%, var(--zb-surface));
+    --zb-level-2: var(--zb-surface);
+    --zb-level-3: color-mix(in srgb, var(--zb-surface) 96%, var(--zb-fg));
+    --zb-level-4: color-mix(in srgb, var(--zb-surface) 93%, var(--zb-fg));
+    --zb-level-5: color-mix(in srgb, var(--zb-surface) 90%, var(--zb-fg));
+
+    /* Foreground fills: hover, selected, pressed; the glass rim. */
+    --zb-fill-rest: color-mix(in srgb, var(--zb-fg) @FILL_REST@%, transparent);
+    --zb-fill-hover: color-mix(in srgb, var(--zb-fg) @FILL_HOVER@%, transparent);
+    --zb-fill-pressed: color-mix(in srgb, var(--zb-fg) @FILL_PRESSED@%, transparent);
+    --zb-rim: color-mix(in srgb, var(--zb-fg) @RIM@%, transparent);
+    --zb-selection: color-mix(in srgb, var(--zb-fg) @SELECTION@%, transparent);
+    --zb-accent-tint: color-mix(in srgb, var(--zb-accent) 18%, transparent);
+    --zb-accent-hover: color-mix(in srgb, var(--zb-accent) 85%, var(--zb-fg));
+    --zb-accent-pressed: color-mix(in srgb, var(--zb-accent) 80%, var(--zb-bg));
+}
+
+:root,
+.theme-dark,
+.theme-darker,
+.theme-midnight,
+.theme-light,
+.visual-refresh.theme-dark {
+    /* Fonts: the shell's UI font, the terminal's for code. */
+    --font-primary: "@FONT@", sans-serif !important;
+    --font-display: "@FONT@", sans-serif !important;
+    --font-headline: "@FONT@", sans-serif !important;
+    --font-code: "@FONT_MONO@", monospace !important;
+
+    /* Backgrounds. */
+    --background-base-lowest: var(--zb-level-0) !important;
+    --background-base-lower: var(--zb-level-1) !important;
+    --background-base-low: var(--zb-level-2) !important;
+    --background-surface-high: var(--zb-level-3) !important;
+    --background-surface-higher: var(--zb-level-4) !important;
+    --background-surface-highest: var(--zb-level-5) !important;
+    --background-secondary-alt: var(--zb-level-1) !important;
+    --bg-surface-raised: var(--zb-level-3) !important;
+    --app-frame-background: var(--zb-level-0) !important;
+    --app-frame-border: var(--zb-rim) !important;
+    --home-background: var(--zb-level-2) !important;
+    --panel-bg: var(--zb-level-1) !important;
+    --chat-background: var(--zb-level-2) !important;
+    --chat-background-default: var(--zb-level-2) !important;
+    --chat-border: var(--zb-rim) !important;
+    --channeltextarea-background: var(--zb-level-3) !important;
+    --modal-background: var(--zb-level-3) !important;
+    --modal-footer-background: var(--zb-level-2) !important;
+    --card-background-default: var(--zb-level-3) !important;
+    --card-border-default: var(--zb-rim) !important;
+    --card-secondary-bg: var(--zb-level-2) !important;
+    --background-mod-muted: color-mix(in srgb, var(--zb-fg) 4%, transparent) !important;
+    --background-mod-subtle: var(--zb-fill-rest) !important;
+    --background-mod-normal: var(--zb-fill-hover) !important;
+    --background-mod-strong: var(--zb-fill-pressed) !important;
+    --background-accent: var(--zb-accent-tint) !important;
+    --background-brand: var(--zb-accent) !important;
+    --background-scrim: color-mix(in srgb, var(--zb-bg) 70%, transparent) !important;
+    --background-feedback-critical: color-mix(in srgb, var(--zb-red) 14%, transparent) !important;
+    --background-feedback-positive: color-mix(in srgb, var(--zb-green) 14%, transparent) !important;
+    --background-feedback-warning: color-mix(in srgb, var(--zb-yellow) 14%, transparent) !important;
+    --background-feedback-info: var(--zb-accent-tint) !important;
+    --background-feedback-notification: var(--zb-red) !important;
+
+    /* Text. */
+    --text-default: var(--zb-fg) !important;
+    --text-strong: var(--zb-fg) !important;
+    --text-muted: var(--zb-muted) !important;
+    --text-subtle: var(--zb-muted) !important;
+    --text-link: var(--zb-accent) !important;
+    --text-brand: var(--zb-accent) !important;
+    --text-invert: var(--zb-bg) !important;
+    --text-feedback-critical: var(--zb-red) !important;
+    --text-feedback-positive: var(--zb-green) !important;
+    --text-feedback-warning: var(--zb-yellow) !important;
+    --text-feedback-info: var(--zb-accent) !important;
+    --channels-default: var(--zb-muted) !important;
+    --channel-icon: var(--zb-muted) !important;
+    --chat-text-muted: var(--zb-muted) !important;
+    --channel-text-area-placeholder: var(--zb-muted) !important;
+    --textbox-markdown-syntax: var(--zb-muted) !important;
+
+    /* Interactive items (channels, members, menu rows): neutral hover and
+       selection, never the accent. */
+    --interactive-text-default: var(--zb-muted) !important;
+    --interactive-text-hover: var(--zb-fg) !important;
+    --interactive-text-active: var(--zb-fg) !important;
+    --interactive-icon-default: var(--zb-muted) !important;
+    --interactive-icon-hover: var(--zb-fg) !important;
+    --interactive-icon-active: var(--zb-fg) !important;
+    --interactive-muted: color-mix(in srgb, var(--zb-muted) 55%, var(--zb-bg)) !important;
+    --interactive-background-default: transparent !important;
+    --interactive-background-hover: var(--zb-fill-rest) !important;
+    --interactive-background-active: var(--zb-fill-hover) !important;
+    --interactive-background-selected: var(--zb-selection) !important;
+    --interactive-accent-background-default: var(--zb-accent-tint) !important;
+    --interactive-accent-background-hover: var(--zb-accent-tint) !important;
+    --interactive-accent-background-active: var(--zb-accent-tint) !important;
+    --interactive-accent-background-selected: var(--zb-accent-tint) !important;
+
+    /* Icons. */
+    --icon-default: var(--zb-fg) !important;
+    --icon-muted: var(--zb-muted) !important;
+    --icon-link: var(--zb-accent) !important;
+    --icon-invert: var(--zb-bg) !important;
+    --icon-feedback-critical: var(--zb-red) !important;
+    --icon-feedback-positive: var(--zb-green) !important;
+    --icon-feedback-warning: var(--zb-yellow) !important;
+    --icon-feedback-info: var(--zb-accent) !important;
+    --icon-feedback-notification: var(--zb-red) !important;
+
+    /* Borders: 1px light rims; focus in the accent. */
+    --border-muted: color-mix(in srgb, var(--zb-fg) 4%, transparent) !important;
+    --border-subtle: var(--zb-rim) !important;
+    --border-normal: var(--zb-fill-hover) !important;
+    --border-strong: var(--zb-fill-pressed) !important;
+    --border-focus: var(--zb-accent) !important;
+    --border-feedback-critical: var(--zb-red) !important;
+    --border-feedback-positive: var(--zb-green) !important;
+    --border-feedback-warning: var(--zb-yellow) !important;
+    --border-feedback-info: var(--zb-accent) !important;
+
+    /* The brand scale (Discord's blurple) becomes the accent. */
+    --brand-260: color-mix(in srgb, var(--zb-accent) 60%, var(--zb-fg)) !important;
+    --brand-300: color-mix(in srgb, var(--zb-accent) 70%, var(--zb-fg)) !important;
+    --brand-330: color-mix(in srgb, var(--zb-accent) 80%, var(--zb-fg)) !important;
+    --brand-345: color-mix(in srgb, var(--zb-accent) 85%, var(--zb-fg)) !important;
+    --brand-360: color-mix(in srgb, var(--zb-accent) 90%, var(--zb-fg)) !important;
+    --brand-400: var(--zb-accent) !important;
+    --brand-430: var(--zb-accent) !important;
+    --brand-460: var(--zb-accent) !important;
+    --brand-500: var(--zb-accent) !important;
+    --brand-530: var(--zb-accent-pressed) !important;
+    --brand-560: var(--zb-accent-pressed) !important;
+    --brand-600: var(--zb-accent-pressed) !important;
+    --brand-630: color-mix(in srgb, var(--zb-accent) 70%, var(--zb-bg)) !important;
+    --brand-660: color-mix(in srgb, var(--zb-accent) 60%, var(--zb-bg)) !important;
+    --control-brand-foreground: var(--zb-accent) !important;
+    --control-brand-foreground-new: var(--zb-accent) !important;
+
+    /* Buttons: primary in the accent, secondary as neutral fills, critical
+       in red. */
+    --control-primary-background-default: var(--zb-accent) !important;
+    --control-primary-background-hover: var(--zb-accent-hover) !important;
+    --control-primary-background-active: var(--zb-accent-pressed) !important;
+    --control-primary-border-default: transparent !important;
+    --control-primary-border-hover: transparent !important;
+    --control-primary-border-active: transparent !important;
+    --control-primary-text-default: var(--zb-on-accent) !important;
+    --control-primary-text-hover: var(--zb-on-accent) !important;
+    --control-primary-text-active: var(--zb-on-accent) !important;
+    --control-primary-icon-default: var(--zb-on-accent) !important;
+    --control-primary-icon-hover: var(--zb-on-accent) !important;
+    --control-primary-icon-active: var(--zb-on-accent) !important;
+    --control-secondary-background-default: var(--zb-fill-rest) !important;
+    --control-secondary-background-hover: var(--zb-fill-hover) !important;
+    --control-secondary-background-active: var(--zb-fill-pressed) !important;
+    --control-secondary-border-default: var(--zb-rim) !important;
+    --control-secondary-border-hover: var(--zb-rim) !important;
+    --control-secondary-border-active: var(--zb-rim) !important;
+    --control-secondary-text-default: var(--zb-fg) !important;
+    --control-secondary-text-hover: var(--zb-fg) !important;
+    --control-secondary-text-active: var(--zb-fg) !important;
+    --control-secondary-icon-default: var(--zb-fg) !important;
+    --control-secondary-icon-hover: var(--zb-fg) !important;
+    --control-secondary-icon-active: var(--zb-fg) !important;
+    --control-critical-primary-background-default: var(--zb-red) !important;
+    --control-critical-primary-background-hover: color-mix(in srgb, var(--zb-red) 85%, var(--zb-fg)) !important;
+    --control-critical-primary-background-active: color-mix(in srgb, var(--zb-red) 80%, var(--zb-bg)) !important;
+    --control-critical-primary-text-default: var(--zb-bg) !important;
+    --control-critical-primary-text-hover: var(--zb-bg) !important;
+    --control-critical-primary-text-active: var(--zb-bg) !important;
+    --control-critical-primary-icon-default: var(--zb-bg) !important;
+    --control-critical-primary-icon-hover: var(--zb-bg) !important;
+    --control-critical-primary-icon-active: var(--zb-bg) !important;
+    --control-connected-background-default: var(--zb-green) !important;
+    --control-connected-text-default: var(--zb-bg) !important;
+    --control-connected-icon-default: var(--zb-bg) !important;
+    --control-icon-only-background-hover: var(--zb-fill-rest) !important;
+    --control-icon-only-background-active: var(--zb-fill-hover) !important;
+    --control-icon-only-icon-default: var(--zb-muted) !important;
+    --control-icon-only-icon-hover: var(--zb-fg) !important;
+    --control-icon-only-icon-active: var(--zb-fg) !important;
+
+    /* Inputs: frosted chips with the accent rim on focus. */
+    --input-background-default: var(--zb-level-3) !important;
+    --input-border-default: var(--zb-rim) !important;
+    --input-border-hover: var(--zb-fill-hover) !important;
+    --input-border-active: var(--zb-accent) !important;
+    --input-text-default: var(--zb-fg) !important;
+    --input-placeholder-text-default: var(--zb-muted) !important;
+    --input-icon-default: var(--zb-muted) !important;
+    --input-border-error-default: var(--zb-red) !important;
+    --input-text-error-default: var(--zb-red) !important;
+    --checkbox-background-selected-default: var(--zb-accent) !important;
+    --checkbox-background-selected-hover: var(--zb-accent-hover) !important;
+    --checkbox-border-selected-default: var(--zb-accent) !important;
+    --checkbox-border-selected-hover: var(--zb-accent-hover) !important;
+
+    /* Messages and mentions. */
+    --message-background-hover: color-mix(in srgb, var(--zb-fg) 3%, transparent) !important;
+    --message-mentioned-background-default: color-mix(in srgb, var(--zb-accent) 8%, transparent) !important;
+    --message-mentioned-background-hover: color-mix(in srgb, var(--zb-accent) 12%, transparent) !important;
+    --message-highlight-background-default: color-mix(in srgb, var(--zb-accent) 8%, transparent) !important;
+    --message-highlight-background-hover: color-mix(in srgb, var(--zb-accent) 12%, transparent) !important;
+    --mention-background: var(--zb-accent-tint) !important;
+    --mention-foreground: var(--zb-accent) !important;
+    --spoiler-hidden-background: var(--zb-level-5) !important;
+    --spoiler-hidden-background-hover: var(--zb-level-5) !important;
+    --spoiler-revealed-background: var(--zb-fill-rest) !important;
+
+    /* Status: green online and speaking, yellow idle, red busy. */
+    --status-positive: var(--zb-green) !important;
+    --status-online: var(--zb-green) !important;
+    --status-speaking: var(--zb-green) !important;
+    --status-warning: var(--zb-yellow) !important;
+    --status-danger: var(--zb-red) !important;
+    --text-status-online: var(--zb-green) !important;
+    --text-status-idle: var(--zb-yellow) !important;
+    --text-status-dnd: var(--zb-red) !important;
+    --text-status-offline: var(--zb-muted) !important;
+
+    /* Code: keywords in the accent, literals in their own hue, the rest plain
+       or muted. */
+    --background-code: var(--zb-level-1) !important;
+    --background-code-addition: color-mix(in srgb, var(--zb-green) 14%, transparent) !important;
+    --background-code-deletion: color-mix(in srgb, var(--zb-red) 14%, transparent) !important;
+    --text-code: var(--zb-fg) !important;
+    --text-code-keyword: var(--zb-accent) !important;
+    --text-code-tag: var(--zb-accent) !important;
+    --text-code-section: var(--zb-accent) !important;
+    --text-code-link: var(--zb-accent) !important;
+    --text-code-string: var(--zb-green) !important;
+    --text-code-regexp: var(--zb-green) !important;
+    --text-code-escape: var(--zb-green) !important;
+    --text-code-number: var(--zb-yellow) !important;
+    --text-code-builtin: var(--zb-yellow) !important;
+    --text-code-comment: var(--zb-muted) !important;
+    --text-code-operator: var(--zb-muted) !important;
+    --text-code-bullet: var(--zb-muted) !important;
+    --text-code-decorator: var(--zb-muted) !important;
+    --text-code-attribute: var(--zb-fg) !important;
+    --text-code-property: var(--zb-fg) !important;
+    --text-code-namespace: var(--zb-fg) !important;
+    --text-code-title: var(--zb-fg) !important;
+    --text-code-type: var(--zb-fg) !important;
+    --text-code-variable: var(--zb-fg) !important;
+    --text-code-addition: var(--zb-green) !important;
+    --text-code-deletion: var(--zb-red) !important;
+    --text-code-error: var(--zb-red) !important;
+
+    /* Scrollbars: thin neutral thumbs, no track. */
+    --scrollbar-thin-thumb: var(--zb-fill-pressed) !important;
+    --scrollbar-thin-track: transparent !important;
+    --scrollbar-auto-thumb: var(--zb-fill-pressed) !important;
+    --scrollbar-auto-track: transparent !important;
+    --scrollbar-auto-scrollbar-color-thumb: var(--zb-fill-pressed) !important;
+    --scrollbar-auto-scrollbar-color-track: transparent !important;
+
+    /* Profiles. */
+    --user-profile-border: var(--zb-rim) !important;
+    --user-profile-background-hover: var(--zb-fill-rest) !important;
+    --user-profile-toolbar-background: var(--zb-level-3) !important;
+    --user-profile-toolbar-border: var(--zb-rim) !important;
+    --user-profile-overlay-background: var(--zb-level-3) !important;
+    --user-profile-overlay-background-hover: var(--zb-level-4) !important;
+}
+
+/* Selected text: the neutral selection grey, never the accent. */
+::selection {
+    background-color: var(--zb-selection) !important;
+}

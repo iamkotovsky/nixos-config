@@ -15,6 +15,7 @@
     ./ssh.nix
     ./starship.nix
     ./telegram.nix
+    ./vesktop.nix
     ./theme.nix
     ./udiskie.nix
     ./wallpaper.nix

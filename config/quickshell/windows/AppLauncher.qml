@@ -155,7 +155,7 @@ PanelWindow {
 
                         width: ListView.view.width
                         height: Theme.launcherRowHeight
-                        image: Quickshell.iconPath(modelData.icon, true)
+                        image: Icons.resolve(modelData.icon, modelData.name)
                         imageSize: Theme.launcherIconSize
                         leftPadding: window.rowPadding
                         iconColumnWidth: Theme.launcherIconSize
