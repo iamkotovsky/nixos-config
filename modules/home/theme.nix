@@ -1,13 +1,8 @@
-{
-  lib,
-  pkgs,
-  theme,
-  ...
-}:
+{ pkgs, theme, ... }:
 let
-  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  inherit (theme) colors mix;
   # Selected text is the neutral selection grey, not the accent.
-  selection = mix theme.colors.background theme.colors.foreground theme.tint.selection;
+  selection = mix colors.background colors.foreground theme.tint.selection;
 
   gtkTheme = {
     name = "adw-gtk3-dark";
@@ -15,9 +10,9 @@ let
   };
 
   accentCss = ''
-    @define-color accent_color ${theme.colors.accent};
-    @define-color accent_bg_color ${theme.colors.accent};
-    @define-color accent_fg_color ${theme.colors.background};
+    @define-color accent_color ${colors.accent};
+    @define-color accent_bg_color ${colors.accent};
+    @define-color accent_fg_color ${colors.background};
 
     selection {
       background-color: ${selection};
@@ -26,9 +21,9 @@ let
   # GTK 4 (adw-gtk3's libadwaita sheet) reads the accent from CSS variables.
   accentCss4 = accentCss + ''
     :root {
-      --accent-color: ${theme.colors.accent};
-      --accent-bg-color: ${theme.colors.accent};
-      --accent-fg-color: ${theme.colors.background};
+      --accent-color: ${colors.accent};
+      --accent-bg-color: ${colors.accent};
+      --accent-fg-color: ${colors.background};
     }
 
     /* The theme's focused selection is more specific than plain `selection`. */

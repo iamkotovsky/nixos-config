@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.UPower
 import ".."
 
@@ -46,16 +47,36 @@ Singleton {
         return device.timeToEmpty > 0 ? duration(device.timeToEmpty) + " left" : "On battery";
     }
 
-    // Same order as the Mod+P keybind. Always all three: Quickshell 0.3.1
-    // reports hasPerformanceProfile = false although the daemon offers it.
+    // The order the tile and Mod+P cycle through. Always all three: Quickshell
+    // 0.3.1 reports hasPerformanceProfile = false although the daemon offers
+    // it.
     readonly property var profiles: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
     readonly property int profile: PowerProfiles.profile
     readonly property bool balanced: profile === PowerProfile.Balanced
     readonly property string profileIcon: profile === PowerProfile.PowerSaver ? "eco" : profile === PowerProfile.Performance ? "speed" : "balance"
-    readonly property string profileName: profile === PowerProfile.PowerSaver ? "Power saver" : profile === PowerProfile.Performance ? "Performance" : "Balanced"
+    readonly property string profileName: nameOf(profile)
 
+    function nameOf(profile) {
+        return profile === PowerProfile.PowerSaver ? "Power saver" : profile === PowerProfile.Performance ? "Performance" : "Balanced";
+    }
+
+    // Returns the profile switched to.
     function cycleProfile() {
         const index = profiles.indexOf(PowerProfiles.profile);
-        PowerProfiles.profile = profiles[(index + 1) % profiles.length];
+        const next = profiles[(index + 1) % profiles.length];
+        PowerProfiles.profile = next;
+        return next;
+    }
+
+    // `quickshell ipc call powerprofile cycle` (Mod+P). The panel tile shows
+    // the mode itself; from the keybind there is nothing on screen, so a
+    // brief notification says which mode it is now.
+    IpcHandler {
+        target: "powerprofile"
+
+        function cycle(): void {
+            const next = root.cycleProfile();
+            Quickshell.execDetached(["notify-send", "-a", "Power", "-t", String(Theme.osdTimeout), "Power mode", root.nameOf(next)]);
+        }
     }
 }

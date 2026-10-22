@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import ".."
 
 // Lock, suspend and leaving the session, through `sessionctl`
 // (modules/home/session.nix), which closes windows first and then stops the
@@ -59,7 +60,7 @@ Singleton {
         }
     ]
 
-    readonly property int countdownSeconds: 5
+    readonly property int countdownSeconds: Theme.confirmSeconds
 
     // The action counting down ("" = none) and the seconds left.
     property string pending: ""

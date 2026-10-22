@@ -5,9 +5,8 @@ import Quickshell
 import Quickshell.Io
 
 // The app launcher (windows/AppLauncher.qml, Mod+D): which screen it is open on
-// ("" = closed), the search, and the ranked apps. Apps start through
-// `niri msg action spawn` so they live in niri's scope, not this shell's: a
-// shell restart (every rebuild) would otherwise take them down with it.
+// ("" = closed), the search, and the ranked apps. Apps start through Apps
+// (niri's scope, so a shell restart doesn't close them).
 Singleton {
     id: root
 
@@ -96,26 +95,16 @@ Singleton {
         root.usage = counts;
         usageFile.setText(JSON.stringify(counts));
 
-        Quickshell.execDetached(root.spawnCommand(entry));
+        Apps.launch(entry);
     }
 
-    // niri spawns the app (own scope); terminal apps run in kitty, the
-    // Mod+Return terminal; a working directory needs a small sh wrapper.
-    function spawnCommand(entry) {
-        let command = entry.command;
-        if (entry.runInTerminal)
-            command = ["kitty", "-e", ...command];
-        if (entry.workingDirectory)
-            command = ["sh", "-c", 'cd "$1" && shift && exec "$@"', "sh", entry.workingDirectory, ...command];
-        return ["niri", "msg", "action", "spawn", "--", ...command];
-    }
-
+    // Until the first launch writes it, the file doesn't exist: the read logs
+    // a warning once and usage starts empty. (Writing it from onLoadFailed
+    // raced the failing read.)
     FileView {
         id: usageFile
 
         path: Quickshell.statePath("launcher-usage.json")
-        // First run: start the file so later reads find it.
-        onLoadFailed: setText("{}")
         onLoaded: {
             try {
                 root.usage = JSON.parse(text()) ?? {};
@@ -130,7 +119,7 @@ Singleton {
         target: "launcher"
 
         function toggle(): void {
-            root.toggle(NiriEvents.focusedOutput());
+            root.toggle(NiriEvents.focusedOutput);
         }
     }
 }

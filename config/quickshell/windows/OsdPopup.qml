@@ -14,7 +14,7 @@ PanelWindow {
 
     // Shown on the screen in use. Compares a plain name, not `screen`, which
     // mapping the window re-evaluates.
-    readonly property bool active: Osd.shown && Osd.output === screenName
+    readonly property bool active: Osd.shown && NiriEvents.focusedOutput === screenName
     readonly property bool volume: Osd.kind === Osd.volume
     readonly property real value: volume ? Math.min(Audio.volume, 1) : Brightness.percent / 100
     readonly property bool dimmed: volume && Audio.muted
@@ -37,7 +37,7 @@ PanelWindow {
 
     BackgroundEffect.blurRegion: card.liveBlurRegion
 
-    // Springs up in; sinks and fades out quicker, no bounce.
+    // Eases up in; sinks and fades out quicker.
     PopupSurface {
         id: card
 

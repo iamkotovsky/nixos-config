@@ -8,8 +8,12 @@
   ...
 }:
 let
-  inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) mix rgb sgr;
+  inherit (theme)
+    colors
+    mix
+    rgb
+    sgr
+    ;
 
   # LS_COLORS-style codes: no colour, bold, a palette colour.
   plain = "00";
@@ -84,13 +88,6 @@ let
     }
   );
 
-  # Code highlighting for bat and delta (theme/syntax.nix).
-  syntaxTheme = import ../../theme/syntax.nix {
-    inherit colors;
-    inherit mix;
-    selectionTint = theme.tint.selection;
-  };
-
   # tealdeer wants { rgb = { r, g, b }; } colours.
   tldrColor = color: { rgb = rgb color; };
 in
@@ -147,7 +144,8 @@ in
         italic-text = "always";
       };
       themes.zenbook = {
-        src = pkgs.writeTextDir "zenbook.tmTheme" syntaxTheme;
+        # Code highlighting for bat and delta (theme/syntax.nix).
+        src = pkgs.writeTextDir "zenbook.tmTheme" theme.syntaxTheme;
         file = "zenbook.tmTheme";
       };
     };

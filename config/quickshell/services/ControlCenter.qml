@@ -48,7 +48,7 @@ Singleton {
         target: "panel"
 
         function power(): void {
-            const screen = NiriEvents.focusedOutput();
+            const screen = NiriEvents.focusedOutput;
             if (root.showing(root.powerPage) && root.openOn === screen) {
                 root.close();
                 return;

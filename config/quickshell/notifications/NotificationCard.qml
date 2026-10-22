@@ -92,6 +92,20 @@ Glass {
         card.closing = true;
         card.notification.dismiss();
     }
+
+    // Runs one of the app's actions, then closes the card. invoke() already
+    // dismisses a non-resident notification (dismissing it again hits a
+    // destroyed object), so only a resident one is dismissed here.
+    function run(action) {
+        if (card.closing || !card.notification)
+            return;
+        const resident = card.notification.resident;
+        card.closing = true;
+        action.invoke();
+        if (resident)
+            card.notification.dismiss();
+    }
+
     // Driven by the countdown below: a NumberAnimation is used as a timer
     // because, unlike Timer, it can pause (while hovered).
     property real countdown: 1
@@ -131,9 +145,10 @@ Glass {
     StateLayer {
         squash: false
         onClicked: {
-            if (!card.closing && card.notification && card.defaultAction)
-                card.defaultAction.invoke();
-            card.dismiss();
+            if (card.defaultAction)
+                card.run(card.defaultAction);
+            else
+                card.dismiss();
         }
     }
 
@@ -185,7 +200,7 @@ Glass {
                     color: Qt.alpha(Theme.foreground, Theme.subtleTextOpacity)
                     font.pixelSize: Theme.fontSmall
                     linkColor: Theme.accent
-                    onLinkActivated: link => Qt.openUrlExternally(link)
+                    onLinkActivated: link => Apps.openUrl(link)
                 }
             }
 
@@ -208,11 +223,7 @@ Glass {
         NotificationActions {
             Layout.fillWidth: true
             buttons: card.buttons
-            onTriggered: action => {
-                if (!card.closing && card.notification)
-                    action.invoke();
-                card.dismiss();
-            }
+            onTriggered: action => card.run(action)
         }
     }
 }

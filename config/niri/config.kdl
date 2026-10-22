@@ -75,13 +75,11 @@ window-rule {
     }
 }
 
-// Firefox supplies the transparent chrome; Niri adds a subtle frosted finish.
+// Firefox supplies the transparent chrome; slightly see-through, the blur
+// from the rule above gives it a subtle frosted finish.
 window-rule {
     match app-id="^firefox$"
     opacity 0.96
-    background-effect {
-        blur true
-    }
 }
 
 layer-rule {

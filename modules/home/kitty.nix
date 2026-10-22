@@ -1,7 +1,6 @@
-{ lib, theme, ... }:
+{ theme, ... }:
 let
-  inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  inherit (theme) colors mix;
 in
 {
   programs.kitty = {
@@ -13,9 +12,10 @@ in
 
     settings = {
       inherit (colors) background foreground;
-      # Enough translucency for Niri's blur and grain to read as frosted glass.
+      # Enough translucency for niri's blur (its window rule blurs every
+      # window; kitty's own background_blur does nothing there) to read as
+      # frosted glass.
       background_opacity = theme.opacity.terminal;
-      background_blur = 1;
       # Selection is a neutral grey that keeps the text's own colours, as in
       # Helix and yazi; links are the accent. The cursor stays neutral too.
       selection_background = mix colors.background colors.foreground theme.tint.selection;

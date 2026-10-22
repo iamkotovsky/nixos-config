@@ -1,12 +1,6 @@
-{
-  lib,
-  pkgs,
-  theme,
-  ...
-}:
+{ pkgs, theme, ... }:
 let
-  inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  inherit (theme) colors mix;
 
   # Selected text: the neutral selection grey (background towards foreground).
   selection = mix colors.background colors.foreground theme.tint.selection;

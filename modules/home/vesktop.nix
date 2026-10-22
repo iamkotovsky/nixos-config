@@ -1,6 +1,6 @@
 { pkgs, theme, ... }:
 let
-  inherit (theme) colors;
+  inherit (theme) colors render percent;
 
   # Vesktop's icon (Papirus's is a rainbow): Papirus's Discord logo with the
   # circle in the accent and the glyph in the background colour, so it
@@ -10,9 +10,6 @@ let
       -e 's/style="fill:#ffffff"/style="fill:${colors.background}"/' \
       ${pkgs.papirus-icon-theme}/share/icons/Papirus/64x64/apps/discord.svg > $out
   '';
-
-  # Opacity strings ("0.08") as CSS color-mix percentages ("8").
-  percent = opacity: toString (builtins.floor (builtins.fromJSON opacity * 100 + 0.5));
 
   # Each attribute fills the matching @NAME@ placeholder in the template.
   substitutions = {
@@ -29,7 +26,7 @@ let
     FILL_PRESSED = percent theme.fill.pressed;
     RIM = percent theme.opacity.rim;
     # The selection grey as a foreground overlay (Helix/kitty mix it solid).
-    SELECTION = toString (builtins.floor (theme.tint.selection * 100 + 0.5));
+    SELECTION = percent theme.tint.selection;
     FONT = theme.font.ui;
     FONT_MONO = theme.font.mono;
   };
@@ -59,8 +56,6 @@ in
   # across presets, so enabling it once (Vesktop: Settings -> Themes) keeps it
   # following whichever preset is active. Only the theme file is managed:
   # Vesktop's settings.json stays writable by Vesktop.
-  xdg.configFile."vesktop/themes/zenbook.theme.css".text = builtins.replaceStrings (map
-    (name: "@${name}@")
-    (builtins.attrNames substitutions)
-  ) (builtins.attrValues substitutions) (builtins.readFile ../../config/vesktop/theme.css);
+  xdg.configFile."vesktop/themes/zenbook.theme.css".text =
+    render substitutions ../../config/vesktop/theme.css;
 }

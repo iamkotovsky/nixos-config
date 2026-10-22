@@ -62,9 +62,7 @@ Pill {
                 }
 
                 Behavior on color {
-                    ColorAnimation {
-                        duration: Theme.durationNormal
-                    }
+                    ColorFade {}
                 }
             }
 

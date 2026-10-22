@@ -1,7 +1,11 @@
-# Colour helpers for apps that need palette colours in other forms:
-# `mix a b t` is hex colour `a` moved a fraction `t` (0-1) towards `b`;
-# `rgb` splits a hex colour into { r, g, b }; `sgr` is the ANSI truecolor
-# foreground code ("38;2;r;g;b") for LS_COLORS-style variables.
+# Colour helpers for apps that need palette colours in other forms. Reached
+# through the theme (`inherit (theme) mix hex ...`), never imported directly.
+#   mix a b t   hex colour `a` moved a fraction `t` (0-1) towards `b`
+#   rgb c       a hex colour split into { r, g, b }
+#   sgr c       the ANSI truecolor foreground code ("38;2;r;g;b"), for
+#               LS_COLORS-style variables
+#   hex c       the colour without its "#" (rofi-style and console consumers)
+#   alphaHex o  an opacity ("0.84") as a two-digit hex alpha suffix ("d6")
 { lib }:
 let
   channels =
@@ -33,4 +37,8 @@ in
     };
 
   sgr = color: "38;2;" + lib.concatMapStringsSep ";" toString (channels color);
+
+  hex = color: builtins.substring 1 6 color;
+
+  alphaHex = opacity: toHex (builtins.floor (builtins.fromJSON opacity * 255 + 0.5));
 }

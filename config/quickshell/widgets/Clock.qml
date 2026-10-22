@@ -19,6 +19,6 @@ Pill {
 
     BarText {
         fadeText: true
-        text: root.showDate ? Qt.formatDate(clock.date, "dddd, dd MMMM") : Qt.formatTime(clock.date, "hh:mm")
+        text: root.showDate ? Qt.formatDate(clock.date, "dddd, d MMMM") : Qt.formatTime(clock.date, "hh:mm")
     }
 }

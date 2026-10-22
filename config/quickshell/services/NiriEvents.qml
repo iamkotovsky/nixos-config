@@ -26,9 +26,10 @@ Singleton {
         return name.slice(0, 2).toUpperCase();
     }
 
-    // The output with keyboard focus (for opening popups from a keybind), or
-    // the first screen before niri has reported any workspaces.
-    function focusedOutput() {
+    // The screen in use: the output with keyboard focus (where popups open
+    // from a keybind, and where the OSD and notifications show), or the first
+    // screen before niri has reported any workspaces.
+    readonly property string focusedOutput: {
         const focused = root.workspaces.find(w => w.is_focused);
         if (focused && focused.output)
             return focused.output;

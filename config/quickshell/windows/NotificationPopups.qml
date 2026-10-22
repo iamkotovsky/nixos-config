@@ -68,7 +68,7 @@ PanelWindow {
         spacing: Theme.gap
         model: ScriptModel {
             // Only on the screen in use; switching screens moves the cards.
-            values: Osd.output === popups.screenName ? Notifications.popups : []
+            values: NiriEvents.focusedOutput === popups.screenName ? Notifications.popups : []
         }
 
         delegate: NotificationCard {

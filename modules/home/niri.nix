@@ -20,32 +20,20 @@ let
       ${pkgs.libnotify}/bin/notify-send -a Power -t 1500 "Power mode" "$name"
   '';
 
-  rawConfig = builtins.readFile ../../config/niri/config.kdl;
-  themedConfig =
-    builtins.replaceStrings
-      [
-        "@BACKGROUND@"
-        "@SURFACE@"
-        "@ACCENT@"
-        "@RADIUS@"
-        "@LOCK_SCRIPT@"
-        "@POWER_PROFILE_SCRIPT@"
-        "@CURSOR_THEME@"
-        "@CURSOR_SIZE@"
-        "@GAP@"
-      ]
-      [
-        theme.colors.background
-        theme.colors.surface
-        theme.colors.accent
-        (toString theme.radius.medium)
-        config.lockScreen.script
-        (toString cyclePowerProfile)
-        theme.cursor.name
-        (toString theme.cursor.size)
-        (toString theme.gap)
-      ]
-      rawConfig;
+  inherit (theme) colors render;
+
+  # Each attribute fills the matching @NAME@ placeholder in config.kdl.
+  themedConfig = render {
+    BACKGROUND = colors.background;
+    SURFACE = colors.surface;
+    ACCENT = colors.accent;
+    RADIUS = toString theme.radius.medium;
+    LOCK_SCRIPT = config.lockScreen.script;
+    POWER_PROFILE_SCRIPT = toString cyclePowerProfile;
+    CURSOR_THEME = theme.cursor.name;
+    CURSOR_SIZE = toString theme.cursor.size;
+    GAP = toString theme.gap;
+  } ../../config/niri/config.kdl;
 in
 {
   # Keep compositor configuration in its native format for easy live editing.

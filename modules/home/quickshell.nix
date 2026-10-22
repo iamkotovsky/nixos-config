@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (theme) colors;
+  inherit (theme) colors render;
 
   # The lock screen's backdrop: the wallpaper pre-blurred and scaled down at
   # build time, so it loads instantly and costs nothing per frame (a runtime
@@ -69,9 +69,7 @@ let
     LOCK_BACKDROP = toString lockBackdrop;
   };
 
-  themeQml = builtins.replaceStrings (map (name: "@${name}@") (
-    builtins.attrNames substitutions
-  )) (builtins.attrValues substitutions) (builtins.readFile ../../config/quickshell/Theme.qml);
+  themeQml = render substitutions ../../config/quickshell/Theme.qml;
 
   # config/quickshell without the Theme.qml template.
   shellConfig = builtins.path {

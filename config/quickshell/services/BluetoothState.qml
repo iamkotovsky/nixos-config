@@ -77,6 +77,24 @@ Singleton {
                 root.pairing = null;
             }
         }
+
+        function onPairingChanged() {
+            if (!root.pairing.pairing)
+                pairingEnded.restart();
+        }
+    }
+
+    // Pairing ended without pairing (failed, cancelled): forget it, so a later
+    // pairing of this device doesn't auto-connect from stale state. Checked a
+    // little later: `pairing` can turn off just before `paired` turns on.
+    Timer {
+        id: pairingEnded
+
+        interval: 2000
+        onTriggered: {
+            if (root.pairing && !root.pairing.pairing && !root.pairing.paired)
+                root.pairing = null;
+        }
     }
 
     // Off: power the adapter down through BlueZ first (it disconnects

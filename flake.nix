@@ -21,7 +21,7 @@
       username = "danil";
       # Where this repo lives on disk; used by nh and the shell aliases.
       flakeDir = "/etc/nixos";
-      theme = import ./theme;
+      theme = import ./theme { inherit (nixpkgs) lib; };
     in
     {
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;

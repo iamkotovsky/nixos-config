@@ -20,6 +20,9 @@ Singleton {
     readonly property string icon: percent < 34 ? "brightness_low" : percent < 67 ? "brightness_medium" : "brightness_high"
 
     property int pending: -1
+    // When brightnessctl was last asked to write: sysfs still has the old
+    // value for a moment, and reading it then would snap the slider back.
+    property real lastWrite: 0
 
     // Slider drags fire many changes; apply only the latest every 50 ms so
     // brightnessctl isn't spawned per pixel. Never below 1%: 0 is black.
@@ -55,7 +58,7 @@ Singleton {
         // step() needs the fresh value right after reload().
         blockAllReads: true
         onLoaded: {
-            if (root.pending < 0)
+            if (root.pending < 0 && Date.now() - root.lastWrite > 500)
                 root.brightness = parseInt(text());
         }
     }
@@ -107,6 +110,7 @@ Singleton {
         interval: 50
         onTriggered: {
             Quickshell.execDetached(["brightnessctl", "set", root.pending + "%"]);
+            root.lastWrite = Date.now();
             root.pending = -1;
         }
     }

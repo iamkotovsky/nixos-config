@@ -1,7 +1,6 @@
-{ lib, theme, ... }:
+{ theme, ... }:
 let
-  inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  inherit (theme) colors mix;
 
   # Added and removed lines on a faint green / red, the changed words in
   # them on a stronger one; the code keeps its syntax colours.

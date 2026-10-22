@@ -140,6 +140,12 @@ Singleton {
     // Scrollbar: thumb width, and how long it stays after scrolling stops.
     property int scrollbarWidth: 4
     property int scrollbarLinger: 800
+    // How long brief feedback stays: the volume/brightness slider and the
+    // power-mode notification (ms); a notification that sets no timeout of
+    // its own (ms); the countdown before log out / restart / shut down (s).
+    property int osdTimeout: 1500
+    property int notificationTimeout: 5000
+    property int confirmSeconds: 5
     // App launcher: a centred card of fixed size (the list area always holds
     // `launcherRows` rows, so the card never jumps while filtering), with a
     // larger field, rows and app icons than the panel's.

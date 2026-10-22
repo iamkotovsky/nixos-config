@@ -103,7 +103,7 @@ Singleton {
     }
 
     function openMixer() {
-        Quickshell.execDetached(["pavucontrol"]);
+        Apps.spawn(["pavucontrol"]);
     }
 
     // Binds the sink so its audio properties are live.

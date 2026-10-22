@@ -7,26 +7,15 @@
 # neutral greys. Red, yellow and green only mean status (cut, modified,
 # added); the accent marks state (selected and copied files, current tab);
 # the hovered row is the neutral selection grey.
-{
-  lib,
-  pkgs,
-  theme,
-  ...
-}:
+{ pkgs, theme, ... }:
 let
-  inherit (theme) colors;
-  inherit (import ../../theme/color.nix { inherit lib; }) mix;
+  inherit (theme) colors mix;
 
   # The hovered row: the neutral selection grey, as in Helix.
   hovered = mix colors.background colors.foreground theme.tint.selection;
 
   # Code previews use the shared highlighting theme (theme/syntax.nix).
-  previewTheme = pkgs.writeText "zenbook.tmTheme" (
-    import ../../theme/syntax.nix {
-      inherit colors mix;
-      selectionTint = theme.tint.selection;
-    }
-  );
+  previewTheme = pkgs.writeText "zenbook.tmTheme" theme.syntaxTheme;
 
   # A muted glyph for every entry of a kind; only broken entries are red.
   glyph = text: color: {

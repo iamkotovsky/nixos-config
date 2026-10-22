@@ -6,16 +6,7 @@
   ...
 }:
 let
-  inherit (theme) colors;
-
-  # Opacity strings ("0.08") as CSS color-mix percentages ("8").
-  percent = opacity: toString (builtins.floor (builtins.fromJSON opacity * 100 + 0.5));
-
-  render =
-    substitutions: file:
-    builtins.replaceStrings (map (name: "@${name}@") (
-      builtins.attrNames substitutions
-    )) (builtins.attrValues substitutions) (builtins.readFile file);
+  inherit (theme) colors render percent;
 
   # Design tokens shared by userChrome.css and the start page; each attribute
   # fills the matching @NAME@ placeholder.

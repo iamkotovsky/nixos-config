@@ -1,5 +1,9 @@
-# Values shared by every visual profile. Individual profiles provide colors and
+# Design tokens shared by every preset. Presets (./presets) provide colors and
 # their wallpaper, keeping a theme switch to one declarative selection.
+#
+# Values a template takes verbatim (opacities, overshoot, press scale) are
+# strings, since Nix prints floats as "0.550000"; values only computed with in
+# Nix (tint) are numbers. `number` (template.nix) reads either.
 {
   # ui: the shell (bar, panel, launcher, notifications, lock screen); mono: terminal,
   # code, and Nerd Font glyphs.
@@ -101,28 +105,26 @@
   };
 
   # Solid tints for apps that need opaque shades (`mix background colour t`,
-  # theme/color.nix): selection is the neutral grey (towards the foreground,
-  # never the accent) behind selected text, the selected chat and hovered
-  # rows (Helix, yazi, kitty, bat, fzf, GTK, Telegram); diff and diffEmphasis are green
-  # and red behind added and removed lines, and the changed words in them
-  # (delta).
+  # theme/color.nix):
+  #  - selection: the neutral grey (towards the foreground, never the accent)
+  #    behind selected text, the selected chat and hovered rows (Helix, yazi,
+  #    kitty, bat, fzf, GTK, Telegram);
+  #  - diff, diffEmphasis: green and red behind added and removed lines, and
+  #    the changed words in them (delta);
+  #  - bubble, bubblePressed: the soft accent behind Telegram's outgoing
+  #    messages (surface towards the accent).
   tint = {
     selection = 0.25;
     diff = 0.15;
     diffEmphasis = 0.3;
+    bubble = 0.22;
+    bubblePressed = 0.32;
   };
 
-  # Strips the leading "#" for consumers that want bare hex (Telegram).
-  hex = color: builtins.substring 1 6 color;
-
-  # Renders an opacity string like "0.84" as a two-digit hex alpha suffix ("d6").
-  alphaHex =
-    opacity:
-    let
-      digits = "0123456789abcdef";
-      n = builtins.floor (builtins.fromJSON opacity * 255 + 0.5);
-      hi = n / 16;
-      lo = n - hi * 16;
-    in
-    "${builtins.substring hi 1 digits}${builtins.substring lo 1 digits}";
+  # Scrollbar thumbs where an app takes their colour (Telegram): foreground at
+  # these opacities, at rest and hovered.
+  scrollbar = {
+    rest = "0.20";
+    hover = "0.30";
+  };
 }
